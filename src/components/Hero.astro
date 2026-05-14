@@ -1,0 +1,316 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+/* Split \n into array for multiline rendering */
+function lines(str: string) {
+  return str.split('\n');
+}
+---
+
+<section class="hero">
+  <!-- Video background – muted + playsinline son obligatorios para Safari/iOS -->
+  <video
+    class="hero-video"
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="metadata"
+    aria-hidden="true"
+  >
+    <source src="/videos/desktop.mp4" type="video/mp4" />
+  </video>
+
+  <!-- Content overlay -->
+  <div class="hero-inner">
+
+    <!-- LEFT: card de contenido -->
+    <div class="hero-card">
+
+      <!-- Bloque superior: textos -->
+      <div class="hero-card-top">
+        <p class="hero-congress">{t('hero.congress' as any)}</p>
+
+        <h1 class="hero-headline" aria-label={`${t('hero.headline1' as any)} ${t('hero.headline2' as any)}`}>
+          <span>{t('hero.headline1' as any)}</span>
+          <span>{t('hero.headline2' as any)}</span>
+        </h1>
+
+        <p class="hero-desc">
+          {lines(t('hero.desc' as any)).map((l, i, arr) => (
+            <>{l}{i < arr.length - 1 && <br />}</>
+          ))}
+        </p>
+      </div>
+
+      <!-- Bloque inferior: info evento + organizadores -->
+      <div class="hero-card-bottom">
+
+        <div class="hero-event">
+          <div class="hero-event-row">
+            <span class="hero-date">
+              {lines(t('hero.date' as any)).map((l, i, arr) => (
+                <>{l}{i < arr.length - 1 && <br />}</>
+              ))}
+            </span>
+            <div class="hero-venue">
+              <span>
+                {lines(t('hero.venue' as any)).map((l, i, arr) => (
+                  <>{l}{i < arr.length - 1 && <br />}</>
+                ))}
+              </span>
+              <span>
+                {lines(t('hero.city' as any)).map((l, i, arr) => (
+                  <>{l}{i < arr.length - 1 && <br />}</>
+                ))}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-organizers">
+          <p class="hero-org-label">{t('hero.organizers' as any)}</p>
+          <div class="hero-org-logos">
+            <img src="/img/cole.svg" alt="COLE" />
+            <img src="/img/sebas.svg" alt="SEBAS" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT: CTAs (alineados al fondo por align-items: flex-end del padre) -->
+    <div class="hero-ctas">
+      <a href="#programa" class="btn-secondary">{t('hero.program' as any)}</a>
+      <a href="#entradas" class="btn-primary">{t('hero.tickets' as any)}</a>
+    </div>
+
+  </div>
+
+  <!-- Flecha scroll: bottom center, fuera del inner para no afectar al layout -->
+  <div class="hero-scroll-arrow" aria-hidden="true">
+    <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M9.48066 19.3973L10.4996 18.3947L16.2916 24.1867L16.2916 7.08331L17.7083 7.08331L17.7083 24.1867L23.5003 18.3947L24.5193 19.3973L17 26.9166L9.48066 19.3973Z" fill="#262624"/>
+    </svg>
+  </div>
+</section>
+
+<style>
+  /* ── Section ─────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── Video background ────────────────────────────────── */
+  .hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  /* ── Content overlay ─────────────────────────────────── */
+  .hero-inner {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 2.4rem;               /* 48px */
+  }
+
+  /* ── Left card ───────────────────────────────────────── */
+  .hero-card {
+    width: 32.3rem;                /* 646px */
+    height: 38.15rem;              /* 763px */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: var(--radius-card);
+  }
+
+  .hero-card-top {
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;                   /* 48px */
+  }
+
+  .hero-congress {
+    font-size: 1.5rem;             /* 30px */
+    font-weight: 600;
+    line-height: 1.1em;
+    max-width: 25.8rem;            /* 516px */
+    color: var(--color-dark);
+  }
+
+  .hero-headline {
+    display: flex;
+    flex-direction: column;
+    font-size: 6.5rem;             /* 130px */
+    font-weight: 600;
+    line-height: 1em;
+    letter-spacing: -0.04em;
+    color: var(--color-dark);
+  }
+
+  .hero-desc {
+    font-size: 0.8rem;             /* 16px */
+    font-weight: 400;
+    line-height: 1.4em;
+    color: var(--color-dark);
+  }
+
+  /* ── Bottom card ─────────────────────────────────────── */
+  .hero-card-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 3.2rem;                   /* 64px */
+  }
+
+  .hero-event {
+    width: 23.3rem;                /* 466px */
+  }
+
+  .hero-event-row {
+    display: flex;
+    gap: 6.35rem;                  /* 127px */
+    align-items: flex-start;
+  }
+
+  .hero-date,
+  .hero-venue span {
+    font-size: 0.8rem;             /* 16px */
+    font-weight: 400;
+    line-height: 1.4em;
+    color: var(--color-dark);
+  }
+
+  .hero-venue {
+    display: flex;
+    gap: 1.4rem;                   /* 28px */
+  }
+
+  .hero-organizers {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;                   /* 12px */
+    width: 23.3rem;                /* 466px */
+  }
+
+  .hero-org-label {
+    font-size: 0.6rem;             /* 12px */
+    font-weight: 400;
+    line-height: 1.4em;
+    color: var(--color-dark);
+  }
+
+  .hero-org-logos {
+    display: flex;
+    align-items: center;
+    gap: 2.4rem;                   /* 48px */
+  }
+
+  .hero-org-logos img {
+    height: auto;
+    max-height: 2.4rem;            /* ~48px, deja que el SVG escale */
+  }
+
+  /* ── Scroll arrow ───────────────────────────────────── */
+  .hero-scroll-arrow {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+
+  /* ── Right CTAs ──────────────────────────────────────── */
+  .hero-ctas {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;                   /* 8px */
+  }
+
+  /* ── Mobile ──────────────────────────────────────────── */
+  @media (max-width: 767px) {
+    .hero {
+      height: 100svh;
+    }
+
+    .hero-scroll-arrow {
+      bottom: 20px;
+    }
+
+    .hero-inner {
+      position: relative;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 32px;
+      padding: 24px 20px;
+    }
+
+    .hero-card {
+      width: 100%;
+      height: auto;
+    }
+
+    .hero-card-top {
+      gap: 20px;
+    }
+
+    .hero-congress {
+      font-size: 16px;
+      max-width: 100%;
+    }
+
+    .hero-headline {
+      font-size: 52px;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-desc {
+      font-size: 14px;
+    }
+
+    .hero-event-row {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .hero-date,
+    .hero-venue span {
+      font-size: 14px;
+    }
+
+    .hero-organizers {
+      width: 100%;
+    }
+
+    .hero-org-label {
+      font-size: 11px;
+    }
+
+    .hero-ctas {
+      width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+    }
+
+    .hero-ctas .btn-secondary,
+    .hero-ctas .btn-primary {
+      justify-content: center;
+      font-size: 15px;
+      padding: 14px 20px;
+    }
+  }
+</style>

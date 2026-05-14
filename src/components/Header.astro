@@ -1,0 +1,208 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+interface Props {
+  activePage?: string;
+}
+const { activePage = 'home' } = Astro.props;
+
+const navLinks = [
+  { key: 'nav.home',      href: lang === 'en' ? '/en/' : '/',            id: 'home'      },
+  { key: 'nav.speakers',  href: lang === 'en' ? '/en/ponentes/' : '/ponentes/', id: 'speakers'  },
+  { key: 'nav.agenda',    href: lang === 'en' ? '/en/agenda/'   : '/agenda/',   id: 'agenda'    },
+  { key: 'nav.manifesto', href: lang === 'en' ? '/en/manifesto/': '/manifesto/',id: 'manifesto' },
+  { key: 'nav.contact',   href: lang === 'en' ? '/en/contacto/' : '/contacto/', id: 'contact'   },
+] as const;
+---
+
+<header class="header">
+  <!-- Logo -->
+  <a href={lang === 'en' ? '/en/' : '/'} class="header-logo" aria-label="Qualicer">
+    <img src="/img/logo.svg" alt="Qualicer" width="182" height="29" />
+  </a>
+
+  <!-- Nav group -->
+  <nav class="header-nav" aria-label="Navegación principal">
+    <div class="header-nav-links">
+      {navLinks.map(({ key, href, id }) => (
+        <a
+          href={href}
+          class:list={['btn-nav', { active: activePage === id }]}
+        >
+          {t(key as any)}
+        </a>
+      ))}
+    </div>
+
+    <!-- Language switcher -->
+    <details class="lang-switcher">
+      <summary class="btn-dropdown" aria-label="Cambiar idioma">
+        {lang === 'en' ? 'EN' : 'ES'}
+        <svg class="lang-arrow" width="8" height="10" viewBox="0 0 8 10" fill="none" aria-hidden="true">
+          <path d="M4 10L0.535898 4L7.4641 4L4 10Z" fill="currentColor"/>
+        </svg>
+      </summary>
+      <div class="lang-menu">
+        <a href={lang === 'en' ? '/' : '/en/'} class="lang-option">
+          {lang === 'en' ? 'ES' : 'EN'}
+        </a>
+      </div>
+    </details>
+
+    <!-- CTA -->
+    <a href="#entradas" class="btn-primary">{t('nav.tickets' as any)}</a>
+  </nav>
+</header>
+
+<style>
+  .header {
+    position: fixed;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2.4rem;          /* 20px 48px */
+    background: var(--color-glass);
+    backdrop-filter: blur(8.5px);
+    -webkit-backdrop-filter: blur(8.5px);
+    border-bottom: 1px solid var(--color-dark);
+  }
+
+  .header-logo img {
+    width: 9.1rem;                 /* 182px */
+    height: auto;
+  }
+
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.6rem;                   /* 32px */
+  }
+
+  .header-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;                   /* 4px */
+  }
+
+  /* Botones dentro del header — scoped para garantizar cascade */
+  .btn-nav, .btn-dropdown, .btn-primary {
+    font-family: var(--font);
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: 1.2;
+    padding: 0.6rem 0.9rem;
+    border-radius: var(--radius-pill);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+
+  .btn-nav {
+    background: transparent;
+    color: var(--color-dark);
+    border: 1px solid var(--color-dark);
+  }
+
+  .btn-nav.active {
+    border-width: 2px;
+    font-weight: 600;
+  }
+
+  .btn-dropdown {
+    background: transparent;
+    color: var(--color-dark);
+    border: 1px solid var(--color-dark);
+    gap: 0.3rem;
+  }
+
+  .btn-primary {
+    background: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+  }
+
+  .btn-nav:hover, .btn-dropdown:hover, .btn-primary:hover {
+    opacity: 0.8;
+  }
+
+  /* ── Language switcher ── */
+  .lang-switcher {
+    position: relative;
+  }
+
+  .lang-switcher summary {
+    list-style: none;
+  }
+
+  .lang-switcher summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .lang-menu {
+    position: absolute;
+    top: calc(100% + 0.3rem);
+    left: 0;
+    min-width: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-glass);
+    backdrop-filter: blur(8.5px);
+    -webkit-backdrop-filter: blur(8.5px);
+    border: 1px solid var(--color-dark);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+    z-index: 10;
+  }
+
+  .lang-option {
+    font-family: var(--font);
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: 1.2;
+    padding: 0.6rem 0.9rem;
+    color: var(--color-dark);
+    text-align: center;
+    white-space: nowrap;
+    transition: opacity 0.15s ease;
+  }
+
+  .lang-option:hover {
+    opacity: 0.8;
+  }
+
+  .lang-arrow {
+    transition: transform 0.2s ease;
+  }
+
+  details[open] .lang-arrow {
+    transform: rotate(180deg);
+  }
+
+  /* ── Mobile ── */
+  @media (max-width: 767px) {
+    .header {
+      padding: 14px 20px;
+    }
+
+    .header-logo img {
+      width: 120px;
+    }
+
+    .header-nav-links {
+      display: none;
+    }
+
+    .header-nav {
+      gap: 8px;
+    }
+  }
+</style>

@@ -1,0 +1,94 @@
+/* ─── Fonts ─────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap');
+
+/* ─── Responsive scale root ─────────────────────────────────────────── */
+/* 1rem = clamp(4px, 1.05vw, 20px)                                       */
+/* At 1920px: 1rem = 20px  |  At 1440px: ~15px  |  At 767px: ~8px       */
+html {
+  font-size: clamp(4px, 1.05vw, 20px);
+}
+
+/* ─── Design tokens ─────────────────────────────────────────────────── */
+:root {
+  --color-dark:    #262624;
+  --color-primary: #0047AF;
+  --color-white:   #FEFEFE;
+  --color-bg:      #EDEDED;
+  --color-glass:   rgba(255, 255, 255, 0.75);
+
+  --font: 'Inter Tight', sans-serif;
+
+  --radius-pill: 100px;
+  --radius-card: 1.5rem;   /* 30px */
+}
+
+/* ─── Reset ─────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font);
+  color: var(--color-dark);
+  background: var(--color-bg);
+  overflow-x: hidden;
+}
+
+img, svg, video { display: block; max-width: 100%; }
+a { text-decoration: none; color: inherit; }
+
+/* ─── Shared button styles ───────────────────────────────────────────── */
+.btn-primary,
+.btn-secondary,
+.btn-nav,
+.btn-dropdown {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 0.9rem;         /* 12px 18px */
+  border-radius: var(--radius-pill);
+  font-family: var(--font);
+  font-size: 0.8rem;              /* 16px */
+  font-weight: 500;
+  line-height: 1.2em;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-dark);
+  border: 1px solid var(--color-dark);
+}
+
+.btn-nav {
+  background: transparent;
+  color: var(--color-dark);
+  border: 1px solid var(--color-dark);
+}
+
+.btn-nav.active {
+  border-width: 2px;
+  font-weight: 600;
+}
+
+.btn-dropdown {
+  background: transparent;
+  color: var(--color-dark);
+  border: 1px solid var(--color-dark);
+  gap: 0.3rem;                    /* 6px */
+}
+
+.btn-primary:hover,
+.btn-secondary:hover,
+.btn-nav:hover,
+.btn-dropdown:hover { opacity: 0.8; }
