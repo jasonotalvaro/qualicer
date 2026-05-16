@@ -248,17 +248,17 @@ function lines(str: string) {
 
     .hero-scroll-arrow { display: none; }
 
-    /* hero-inner ocupa todo el viewport, card-top arriba, ctas abajo */
+    /* padding-top para despejar el header fijo */
     .hero-inner {
       position: absolute;
       inset: 0;
       flex-direction: column;
       justify-content: flex-start;
       gap: 16px;
-      padding: 16px;
+      padding: 80px 16px 16px;
     }
 
-    /* hero-card crece para llenar el espacio, card-top arriba y card-bottom abajo */
+    /* hero-card crece y distribuye: event arriba, card-top centro, organizers abajo */
     .hero-card {
       flex: 1;
       width: 100%;
@@ -268,9 +268,15 @@ function lines(str: string) {
       justify-content: space-between;
     }
 
-    .hero-card-top {
-      gap: 20px;
+    /* hero-card-bottom se vuelve transparente: sus hijos participan en el flex de hero-card */
+    .hero-card-bottom {
+      display: contents;
     }
+
+    /* orden en mobile: evento → textos → organizers */
+    .hero-event      { order: 1; }
+    .hero-card-top   { order: 2; gap: 20px; }
+    .hero-organizers { order: 3; }
 
     .hero-congress {
       font-size: 16px;
@@ -286,11 +292,6 @@ function lines(str: string) {
       font-size: 14px;
     }
 
-    /* card-bottom: evento + organizers empujados al fondo por space-between */
-    .hero-card-bottom {
-      gap: 16px;
-    }
-
     /* fecha y auditorio en fila */
     .hero-event-row {
       flex-direction: row;
@@ -303,9 +304,10 @@ function lines(str: string) {
       font-size: 14px;
     }
 
+    /* venue: los dos spans en fila */
     .hero-venue {
-      gap: 0;
-      flex-direction: column;
+      flex-direction: row;
+      gap: 12px;
     }
 
     .hero-organizers {
