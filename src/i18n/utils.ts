@@ -39,6 +39,9 @@ const ui = {
     'datos.card4.stat':  '2 Días',
     'datos.card4.label': '10 y 11 de junio',
     'datos.card4.desc':  'Dos jornadas intensivas en el Auditorio y Palacio de Congresos de Castellón para aprovechar al máximo cada momento.',
+
+    /* bloque 3 */
+    'b3.headline': 'Donde todas las voces\ndel sector convergen',
   },
   en: {
     /* nav */
@@ -77,6 +80,9 @@ const ui = {
     'datos.card4.stat':  '2 Days',
     'datos.card4.label': '10 and 11 June',
     'datos.card4.desc':  'Two intensive days at the Auditorium and Congress Centre of Castellón to make the most of every moment.',
+
+    /* bloque 3 */
+    'b3.headline': "Where all the sector's\nvoices converge",
   },
 } as const;
 
