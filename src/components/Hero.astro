@@ -254,7 +254,7 @@ function lines(str: string) {
       position: absolute;
       inset: 0;
       flex-direction: column;
-      justify-content: flex-end;
+      justify-content: space-between !important;
       gap: 32px;
       padding: 24px 20px;
     }
@@ -262,6 +262,7 @@ function lines(str: string) {
     .hero-card {
       width: 100%;
       height: auto;
+      margin-top: 60px;
     }
 
     .hero-card-top {
@@ -282,9 +283,17 @@ function lines(str: string) {
       font-size: 14px;
     }
 
+    .hero-event {
+      width: 100% !important;
+    }
+
     .hero-event-row {
-      flex-direction: column;
-      gap: 12px;
+      flex-direction: row !important;
+      gap: 20px;
+    }
+
+    .hero-venue {
+      gap: 20px;
     }
 
     .hero-date,
@@ -292,8 +301,12 @@ function lines(str: string) {
       font-size: 14px;
     }
 
+    .hero-card-bottom {
+      margin-top: 24px;
+    }
+
     .hero-organizers {
-      width: 100%;
+      display: none;
     }
 
     .hero-org-label {
