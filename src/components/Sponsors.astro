@@ -1,0 +1,93 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const sponsors = [
+  { file: 'equipe',    alt: 'Equipe' },
+  { file: 'grespania', alt: 'Grespania Ceramica' },
+  { file: 'iberdrola', alt: 'Iberdrola' },
+  { file: 'italcer',   alt: 'Equipe ItalCer' },
+  { file: 'kale',      alt: 'Kale Seramik' },
+  { file: 'kerajet',   alt: 'KERAjet' },
+  { file: 'sicer',     alt: 'Sicer' },
+  { file: 'alcora',    alt: "L'Alcora Ajuntament" },
+  { file: 'systemfoc', alt: 'SystemFoc' },
+  { file: 'schluter',  alt: 'Schlüter Systems' },
+];
+---
+
+<section class="b4">
+  <h2 class="b4-title">{t('b4.title' as any)}</h2>
+  <div class="b4-logos">
+    {sponsors.map(s => (
+      <img src={`/img/sponsors/${s.file}.svg`} alt={s.alt} class="b4-logo" />
+    ))}
+  </div>
+</section>
+
+<style>
+  /* ── Desktop ──────────────────────────────────────────── */
+  /*
+   * Frame 723: 1920×177px
+   * Frame 722 (título): y:0, height hug → contenedor 70px, texto alineado centro-izq
+   * Frame 720 (logos): y:70, gap:122px, padding:32px 0 32px 213px, overflow-x scroll
+   */
+  .b4 {
+    width: 100%;
+    max-width: 1920px;
+    margin-top: 9.8rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .b4-title {
+    font-size: 1.5rem;          /* 30px — DESKTOP H1 */
+    font-weight: 600;
+    line-height: 1.1em;
+    color: var(--color-dark);
+    padding: 0 1.6rem;          /* 0 32px */
+    height: 3.5rem;             /* 70px — espacio del título en Figma */
+    display: flex;
+    align-items: center;
+  }
+
+  .b4-logos {
+    display: flex;
+    align-items: center;
+    gap: 6.1rem;                /* 122px */
+    padding: 1.6rem 0 1.6rem 10.65rem;  /* 32px 0 32px 213px */
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .b4-logos::-webkit-scrollbar {
+    display: none;
+  }
+
+  .b4-logo {
+    flex-shrink: 0;
+    display: block;
+    height: auto;
+  }
+
+  /* ── Mobile ───────────────────────────────────────────── */
+  @media (max-width: 767px) {
+    .b4 {
+      margin-top: 196px;
+    }
+
+    .b4-title {
+      font-size: 20px !important;
+      height: auto;
+      padding: 0 20px;
+      margin-bottom: 24px;
+    }
+
+    .b4-logos {
+      gap: 48px;
+      padding: 16px 20px;
+    }
+  }
+</style>

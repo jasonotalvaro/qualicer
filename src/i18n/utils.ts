@@ -42,6 +42,9 @@ const ui = {
 
     /* bloque 3 */
     'b3.headline': 'Donde todas las voces del sector convergen',
+
+    /* bloque 4 */
+    'b4.title': 'Patrocinadores 2026',
   },
   en: {
     /* nav */
@@ -83,6 +86,9 @@ const ui = {
 
     /* bloque 3 */
     'b3.headline': "Where all the sector's voices converge",
+
+    /* bloque 4 */
+    'b4.title': 'Sponsors 2026',
   },
 } as const;
 
