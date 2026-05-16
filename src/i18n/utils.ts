@@ -24,6 +24,21 @@ const ui = {
     'hero.organizers':  'Organizadores:',
     'hero.program':     'Ver programa',
     'hero.tickets':     'Conseguir entradas',
+
+    /* datos */
+    'datos.title':       'El foro en datos',
+    'datos.card1.stat':  '32ª',
+    'datos.card1.label': 'Congreso Mundial de la Calidad del Azulejo y del Pavimento Cerámico',
+    'datos.card1.desc':  'Desde 1992, Qualicer reúne a los mejores expertos del mundo en un encuentro que define el rumbo de la industria cerámica.',
+    'datos.card2.stat':  '+30',
+    'datos.card2.label': 'Ponentes de Europa, América y Asia',
+    'datos.card2.desc':  'Los expertos internacionales más relevantes de la cerámica, con perspectivas que van más allá de los límites del sector.',
+    'datos.card3.stat':  '5',
+    'datos.card3.label': 'Ejes temáticos que cubren todo el sector',
+    'datos.card3.desc':  'Innovación, sostenibilidad, digitalización, normativa y tendencias: el sector cerámico en todas sus dimensiones.',
+    'datos.card4.stat':  '2 Días',
+    'datos.card4.label': '10 y 11 de junio',
+    'datos.card4.desc':  'Dos jornadas intensivas en el Auditorio y Palacio de Congresos de Castellón para aprovechar al máximo cada momento.',
   },
   en: {
     /* nav */
@@ -47,6 +62,21 @@ const ui = {
     'hero.organizers':  'Organizers:',
     'hero.program':     'View programme',
     'hero.tickets':     'Get tickets',
+
+    /* datos */
+    'datos.title':       'The forum in numbers',
+    'datos.card1.stat':  '32nd',
+    'datos.card1.label': 'World Congress on Ceramic Tile and Flooring Quality',
+    'datos.card1.desc':  'Since 1992, Qualicer has brought together the world\'s leading experts in an event that shapes the direction of the ceramic industry.',
+    'datos.card2.stat':  '+30',
+    'datos.card2.label': 'Speakers from Europe, America and Asia',
+    'datos.card2.desc':  'The most relevant international voices in ceramics, with perspectives that go beyond the boundaries of the sector.',
+    'datos.card3.stat':  '5',
+    'datos.card3.label': 'Thematic areas covering the entire sector',
+    'datos.card3.desc':  'Innovation, sustainability, digitalisation, regulation and market trends: the ceramic sector in all its dimensions.',
+    'datos.card4.stat':  '2 Days',
+    'datos.card4.label': '10 and 11 June',
+    'datos.card4.desc':  'Two intensive days at the Auditorium and Congress Centre of Castellón to make the most of every moment.',
   },
 } as const;
 

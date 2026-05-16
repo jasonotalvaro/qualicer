@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Hero from '../../components/Hero.astro';
+import DatosForum from '../../components/DatosForum.astro';
 ---
 
 <Layout
@@ -12,5 +13,8 @@ import Hero from '../../components/Hero.astro';
   <Header activePage="home" />
   <main>
     <Hero />
+    <div class="site-sections">
+      <DatosForum />
+    </div>
   </main>
 </Layout>

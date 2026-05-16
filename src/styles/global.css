@@ -92,3 +92,19 @@ a { text-decoration: none; color: inherit; }
 .btn-secondary:hover,
 .btn-nav:hover,
 .btn-dropdown:hover { opacity: 0.8; }
+
+/* ─── Page content sections wrapper ─────────────────────────────────── */
+.site-sections {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 9.8rem;          /* 196px between sections */
+  padding: 3.2rem 2.4rem 0;  /* 64px top, 48px sides */
+}
+
+@media (max-width: 767px) {
+  .site-sections {
+    gap: 40px;
+    padding: 40px 20px 0;
+  }
+}
