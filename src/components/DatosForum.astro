@@ -106,17 +106,21 @@ const cards = [
 
   /* ── Mobile ───────────────────────────────────────────── */
   @media (max-width: 767px) {
+    .datos {
+      padding: 0 16px;
+    }
+
     .datos-title {
-      font-size: 18px;
-      margin-bottom: 16px;
+      font-size: 20px !important;
+      margin-bottom: 24px;
     }
 
     .datos-cards {
       overflow-x: scroll;
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
-      margin: 0 -20px;
-      padding: 0 20px;
+      margin: 0 -16px;
+      padding: 0 16px;
       flex-wrap: nowrap;
       gap: 8px;
     }
@@ -129,8 +133,8 @@ const cards = [
       flex-shrink: 0;
       width: 266px;
       height: 266px;
-      border-radius: 16px;
-      padding: 20px;
+      border-radius: 30px !important;
+      padding: 24px !important;
     }
 
     .datos-card--featured {
@@ -139,19 +143,19 @@ const cards = [
     }
 
     .datos-card-top {
-      gap: 12px;
+      gap: 16px !important;
     }
 
     .datos-stat {
-      font-size: 32px;
+      font-size: 48px !important;
     }
 
     .datos-label {
-      font-size: 16px;
+      font-size: 20px !important;
     }
 
     .datos-desc {
-      font-size: 12px;
+      font-size: 13px !important;
     }
   }
 </style>
