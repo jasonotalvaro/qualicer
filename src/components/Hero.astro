@@ -41,31 +41,31 @@ function lines(str: string) {
         </p>
       </div>
 
-      <!-- Bloque inferior: info evento + organizadores -->
-      <div class="hero-card-bottom">
-
-        <div class="hero-event">
-          <div class="hero-event-row">
-            <span class="hero-date">
-              {lines(t('hero.date' as any)).map((l, i, arr) => (
+      <!-- Info evento: hijo directo de hero-card para control independiente -->
+      <div class="hero-event">
+        <div class="hero-event-row">
+          <span class="hero-date">
+            {lines(t('hero.date' as any)).map((l, i, arr) => (
+              <>{l}{i < arr.length - 1 && <br />}</>
+            ))}
+          </span>
+          <div class="hero-venue">
+            <span>
+              {lines(t('hero.venue' as any)).map((l, i, arr) => (
                 <>{l}{i < arr.length - 1 && <br />}</>
               ))}
             </span>
-            <div class="hero-venue">
-              <span>
-                {lines(t('hero.venue' as any)).map((l, i, arr) => (
-                  <>{l}{i < arr.length - 1 && <br />}</>
-                ))}
-              </span>
-              <span>
-                {lines(t('hero.city' as any)).map((l, i, arr) => (
-                  <>{l}{i < arr.length - 1 && <br />}</>
-                ))}
-              </span>
-            </div>
+            <span>
+              {lines(t('hero.city' as any)).map((l, i, arr) => (
+                <>{l}{i < arr.length - 1 && <br />}</>
+              ))}
+            </span>
           </div>
         </div>
+      </div>
 
+      <!-- Bloque inferior: solo organizadores -->
+      <div class="hero-card-bottom">
         <div class="hero-organizers">
           <p class="hero-org-label">{t('hero.organizers' as any)}</p>
           <div class="hero-org-logos">
@@ -73,7 +73,6 @@ function lines(str: string) {
             <img src="/img/sebas.svg" alt="SEBAS" />
           </div>
         </div>
-
       </div>
     </div>
 
@@ -167,14 +166,17 @@ function lines(str: string) {
   }
 
   /* ── Bottom card ─────────────────────────────────────── */
+  /* hero-event empujado al fondo con margin-top: auto */
+  .hero-event {
+    width: 23.3rem;                /* 466px */
+    margin-top: auto;
+  }
+
+  /* hero-card-bottom solo tiene organizers; el gap con hero-event lo da margin-top */
   .hero-card-bottom {
     display: flex;
     flex-direction: column;
-    gap: 3.2rem;                   /* 64px */
-  }
-
-  .hero-event {
-    width: 23.3rem;                /* 466px */
+    margin-top: 3.2rem;            /* 64px — antes era gap del contenedor */
   }
 
   .hero-event-row {
@@ -248,7 +250,6 @@ function lines(str: string) {
 
     .hero-scroll-arrow { display: none; }
 
-    /* padding-top para despejar el header fijo */
     .hero-inner {
       position: absolute;
       inset: 0;
@@ -258,25 +259,32 @@ function lines(str: string) {
       padding: 80px 16px 16px;
     }
 
-    /* hero-card crece y distribuye: event arriba, card-top centro, organizers abajo */
+    /* hero-card: card-top + event arriba (juntos), organizers abajo */
     .hero-card {
       flex: 1;
       width: 100%;
       height: auto;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      gap: 20px;
     }
 
-    /* hero-card-bottom se vuelve transparente: sus hijos participan en el flex de hero-card */
+    /* event: al final de card-top en mobile, 100% ancho */
+    .hero-event {
+      width: 100%;
+      margin-top: 0;
+      order: 2;
+    }
+
+    .hero-card-top {
+      gap: 20px;
+      order: 1;
+    }
+
+    /* organizers empujados al fondo */
     .hero-card-bottom {
-      display: contents;
+      margin-top: auto;
     }
-
-    /* orden en mobile: evento → textos → organizers */
-    .hero-event      { order: 1; }
-    .hero-card-top   { order: 2; gap: 20px; }
-    .hero-organizers { order: 3; }
 
     .hero-congress {
       font-size: 16px;
@@ -312,7 +320,7 @@ function lines(str: string) {
 
     .hero-organizers {
       width: 100%;
-      gap: 8px;
+      gap: 40px;
     }
 
     .hero-org-label {
