@@ -246,22 +246,26 @@ function lines(str: string) {
     .hero-video--desktop { display: none; }
     .hero-video--mobile  { display: block; }
 
-    .hero-scroll-arrow {
-      bottom: 20px;
-    }
+    .hero-scroll-arrow { display: none; }
 
+    /* hero-inner ocupa todo el viewport, card-top arriba, ctas abajo */
     .hero-inner {
       position: absolute;
       inset: 0;
       flex-direction: column;
-      justify-content: flex-end;
-      gap: 20px;
+      justify-content: flex-start;
+      gap: 16px;
       padding: 16px;
     }
 
+    /* hero-card crece para llenar el espacio, card-top arriba y card-bottom abajo */
     .hero-card {
+      flex: 1;
       width: 100%;
       height: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     .hero-card-top {
@@ -282,9 +286,16 @@ function lines(str: string) {
       font-size: 14px;
     }
 
+    /* card-bottom: evento + organizers empujados al fondo por space-between */
+    .hero-card-bottom {
+      gap: 16px;
+    }
+
+    /* fecha y auditorio en fila */
     .hero-event-row {
-      flex-direction: column;
-      gap: 12px;
+      flex-direction: row;
+      gap: 24px;
+      align-items: flex-start;
     }
 
     .hero-date,
@@ -292,14 +303,34 @@ function lines(str: string) {
       font-size: 14px;
     }
 
+    .hero-venue {
+      gap: 0;
+      flex-direction: column;
+    }
+
     .hero-organizers {
       width: 100%;
+      gap: 8px;
     }
 
     .hero-org-label {
-      font-size: 11px;
+      font-size: 14px;
     }
 
+    /* tamaños exactos de cada logo */
+    .hero-org-logos img:first-child {
+      width: 136px;
+      height: auto;
+      max-height: none;
+    }
+
+    .hero-org-logos img:last-child {
+      width: 111px;
+      height: auto;
+      max-height: none;
+    }
+
+    /* ctas en fila al fondo */
     .hero-ctas {
       width: 100%;
       flex-direction: row;
@@ -315,10 +346,6 @@ function lines(str: string) {
       font-weight: 500;
       line-height: 1.4;
       padding: 14px 22px;
-    }
-
-    .hero-scroll-arrow {
-      display: none;
     }
   }
 </style>
