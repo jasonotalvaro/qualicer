@@ -247,7 +247,7 @@ function lines(str: string) {
     .hero-video--mobile  { display: block; }
 
     .hero-scroll-arrow {
-      bottom: 20px;
+      display: none;
     }
 
     .hero-inner {
@@ -301,16 +301,19 @@ function lines(str: string) {
 
     .hero-ctas {
       width: 100%;
-      flex-direction: column;
+      flex-direction: row;
       align-items: stretch;
       gap: 8px;
     }
 
     .hero-ctas .btn-secondary,
     .hero-ctas .btn-primary {
+      flex: 1;
       justify-content: center;
-      font-size: 15px;
-      padding: 14px 20px;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.4;
+      padding: 14px 22px;
     }
   }
 </style>
