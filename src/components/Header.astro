@@ -10,7 +10,7 @@ interface Props {
 const { activePage = 'home' } = Astro.props;
 
 const navLinks = [
-  { key: 'nav.home',      href: lang === 'en' ? '/en/' : '/',            id: 'home'      },
+  { key: 'nav.home',      href: lang === 'en' ? '/en/' : '/',             id: 'home'      },
   { key: 'nav.speakers',  href: lang === 'en' ? '/en/ponentes/' : '/ponentes/', id: 'speakers'  },
   { key: 'nav.agenda',    href: lang === 'en' ? '/en/agenda/'   : '/agenda/',   id: 'agenda'    },
   { key: 'nav.manifesto', href: lang === 'en' ? '/en/manifesto/': '/manifesto/',id: 'manifesto' },
@@ -24,14 +24,11 @@ const navLinks = [
     <img src="/img/logo.svg" alt="Qualicer" width="182" height="29" />
   </a>
 
-  <!-- Nav group -->
+  <!-- Nav group (desktop) -->
   <nav class="header-nav" aria-label="Navegación principal">
     <div class="header-nav-links">
       {navLinks.map(({ key, href, id }) => (
-        <a
-          href={href}
-          class:list={['btn-nav', { active: activePage === id }]}
-        >
+        <a href={href} class:list={['btn-nav', { active: activePage === id }]}>
           {t(key as any)}
         </a>
       ))}
@@ -55,7 +52,63 @@ const navLinks = [
     <!-- CTA -->
     <a href="#entradas" class="btn-primary">{t('nav.tickets' as any)}</a>
   </nav>
+
+  <!-- Hamburger (mobile only) -->
+  <button class="menu-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu">
+    <svg width="24" height="16" viewBox="0 0 24 16" fill="none" aria-hidden="true">
+      <rect width="24" height="2" rx="1" fill="currentColor"/>
+      <rect y="7" width="24" height="2" rx="1" fill="currentColor"/>
+      <rect y="14" width="24" height="2" rx="1" fill="currentColor"/>
+    </svg>
+  </button>
 </header>
+
+<!-- Mobile menu panel -->
+<div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+  <div class="mobile-menu-top">
+    <a href={lang === 'en' ? '/en/' : '/'} class="mobile-menu-logo" aria-label="Qualicer">
+      <img src="/img/logo.svg" alt="Qualicer" width="135" height="21" />
+    </a>
+    <button class="mobile-menu-close" aria-label="Cerrar menú">
+      <img src="/img/close.svg" alt="" aria-hidden="true" width="24" height="24" />
+    </button>
+  </div>
+
+  <nav class="mobile-menu-nav" aria-label="Navegación mobile">
+    {navLinks.map(({ key, href, id }) => (
+      <a href={href} class:list={['mobile-nav-link', { active: activePage === id }]}>
+        {t(key as any)}
+      </a>
+    ))}
+    <a href={lang === 'en' ? '/' : '/en/'} class="mobile-nav-link mobile-nav-lang">
+      {lang === 'en' ? 'ES' : 'EN'}
+    </a>
+  </nav>
+</div>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+  const closeBtn = menu?.querySelector<HTMLButtonElement>('.mobile-menu-close');
+
+  function openMenu() {
+    menu?.classList.add('is-open');
+    toggle?.setAttribute('aria-expanded', 'true');
+    menu?.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu() {
+    menu?.classList.remove('is-open');
+    toggle?.setAttribute('aria-expanded', 'false');
+    menu?.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  toggle?.addEventListener('click', openMenu);
+  closeBtn?.addEventListener('click', closeMenu);
+  menu?.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+</script>
 
 <style>
   .header {
@@ -66,7 +119,7 @@ const navLinks = [
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2.4rem;          /* 20px 48px */
+    padding: 1rem 2.4rem;
     background: var(--color-glass);
     backdrop-filter: blur(8.5px);
     -webkit-backdrop-filter: blur(8.5px);
@@ -74,23 +127,22 @@ const navLinks = [
   }
 
   .header-logo img {
-    width: 9.1rem;                 /* 182px */
+    width: 9.1rem;
     height: auto;
   }
 
   .header-nav {
     display: flex;
     align-items: center;
-    gap: 1.6rem;                   /* 32px */
+    gap: 1.6rem;
   }
 
   .header-nav-links {
     display: flex;
     align-items: center;
-    gap: 0.2rem;                   /* 4px */
+    gap: 0.2rem;
   }
 
-  /* Botones dentro del header — scoped para garantizar cascade */
   .btn-nav, .btn-dropdown, .btn-primary {
     font-family: var(--font);
     font-size: 0.8rem;
@@ -187,22 +239,103 @@ const navLinks = [
     transform: rotate(180deg);
   }
 
+  /* ── Hamburger (hidden on desktop) ── */
+  .menu-toggle {
+    display: none;
+  }
+
+  /* ── Mobile menu panel (hidden by default) ── */
+  .mobile-menu {
+    display: none;
+  }
+
   /* ── Mobile ── */
   @media (max-width: 767px) {
     .header {
-      padding: 14px 20px;
+      padding: 18px 24px;
     }
 
     .header-logo img {
-      width: 120px;
-    }
-
-    .header-nav-links {
-      display: none;
+      width: 135px;
     }
 
     .header-nav {
-      gap: 8px;
+      display: none;
+    }
+
+    .menu-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      color: var(--color-dark);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    /* ── Mobile menu panel ── */
+    .mobile-menu {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      background: var(--color-white);
+      padding: 18px 24px 32px;
+      transform: translateX(100%);
+      transition: transform 0.28s ease;
+    }
+
+    .mobile-menu.is-open {
+      transform: translateX(0);
+    }
+
+    .mobile-menu-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+
+    .mobile-menu-logo img {
+      width: 135px;
+      height: auto;
+    }
+
+    .mobile-menu-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mobile-menu-nav {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mobile-nav-link {
+      font-family: var(--font);
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.4;
+      color: var(--color-dark);
+      padding: 14px 0;
+      display: block;
+    }
+
+    .mobile-nav-link.active {
+      font-weight: 600;
+    }
+
+    .mobile-nav-lang {
+      margin-top: 8px;
+      opacity: 0.6;
     }
   }
 </style>
