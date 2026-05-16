@@ -41,31 +41,31 @@ function lines(str: string) {
         </p>
       </div>
 
-      <!-- Info evento: hijo directo de hero-card para control independiente -->
-      <div class="hero-event">
-        <div class="hero-event-row">
-          <span class="hero-date">
-            {lines(t('hero.date' as any)).map((l, i, arr) => (
-              <>{l}{i < arr.length - 1 && <br />}</>
-            ))}
-          </span>
-          <div class="hero-venue">
-            <span>
-              {lines(t('hero.venue' as any)).map((l, i, arr) => (
+      <!-- Bloque inferior: info evento + organizadores -->
+      <div class="hero-card-bottom">
+
+        <div class="hero-event">
+          <div class="hero-event-row">
+            <span class="hero-date">
+              {lines(t('hero.date' as any)).map((l, i, arr) => (
                 <>{l}{i < arr.length - 1 && <br />}</>
               ))}
             </span>
-            <span>
-              {lines(t('hero.city' as any)).map((l, i, arr) => (
-                <>{l}{i < arr.length - 1 && <br />}</>
-              ))}
-            </span>
+            <div class="hero-venue">
+              <span>
+                {lines(t('hero.venue' as any)).map((l, i, arr) => (
+                  <>{l}{i < arr.length - 1 && <br />}</>
+                ))}
+              </span>
+              <span>
+                {lines(t('hero.city' as any)).map((l, i, arr) => (
+                  <>{l}{i < arr.length - 1 && <br />}</>
+                ))}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Bloque inferior: solo organizadores -->
-      <div class="hero-card-bottom">
         <div class="hero-organizers">
           <p class="hero-org-label">{t('hero.organizers' as any)}</p>
           <div class="hero-org-logos">
@@ -73,6 +73,7 @@ function lines(str: string) {
             <img src="/img/sebas.svg" alt="SEBAS" />
           </div>
         </div>
+
       </div>
     </div>
 
@@ -166,17 +167,14 @@ function lines(str: string) {
   }
 
   /* ── Bottom card ─────────────────────────────────────── */
-  /* hero-event empujado al fondo con margin-top: auto */
-  .hero-event {
-    width: 23.3rem;                /* 466px */
-    margin-top: auto;
-  }
-
-  /* hero-card-bottom solo tiene organizers; el gap con hero-event lo da margin-top */
   .hero-card-bottom {
     display: flex;
     flex-direction: column;
-    margin-top: 3.2rem;            /* 64px — antes era gap del contenedor */
+    gap: 3.2rem;                   /* 64px */
+  }
+
+  .hero-event {
+    width: 23.3rem;                /* 466px */
   }
 
   .hero-event-row {
@@ -248,42 +246,25 @@ function lines(str: string) {
     .hero-video--desktop { display: none; }
     .hero-video--mobile  { display: block; }
 
-    .hero-scroll-arrow { display: none; }
+    .hero-scroll-arrow {
+      bottom: 20px;
+    }
 
     .hero-inner {
-      position: absolute;
-      inset: 0;
+      position: relative;
       flex-direction: column;
-      justify-content: flex-start;
-      gap: 16px;
-      padding: 80px 16px 16px;
+      justify-content: flex-end;
+      gap: 32px;
+      padding: 24px 20px;
     }
 
-    /* hero-card: card-top + event arriba (juntos), organizers abajo */
     .hero-card {
-      flex: 1;
       width: 100%;
       height: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    /* event: al final de card-top en mobile, 100% ancho */
-    .hero-event {
-      width: 100%;
-      margin-top: 0;
-      order: 2;
     }
 
     .hero-card-top {
       gap: 20px;
-      order: 1;
-    }
-
-    /* organizers empujados al fondo */
-    .hero-card-bottom {
-      margin-top: auto;
     }
 
     .hero-congress {
@@ -300,11 +281,9 @@ function lines(str: string) {
       font-size: 14px;
     }
 
-    /* fecha y auditorio en fila */
     .hero-event-row {
-      flex-direction: row;
-      gap: 24px;
-      align-items: flex-start;
+      flex-direction: column;
+      gap: 12px;
     }
 
     .hero-date,
@@ -312,50 +291,26 @@ function lines(str: string) {
       font-size: 14px;
     }
 
-    /* venue: los dos spans en fila */
-    .hero-venue {
-      flex-direction: row;
-      gap: 12px;
-    }
-
     .hero-organizers {
       width: 100%;
-      gap: 40px;
     }
 
     .hero-org-label {
-      font-size: 14px;
+      font-size: 11px;
     }
 
-    /* tamaños exactos de cada logo */
-    .hero-org-logos img:first-child {
-      width: 136px;
-      height: auto;
-      max-height: none;
-    }
-
-    .hero-org-logos img:last-child {
-      width: 111px;
-      height: auto;
-      max-height: none;
-    }
-
-    /* ctas en fila al fondo */
     .hero-ctas {
       width: 100%;
-      flex-direction: row;
+      flex-direction: column;
       align-items: stretch;
       gap: 8px;
     }
 
     .hero-ctas .btn-secondary,
     .hero-ctas .btn-primary {
-      flex: 1;
       justify-content: center;
-      font-size: 16px;
-      font-weight: 500;
-      line-height: 1.4;
-      padding: 14px 22px;
+      font-size: 15px;
+      padding: 14px 20px;
     }
   }
 </style>
