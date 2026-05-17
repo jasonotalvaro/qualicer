@@ -47,37 +47,25 @@ export default {
       ],
     },
     {
-      name:    'imagen',
-      title:   'Imagen',
-      type:    'image',
-      options: { hotspot: true },
-      validation: (R: any) => R.required(),
+      name:        'imagenVertical',
+      title:       'Imagen vertical',
+      type:        'image',
+      options:     { hotspot: true },
+      description: 'Formato retrato — uso en listado de ponentes',
     },
     {
-      name:    'formato',
-      title:   'Formato imagen',
-      type:    'string',
-      options: {
-        list: [
-          { title: 'Horizontal', value: 'horizontal' },
-          { title: 'Vertical',   value: 'vertical'   },
-        ],
-        layout: 'radio',
-      },
-      initialValue: 'vertical',
-    },
-    {
-      name:        'orden',
-      title:       'Orden',
-      type:        'number',
-      description: 'Controla la posición en el home y en el listado general',
+      name:        'imagenHorizontal',
+      title:       'Imagen horizontal',
+      type:        'image',
+      options:     { hotspot: true },
+      description: 'Formato paisaje — uso en cards destacados del home',
     },
   ],
   preview: {
     select: {
       title:    'apellido',
       subtitle: 'nombre',
-      media:    'imagen',
+      media:    'imagenVertical',
     },
     prepare({ title, subtitle, media }: any) {
       return { title: `${subtitle} ${title}`, media };
