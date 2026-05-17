@@ -19,27 +19,66 @@ const sponsors = [
 ---
 
 <section class="b4">
-  <h2 class="b4-title">{t('b4.title' as any)}</h2>
-  <div class="b4-logos">
+  <div class="b4-header">
+    <h2 class="b4-title">{t('b4.title' as any)}</h2>
+  </div>
+  <div class="b4-logos" id="b4-logos">
     {sponsors.map(s => (
-      <img src={`/img/sponsors/${s.file}.svg`} alt={s.alt} class="b4-logo" />
+      <img src={`/img/sponsors/${s.file}.svg`} alt={s.alt} class="b4-logo" draggable="false" />
     ))}
   </div>
 </section>
 
+<script>
+  const logos = document.getElementById('b4-logos') as HTMLElement;
+  if (logos) {
+    const rootFs  = parseFloat(getComputedStyle(document.documentElement).fontSize);
+    const padLeft = parseFloat(getComputedStyle(logos).paddingLeft);
+
+    const isMobile  = window.innerWidth <= 767;
+    const isWide    = window.innerWidth > 1920;
+    const init = () => {
+      if (isWide) return;
+      logos.scrollLeft = isMobile ? 60 : padLeft + 3 * rootFs;
+    };
+    // esperar a que los SVG tengan dimensiones
+    if (document.readyState === 'complete') init();
+    else window.addEventListener('load', init);
+
+    let dragging = false, startX = 0, startScroll = 0;
+
+    logos.addEventListener('mousedown', (e) => {
+      dragging    = true;
+      startX      = e.clientX;
+      startScroll = logos.scrollLeft;
+      logos.style.cursor = 'grabbing';
+      e.preventDefault();
+    });
+
+    window.addEventListener('mouseup', () => {
+      dragging = false;
+      logos.style.cursor = 'grab';
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!dragging) return;
+      logos.scrollLeft = startScroll - (e.clientX - startX);
+    });
+  }
+</script>
+
 <style>
   /* ── Desktop ──────────────────────────────────────────── */
-  /*
-   * Frame 723: 1920×177px
-   * Frame 722 (título): y:0, height hug → contenedor 70px, texto alineado centro-izq
-   * Frame 720 (logos): y:70, gap:122px, padding:32px 0 32px 213px, overflow-x scroll
-   */
   .b4 {
     width: 100%;
-    max-width: 1920px;
     margin-top: 9.8rem;
+  }
+
+  .b4-header {
+    max-width: 1920px;
     margin-left: auto;
     margin-right: auto;
+    padding: 0 2.4rem;
   }
 
   .b4-title {
@@ -47,8 +86,7 @@ const sponsors = [
     font-weight: 600;
     line-height: 1.1em;
     color: var(--color-dark);
-    padding: 0 1.6rem;          /* 0 32px */
-    height: 3.5rem;             /* 70px — espacio del título en Figma */
+    height: 3.5rem;             /* 70px */
     display: flex;
     align-items: center;
   }
@@ -56,20 +94,29 @@ const sponsors = [
   .b4-logos {
     display: flex;
     align-items: center;
-    gap: 6.1rem;                /* 122px */
-    padding: 1.6rem 0 1.6rem 10.65rem;  /* 32px 0 32px 213px */
+    gap: 6.1rem;
+    padding: 1.6rem 2.4rem;
     overflow-x: auto;
     scrollbar-width: none;
+    cursor: grab;
+    user-select: none;
   }
 
   .b4-logos::-webkit-scrollbar {
     display: none;
   }
 
+  @media (min-width: 1921px) {
+    .b4-logos {
+      justify-content: center;
+    }
+  }
+
   .b4-logo {
     flex-shrink: 0;
     display: block;
     height: auto;
+    pointer-events: none;
   }
 
   /* ── Mobile ───────────────────────────────────────────── */
@@ -78,16 +125,21 @@ const sponsors = [
       margin-top: 196px;
     }
 
+    .b4-header {
+      padding: 0 16px;
+    }
+
     .b4-title {
       font-size: 20px !important;
       height: auto;
-      padding: 0 20px;
       margin-bottom: 24px;
     }
 
     .b4-logos {
       gap: 48px;
-      padding: 16px 20px;
+      padding: 16px 16px;
+      cursor: default;
+      overscroll-behavior-x: contain;
     }
   }
 </style>

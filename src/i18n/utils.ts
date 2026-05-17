@@ -45,6 +45,19 @@ const ui = {
 
     /* bloque 4 */
     'b4.title': 'Patrocinadores 2026',
+
+    /* bloque 5 */
+    'b5.title':       'Ejes transversales Qualicer 2026',
+    'b5.card1.title': 'Calidad y excelencia',
+    'b5.card1.desc':  'La cerámica española frente a los nuevos actores globales. Clústeres, mercados y estrategias para defender la calidad como ventaja competitiva.',
+    'b5.card2.title': 'Instalación y futuro de la construcción',
+    'b5.card2.desc':  'La cerámica española frente a los nuevos actores globales. Clústeres, mercados y estrategias para defender la calidad como ventaja competitiva.',
+    'b5.card3.title': 'Estrategia y competitividad global',
+    'b5.card3.desc':  'La cerámica española frente a los nuevos actores globales. Clústeres, mercados y estrategias para defender la calidad como ventaja competitiva.',
+    'b5.card4.title': 'Sostenibilidad y transición energética',
+    'b5.card4.desc':  'La cerámica española frente a los nuevos actores globales. Clústeres, mercados y estrategias para defender la calidad como ventaja competitiva.',
+    'b5.card5.title': 'Innovación y tecnología',
+    'b5.card5.desc':  'La cerámica española frente a los nuevos actores globales. Clústeres, mercados y estrategias para defender la calidad como ventaja competitiva.',
   },
   en: {
     /* nav */
@@ -89,6 +102,19 @@ const ui = {
 
     /* bloque 4 */
     'b4.title': 'Sponsors 2026',
+
+    /* bloque 5 */
+    'b5.title':       'Qualicer 2026 transversal themes',
+    'b5.card1.title': 'Quality and excellence',
+    'b5.card1.desc':  'Spanish ceramics facing new global players. Clusters, markets and strategies to defend quality as a competitive advantage.',
+    'b5.card2.title': 'Installation and the future of construction',
+    'b5.card2.desc':  'Spanish ceramics facing new global players. Clusters, markets and strategies to defend quality as a competitive advantage.',
+    'b5.card3.title': 'Strategy and global competitiveness',
+    'b5.card3.desc':  'Spanish ceramics facing new global players. Clusters, markets and strategies to defend quality as a competitive advantage.',
+    'b5.card4.title': 'Sustainability and energy transition',
+    'b5.card4.desc':  'Spanish ceramics facing new global players. Clusters, markets and strategies to defend quality as a competitive advantage.',
+    'b5.card5.title': 'Innovation and technology',
+    'b5.card5.desc':  'Spanish ceramics facing new global players. Clusters, markets and strategies to defend quality as a competitive advantage.',
   },
 } as const;
 
