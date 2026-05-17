@@ -1,0 +1,154 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t    = useTranslations(lang);
+
+const agendaHref = lang === 'en' ? '/en/agenda' : '/agenda';
+---
+
+<section class="b7">
+  <div class="b7-inner">
+
+    <h2 class="b7-title">{t('b7.title')}</h2>
+
+    <div class="b7-topics">
+      <div class="b7-col">
+        <p class="b7-topic">{t('b7.topic1')}</p>
+        <p class="b7-topic">{t('b7.topic2')}</p>
+        <p class="b7-topic">{t('b7.topic3')}</p>
+      </div>
+      <div class="b7-col">
+        <p class="b7-topic">{t('b7.topic4')}</p>
+        <p class="b7-topic">{t('b7.topic5')}</p>
+        <p class="b7-topic">{t('b7.topic6')}</p>
+      </div>
+    </div>
+
+    <a href={agendaHref} class="b7-btn">{t('b7.cta')}</a>
+
+  </div>
+</section>
+
+<style>
+  /* Sección: blanco full-width sobre fondo gris */
+  .b7 {
+    background:  #FEFEFE;
+    margin-top:  9.8rem;   /* 196px / 20px — mismo gap que otros bloques */
+  }
+
+  /* Contenedor interior: mismo padding lateral que B6 (2.4rem) */
+  .b7-inner {
+    max-width:       1920px;
+    margin:          0 auto;
+    padding:         1.6rem 2.4rem;  /* 32px vertical (Figma), 2.4rem lateral */
+    display:         flex;
+    flex-direction:  column;
+    justify-content: space-between;
+    min-height:      39.15rem;       /* 783px / 20px — altura del card en Figma */
+    position:        relative;
+  }
+
+  /* Título: 514px exactos del diseño */
+  .b7-title {
+    width:          25.7rem;   /* 514px / 20px */
+    font-size:      2.4rem;    /* 48px */
+    font-weight:    600;
+    line-height:    1.1em;
+    letter-spacing: -0.02em;
+    color:          var(--color-dark);
+  }
+
+  /* Grid de temas: 2 columnas fijas de 613 px, el resto queda vacío */
+  .b7-topics {
+    display: flex;
+    gap:     3.2rem;   /* 64px */
+  }
+
+  .b7-col {
+    width:          30.65rem;  /* 613px — fijo como en Figma */
+    flex-shrink:    0;
+    display:        flex;
+    flex-direction: column;
+    gap:            2.4rem;    /* 48px */
+  }
+
+  .b7-topic {
+    font-size:   1.5rem;   /* 30px */
+    font-weight: 600;
+    line-height: 1.1em;
+    color:       #989898;
+  }
+
+  /* Botón secundario — mismo estilo que B6 */
+  .b7-btn {
+    position:        absolute;
+    bottom:          1.6rem;
+    right:           2.4rem;
+    display:         inline-flex;
+    justify-content: center;
+    align-items:     center;
+    padding:         0.7rem 1.1rem 0.8rem;
+    border:          1px solid var(--color-dark);
+    border-radius:   100px;
+    background:      transparent;
+    font-family:     inherit;
+    font-size:       1rem;
+    font-weight:     500;
+    line-height:     1;
+    color:           var(--color-dark);
+    text-decoration: none;
+    white-space:     nowrap;
+  }
+
+  /* ─── Mobile ────────────────────────────────────────────── */
+  @media (max-width: 767px) {
+    .b7 {
+      margin-top: 196px;
+    }
+
+    .b7-inner {
+      padding:    24px 16px;
+      min-height: unset;
+      position:   static;   /* sin posicionamiento absoluto */
+    }
+
+    .b7-title {
+      width:       100%;
+      max-width:   none;
+      font-size:   24px;
+      margin-bottom: 24px;
+    }
+
+    /* Columna única: las dos cols del desktop se apilan */
+    .b7-topics {
+      flex-direction: column;
+      gap:            0;
+    }
+
+    .b7-col {
+      width:       auto;
+      flex-shrink: unset;
+      gap:         20px;
+    }
+
+    /* Separación visual entre los dos grupos originales */
+    .b7-col + .b7-col {
+      margin-top: 20px;
+    }
+
+    .b7-topic { font-size: 16px; }
+
+    /* Botón: flujo normal, ancho completo */
+    .b7-btn {
+      position:   static;
+      display:    flex;
+      width:      100%;
+      box-sizing: border-box;
+      margin-top: 32px;
+      font-size:  16px;
+      padding:    14px 22px 16px;
+      justify-content: center;
+    }
+  }
+</style>

@@ -5,7 +5,9 @@
 /* 1rem = clamp(4px, 1.05vw, 20px)                                       */
 /* At 1920px: 1rem = 20px  |  At 1440px: ~15px  |  At 767px: ~8px       */
 html {
-  font-size: clamp(4px, 1.05vw, 20px);
+  font-size:       clamp(4px, 1.05vw, 20px);
+  overflow-x:      hidden; /* evita scroll horizontal y fija position:fixed al viewport en Chrome */
+  scroll-behavior: smooth;
 }
 
 /* ─── Design tokens ─────────────────────────────────────────────────── */

@@ -1,0 +1,525 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+import { client, urlFor } from '../lib/sanity';
+
+const lang = getLangFromUrl(Astro.url);
+const t    = useTranslations(lang);
+
+interface Ponente {
+  _id:              string;
+  nombre:           string;
+  apellido:         string;
+  eje:              'construccion' | 'sostenibilidad' | 'estrategia';
+  cargo?:           { es?: string; en?: string };
+  descripcion?:     { es?: string; en?: string };
+  imagenHorizontal?: any;
+  imagenVertical?:   any;
+}
+
+const todos: Ponente[] = await client.fetch(
+  `*[_type == "ponente"]{ _id, nombre, apellido, eje, cargo, descripcion, imagenHorizontal, imagenVertical }`
+);
+
+const shuffled = [...todos];
+for (let i = shuffled.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+}
+const ponentes = shuffled.slice(0, 4);
+
+const ejeColor: Record<string, string> = {
+  construccion:   '#E9002B',
+  sostenibilidad: '#48B9A7',
+  estrategia:     '#36A3DF',
+};
+
+function ejeLabel(eje: string) { return t(`eje.${eje}` as any); }
+
+function slugPonente(p: Ponente) {
+  return `${p.nombre}-${p.apellido}`
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .toLowerCase().replace(/\s+/g, '-');
+}
+
+function cargoText(p: Ponente) {
+  return lang === 'en' ? (p.cargo?.en ?? p.cargo?.es ?? '') : (p.cargo?.es ?? '');
+}
+function descText(p: Ponente) {
+  return lang === 'en' ? (p.descripcion?.en ?? p.descripcion?.es ?? '') : (p.descripcion?.es ?? '');
+}
+
+function imgHoriz(p: Ponente) {
+  if (p.imagenHorizontal) return urlFor(p.imagenHorizontal).width(888).height(462).url();
+  if (p.imagenVertical)   return urlFor(p.imagenVertical).width(888).height(462).fit('crop').url();
+  return '';
+}
+function imgVert(p: Ponente) {
+  if (p.imagenVertical)   return urlFor(p.imagenVertical).width(860).height(1194).url();
+  if (p.imagenHorizontal) return urlFor(p.imagenHorizontal).width(860).height(1194).fit('crop').url();
+  return '';
+}
+
+const agendaBase   = lang === 'en' ? '/en/agenda'    : '/agenda';
+const ponentesHref = lang === 'en' ? '/en/ponentes/' : '/ponentes/';
+const entradasHref = lang === 'en' ? '/en/entradas/' : '/entradas/';
+---
+
+<section class="b6">
+
+  <div class="b6-header">
+    <h2 class="b6-title">{t('b6.title' as any)}</h2>
+    <a href={ponentesHref} class="b6-sec-btn b6-cta-desktop">{t('b6.cta' as any)}</a>
+  </div>
+
+  <!-- Cards sin dialogs (evita problemas con overflow:hidden) -->
+  <div class="b6-grid">
+    {ponentes.map(p => (
+      <div class="b6-card">
+        <div class="b6-img-wrap">
+          {imgHoriz(p)
+            ? <img class="b6-img" src={imgHoriz(p)} alt={`${p.nombre} ${p.apellido}`} loading="lazy" />
+            : <div class="b6-img b6-img-ph"></div>
+          }
+        </div>
+        <div class="b6-info">
+          <div class="b6-name-row">
+            <div class="b6-name-cargo">
+              <p class="b6-name">{p.nombre} {p.apellido}</p>
+              {cargoText(p) && <p class="b6-cargo">{cargoText(p)}</p>}
+            </div>
+            <span class="b6-tag" style={`background:${ejeColor[p.eje] ?? '#888'}`}>
+              {ejeLabel(p.eje)}
+            </span>
+          </div>
+          <button class="b6-explorar b6-sec-btn" data-ponente={p._id} aria-haspopup="dialog">
+            {t('b6.explorar' as any)}
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <a href={ponentesHref} class="b6-sec-btn b6-cta-mobile">{t('b6.cta' as any)}</a>
+
+  <!-- Dialogs FUERA del grid (no hay overflow:hidden ni transform ancestors) -->
+  {ponentes.map(p => (
+    <dialog class="b6-modal" id={`modal-${p._id}`} aria-label={`${p.nombre} ${p.apellido}`}>
+      <button class="b6-modal-close" aria-label="Cerrar">&#x2715;</button>
+
+      {imgVert(p) && (
+        <img
+          class="b6-modal-img"
+          src={imgVert(p)}
+          alt={`${p.nombre} ${p.apellido}`}
+          loading="lazy"
+        />
+      )}
+
+      <div class="b6-modal-content">
+        <!-- TOP: tag → nombre → cargo → descripción -->
+        <div class="b6-modal-top">
+          <div class="b6-modal-header">
+            <span class="b6-tag b6-modal-tag" style={`background:${ejeColor[p.eje] ?? '#888'}`}>
+              {ejeLabel(p.eje)}
+            </span>
+            <div class="b6-modal-name-wrap">
+              <p class="b6-modal-name">{p.nombre} {p.apellido}</p>
+              {cargoText(p) && <p class="b6-modal-cargo">{cargoText(p)}</p>}
+            </div>
+          </div>
+          {descText(p) && <p class="b6-modal-desc">{descText(p)}</p>}
+        </div>
+
+        <!-- BOTTOM: Ver en agenda + Conseguir entradas -->
+        <div class="b6-modal-btns">
+          <a class="b6-sec-btn" href={`${agendaBase}#${slugPonente(p)}`}>
+            {t('b6.agenda' as any)}
+          </a>
+          <a class="btn-primary" href={entradasHref}>
+            {t('b6.tickets.cta' as any)}
+          </a>
+        </div>
+      </div>
+    </dialog>
+  ))}
+
+</section>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.b6-explorar').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const modal = document.getElementById(`modal-${btn.dataset.ponente}`) as HTMLDialogElement | null;
+      modal?.showModal();
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('.b6-modal-close').forEach(btn => {
+    btn.addEventListener('click', () => {
+      (btn.closest('dialog') as HTMLDialogElement | null)?.close();
+    });
+  });
+
+  document.querySelectorAll<HTMLDialogElement>('.b6-modal').forEach(modal => {
+    modal.addEventListener('click', e => {
+      if (e.target === modal) modal.close();
+    });
+  });
+</script>
+
+<style>
+  /* ─── Botón secundario ──────────────────────────────────── */
+  .b6-sec-btn {
+    display:         inline-flex;
+    justify-content: center;
+    align-items:     center;
+    padding:         0.7rem 1.1rem 0.8rem;
+    border:          1px solid var(--color-dark);
+    border-radius:   100px;
+    background:      transparent;
+    font-family:     inherit;
+    font-size:       1rem;
+    font-weight:     500;
+    line-height:     1;
+    color:           var(--color-dark);
+    white-space:     nowrap;
+    cursor:          pointer;
+    text-decoration: none;
+  }
+
+  /* ─── Sección ───────────────────────────────────────────── */
+  .b6 {
+    max-width:      1920px;
+    margin:         9.8rem auto 0;
+    padding:        0 2.4rem;
+    display:        flex;
+    flex-direction: column;
+    gap:            2.4rem;
+  }
+
+  .b6-header {
+    display:         flex;
+    justify-content: space-between;
+    align-items:     flex-end;
+  }
+
+  .b6-title {
+    font-size:   1.5rem;
+    font-weight: 600;
+    line-height: 1.1em;
+    color:       var(--color-dark);
+  }
+
+  .b6-cta-mobile { display: none; }
+
+  /* ─── Grid ──────────────────────────────────────────────── */
+  .b6-grid {
+    display:               grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap:                   0.8rem;
+    align-items:           start;
+  }
+
+  /* ─── Card ──────────────────────────────────────────────── */
+  .b6-card {
+    display:        flex;
+    flex-direction: column;
+    border-radius:  var(--radius-card);
+    overflow:       hidden;
+  }
+
+  .b6-img-wrap {
+    width:        100%;
+    aspect-ratio: 444 / 231;
+    overflow:     hidden;
+  }
+
+  .b6-img {
+    width:         100%;
+    height:        100%;
+    object-fit:    cover;
+    display:       block;
+    border-radius: 30px 30px 0 0;
+  }
+
+  .b6-img-ph { background: #e5e7eb; }
+
+  .b6-info {
+    display:        flex;
+    flex-direction: column;
+    gap:            1.2rem;
+    padding:        1.4rem 1.6rem;
+    background:     var(--color-white);
+    border-radius:  0 0 30px 30px;
+  }
+
+  .b6-name-row {
+    display:         flex;
+    justify-content: space-between;
+    align-items:     flex-start;
+    gap:             0.6rem;
+  }
+
+  .b6-name-cargo {
+    display:        flex;
+    flex-direction: column;
+    gap:            0.8rem;
+    min-width:      0;
+  }
+
+  .b6-name {
+    font-size:   1.1rem;
+    font-weight: 700;
+    line-height: 1.2em;
+    color:       var(--color-dark);
+  }
+
+  .b6-cargo {
+    font-size:   0.7rem;
+    font-weight: 400;
+    line-height: 1.4em;
+    color:       var(--color-dark);
+    opacity:     0.5;
+  }
+
+  .b6-tag {
+    display:        inline-flex;
+    align-items:    center;
+    flex-shrink:    0;
+    padding:        0.2rem 0.4rem;
+    border-radius:  3px;
+    font-size:      0.6rem;
+    font-weight:    400;
+    line-height:    1.21em;
+    letter-spacing: 0.01em;
+    color:          #fff;
+    white-space:    nowrap;
+  }
+
+  .b6-explorar { align-self: flex-end; }
+
+  /* ─── Modal = Card del diseño ───────────────────────────── */
+
+  /* SIN display aquí: el UA aplica display:none en dialogs cerrados.
+     display:flex solo cuando [open] para no romper ese comportamiento. */
+  /* margin:auto centra el dialog en el top layer de showModal() */
+  .b6-modal {
+    box-sizing:    border-box;
+    border:        none;
+    border-radius: 30px;
+    padding:       1.6rem;
+    background:    var(--color-white);
+    box-shadow:    0 32px 80px rgba(0, 0, 0, 0.22);
+    width:         min(1225px, 92vw);
+    max-height:    90vh;
+    overflow-y:    auto;
+    overflow-x:    hidden;
+    margin:        auto;
+  }
+
+  dialog.b6-modal[open] {
+    display:        flex;
+    flex-direction: row;
+    align-items:    stretch;
+    gap:            2.4rem;
+  }
+
+  .b6-modal::backdrop { background: rgba(0, 0, 0, 0.5); }
+
+  .b6-modal-close {
+    position:    absolute;
+    top:         20px;
+    right:       20px;
+    background:  transparent;
+    border:      none;
+    font-size:   1.2rem;
+    line-height: 1;
+    cursor:      pointer;
+    color:       var(--color-dark);
+    padding:     4px;
+    z-index:     1;
+  }
+
+  /* Imagen vertical: 430×597px, borderRadius 15px */
+  .b6-modal-img {
+    width:         430px;
+    height:        597px;
+    object-fit:    cover;
+    border-radius: 15px;
+    flex-shrink:   0;
+    display:       block;
+    align-self:    flex-end;
+  }
+
+  /* Columna de contenido: space-between → texto arriba, botones abajo */
+  .b6-modal-content {
+    flex:            1;
+    display:         flex;
+    flex-direction:  column;
+    justify-content: space-between;
+    min-width:       0;
+  }
+
+  /* TOP: header (tag+nombre+cargo) con gap 32px, luego descripción con gap 64px */
+  .b6-modal-top {
+    display:        flex;
+    flex-direction: column;
+    gap:            3.2rem;   /* 64px entre header y descripción */
+  }
+
+  .b6-modal-header {
+    display:        flex;
+    flex-direction: column;
+    gap:            1.6rem;   /* 32px entre tag y nombre/cargo */
+  }
+
+  /* Tag en modal: hug, no ocupa todo el ancho */
+  .b6-modal-tag { align-self: flex-start; }
+
+  .b6-modal-name-wrap {
+    display:        flex;
+    flex-direction: column;
+    gap:            0.9rem;   /* 18px entre nombre y cargo */
+  }
+
+  .b6-modal-name {
+    font-size:   1.5rem;
+    font-weight: 600;
+    line-height: 1.1em;
+    color:       var(--color-dark);
+  }
+
+  .b6-modal-cargo {
+    font-size:   0.7rem;
+    font-weight: 400;
+    line-height: 1.4em;
+    color:       rgba(38, 38, 36, 0.5);
+  }
+
+  .b6-modal-desc {
+    font-size:   0.7rem;
+    font-weight: 400;
+    line-height: 1.4em;
+    color:       var(--color-dark);
+  }
+
+  /* BOTTOM: botones en row, alineados a la derecha */
+  .b6-modal-btns {
+    display:         flex;
+    flex-direction:  row;
+    gap:             0.4rem;
+    justify-content: flex-end;
+    flex-wrap:       wrap;
+  }
+
+  /* ─── Mobile ────────────────────────────────────────────── */
+  @media (max-width: 767px) {
+    .b6 {
+      margin-top: 196px;
+      padding:    0 16px;
+      gap:        24px;
+    }
+
+    .b6-title  { font-size: 20px !important; }
+
+    .b6-cta-desktop { display: none; }
+
+    .b6-cta-mobile {
+      display:    flex;
+      width:      100%;
+      box-sizing: border-box;
+      font-size:  16px !important;
+      padding:    14px 22px 16px !important;
+    }
+
+    .b6-grid {
+      grid-template-columns: 1fr;
+      gap:                   16px;
+    }
+
+    .b6-img-wrap {
+      aspect-ratio: unset;
+      height:       186px;
+    }
+
+    .b6-img { border-radius: 18px 18px 0 0; }
+
+    .b6-info {
+      padding: 24px;
+      gap:     24px;
+    }
+
+    /* Tag en card mobile: todo en px */
+    .b6-tag {
+      font-size:     12px;
+      padding:       4px 8px;
+      border-radius: 3px;
+    }
+
+    .b6-name   { font-size: 18px; }
+    .b6-cargo  { font-size: 13px; }
+
+    /* Explorar: alineado derecha, NO full-width */
+    .b6-explorar {
+      align-self: flex-end;
+      font-size:  16px;
+      padding:    14px 22px 16px;
+    }
+
+    /* Modal mobile: position:fixed explícito evita que el top-layer
+       use una posición DOM ambigua que desborde el viewport */
+    .b6-modal {
+      position:      fixed;
+      left:          50%;
+      top:           50%;
+      transform:     translate(-50%, -50%);
+      margin:        0;
+      width:         calc(100vw - 32px);
+      max-width:     358px;
+      max-height:    88vh;
+      padding:       60px 24px 24px; /* top extra para la X */
+    }
+
+    .b6-modal-close {
+      top:       18px;
+      right:     18px;
+      font-size: 20px;
+      padding:   8px;
+    }
+
+    dialog.b6-modal[open] {
+      flex-direction: column;
+      align-items:    stretch;
+      gap:            24px;
+    }
+
+    .b6-modal-img {
+      width:      100%;
+      height:     280px;
+      align-self: auto;
+    }
+
+    .b6-modal-top    { gap: 24px; }
+    .b6-modal-header { gap: 16px; }
+    .b6-modal-name-wrap { gap: 8px; }
+
+    .b6-modal-name  { font-size: 20px; }
+    .b6-modal-cargo { font-size: 13px; }
+    .b6-modal-desc  { font-size: 13px; }
+
+    .b6-modal-btns {
+      flex-direction: column;
+      align-items:    stretch;
+      gap:            8px;
+      margin-top:     32px;
+    }
+
+    .b6-modal-btns .b6-sec-btn,
+    .b6-modal-btns .btn-primary {
+      width:      100%;
+      box-sizing: border-box;
+      font-size:  16px;
+      padding:    14px 22px 16px;
+      text-align: center;
+    }
+  }
+</style>

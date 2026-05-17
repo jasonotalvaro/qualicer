@@ -26,20 +26,25 @@ const navLinks = [
 
   <!-- Nav group (desktop) -->
   <nav class="header-nav" aria-label="Navegación principal">
+
+    <!-- Links + botón Entradas (gap 32px, igual que Figma Frame 43) -->
     <div class="header-nav-links">
       {navLinks.map(({ key, href, id }) => (
         <a href={href} class:list={['btn-nav', { active: activePage === id }]}>
           {t(key as any)}
         </a>
       ))}
+      <a href={lang === 'en' ? '/en/entradas' : '/entradas'} class="btn-primary">
+        {t('nav.tickets' as any)}
+      </a>
     </div>
 
-    <!-- Language switcher -->
+    <!-- Selector de idioma (gap 48px desde el grupo, igual que Figma Frame 796) -->
     <details class="lang-switcher">
       <summary class="btn-dropdown" aria-label="Cambiar idioma">
         {lang === 'en' ? 'EN' : 'ES'}
-        <svg class="lang-arrow" width="8" height="10" viewBox="0 0 8 10" fill="none" aria-hidden="true">
-          <path d="M4 10L0.535898 4L7.4641 4L4 10Z" fill="currentColor"/>
+        <svg class="lang-arrow" width="10" height="12" viewBox="0 0 10 12" fill="none" aria-hidden="true">
+          <path d="M5 12L0.669872 4.5L9.33013 4.5L5 12Z" fill="currentColor"/>
         </svg>
       </summary>
       <div class="lang-menu">
@@ -49,8 +54,6 @@ const navLinks = [
       </div>
     </details>
 
-    <!-- CTA -->
-    <a href="#entradas" class="btn-primary">{t('nav.tickets' as any)}</a>
   </nav>
 
   <!-- Hamburger (mobile only) -->
@@ -108,6 +111,20 @@ const navLinks = [
   toggle?.addEventListener('click', openMenu);
   closeBtn?.addEventListener('click', closeMenu);
   menu?.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+
+  // Hide on scroll down, show on scroll up
+  const header = document.querySelector<HTMLElement>('.header');
+  let lastY = window.scrollY;
+
+  window.addEventListener('scroll', () => {
+    const currentY = window.scrollY;
+    if (currentY > lastY && currentY > 80) {
+      header?.classList.add('header--hidden');
+    } else {
+      header?.classList.remove('header--hidden');
+    }
+    lastY = currentY;
+  }, { passive: true });
 </script>
 
 <style>
@@ -119,11 +136,16 @@ const navLinks = [
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2.4rem;
-    background: var(--color-glass);
+    padding: 0.8rem 2.4rem;   /* 16px 48px */
+    background: rgba(255, 255, 255, 0.75);
     backdrop-filter: blur(8.5px);
     -webkit-backdrop-filter: blur(8.5px);
     border-bottom: 1px solid var(--color-dark);
+    transition: transform 0.3s ease;
+  }
+
+  .header--hidden {
+    transform: translateY(-100%);
   }
 
   .header-logo img {
@@ -131,62 +153,66 @@ const navLinks = [
     height: auto;
   }
 
+  /* Grupo derecho: [links+botón] | [lang] — gap 48px */
   .header-nav {
     display: flex;
     align-items: center;
-    gap: 1.6rem;
+    gap: 2.4rem;   /* 48px */
   }
 
+  /* Links + botón Entradas — gap 32px */
   .header-nav-links {
     display: flex;
     align-items: center;
-    gap: 0.2rem;
+    gap: 1.6rem;   /* 32px */
   }
 
-  .btn-nav, .btn-dropdown, .btn-primary {
-    font-family: var(--font);
-    font-size: 0.8rem;
-    font-weight: 500;
-    line-height: 1.2;
-    padding: 0.6rem 0.9rem;
-    border-radius: var(--radius-pill);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: opacity 0.15s ease;
-  }
-
+  /* Nav links: sin borde, activo con underline inferior */
   .btn-nav {
-    background: transparent;
-    color: var(--color-dark);
-    border: 1px solid var(--color-dark);
+    font-family:           var(--font);
+    font-size:             1rem;
+    font-weight:           500;
+    line-height:           1.4em;
+    color:                 var(--color-dark);
+    background:            transparent;
+    border:                none;
+    padding:               0;
+    white-space:           nowrap;
+    cursor:                pointer;
+    text-decoration:       none;
+    text-underline-offset: 3px;
+    transition:            opacity 0.15s ease;
   }
 
   .btn-nav.active {
-    border-width: 2px;
-    font-weight: 600;
+    text-decoration: underline;
   }
 
-  .btn-dropdown {
-    background: transparent;
-    color: var(--color-dark);
-    border: 1px solid var(--color-dark);
-    gap: 0.3rem;
-  }
+  .btn-nav:hover { opacity: 0.7; }
 
+  /* Botón Entradas */
   .btn-primary {
-    background: var(--color-primary);
-    color: var(--color-white);
-    border: none;
+    font-family:     var(--font);
+    font-size:       1rem;     /* 20px */
+    font-weight:     500;
+    line-height:     1;
+    display:         inline-flex;
+    align-items:     center;
+    justify-content: center;
+    padding:         0.7rem 1.1rem 0.8rem;  /* 14px 22px 16px */
+    background:      var(--color-primary);
+    color:           var(--color-white);
+    border:          none;
+    border-radius:   var(--radius-pill);
+    white-space:     nowrap;
+    cursor:          pointer;
+    text-decoration: none;
+    transition:      opacity 0.15s ease;
   }
 
-  .btn-nav:hover, .btn-dropdown:hover, .btn-primary:hover {
-    opacity: 0.8;
-  }
+  .btn-primary:hover { opacity: 0.85; }
 
-  /* ── Language switcher ── */
+  /* Language switcher */
   .lang-switcher {
     position: relative;
   }
@@ -199,37 +225,55 @@ const navLinks = [
     display: none;
   }
 
+  .btn-dropdown {
+    font-family:  var(--font);
+    font-size:    1rem;
+    font-weight:  500;
+    line-height:  1.4em;
+    color:        var(--color-dark);
+    background:   transparent;
+    border:       none;
+    padding:      0.3rem 0;
+    display:      inline-flex;
+    align-items:  center;
+    gap:          0.3rem;   /* 6px */
+    white-space:  nowrap;
+    cursor:       pointer;
+    transition:   opacity 0.15s ease;
+  }
+
+  .btn-dropdown:hover { opacity: 0.7; }
+
   .lang-menu {
-    position: absolute;
-    top: calc(100% + 0.3rem);
-    left: 0;
-    min-width: 100%;
-    display: flex;
+    position:    absolute;
+    top:         calc(100% + 0.3rem);
+    left:        0;
+    min-width:   100%;
+    display:     flex;
     flex-direction: column;
-    background: var(--color-glass);
+    background:  rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(8.5px);
     -webkit-backdrop-filter: blur(8.5px);
-    border: 1px solid var(--color-dark);
-    border-radius: var(--radius-pill);
-    overflow: hidden;
-    z-index: 10;
+    border:      1px solid var(--color-dark);
+    border-radius: 8px;
+    overflow:    hidden;
+    z-index:     10;
   }
 
   .lang-option {
-    font-family: var(--font);
-    font-size: 0.8rem;
-    font-weight: 500;
-    line-height: 1.2;
-    padding: 0.6rem 0.9rem;
-    color: var(--color-dark);
-    text-align: center;
-    white-space: nowrap;
-    transition: opacity 0.15s ease;
+    font-family:     var(--font);
+    font-size:       1rem;
+    font-weight:     500;
+    line-height:     1.4em;
+    padding:         0.5rem 0.8rem;
+    color:           var(--color-dark);
+    text-align:      center;
+    white-space:     nowrap;
+    text-decoration: none;
+    transition:      opacity 0.15s ease;
   }
 
-  .lang-option:hover {
-    opacity: 0.8;
-  }
+  .lang-option:hover { opacity: 0.7; }
 
   .lang-arrow {
     transition: transform 0.2s ease;

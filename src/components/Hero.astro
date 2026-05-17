@@ -69,8 +69,12 @@ function lines(str: string) {
         <div class="hero-organizers">
           <p class="hero-org-label">{t('hero.organizers' as any)}</p>
           <div class="hero-org-logos">
-            <img src="/img/cole.svg" alt="COLE" />
-            <img src="/img/sebas.svg" alt="SEBAS" />
+            <a href="https://iicv.net/" target="_blank" rel="noopener">
+              <img src="/img/cole.svg" alt="Colegio de Ingenieros Industriales" />
+            </a>
+            <a href="https://www.laboratoriocarpi.com/" target="_blank" rel="noopener">
+              <img src="/img/sebas.svg" alt="Laboratorio Sebastián Carpi" />
+            </a>
           </div>
         </div>
 
@@ -86,11 +90,11 @@ function lines(str: string) {
   </div>
 
   <!-- Flecha scroll: bottom center, fuera del inner para no afectar al layout -->
-  <div class="hero-scroll-arrow" aria-hidden="true">
+  <a href="#datos" class="hero-scroll-arrow" aria-label="Ir al siguiente bloque">
     <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M9.48066 19.3973L10.4996 18.3947L16.2916 24.1867L16.2916 7.08331L17.7083 7.08331L17.7083 24.1867L23.5003 18.3947L24.5193 19.3973L17 26.9166L9.48066 19.3973Z" fill="#262624"/>
     </svg>
-  </div>
+  </a>
 </section>
 
 <style>
@@ -211,14 +215,20 @@ function lines(str: string) {
   }
 
   .hero-org-logos {
-    display: flex;
-    align-items: center;
-    gap: 2.4rem;                   /* 48px */
+    display:     flex;
+    align-items: flex-end;
+    gap:         2.4rem;           /* 48px */
+  }
+
+  .hero-org-logos a {
+    display:     flex;
+    align-items: flex-end;
   }
 
   .hero-org-logos img {
-    height: auto;
-    max-height: 2.4rem;            /* ~48px, deja que el SVG escale */
+    display: block;
+    height:  auto;
+    width:   auto;
   }
 
   /* ── Scroll arrow ───────────────────────────────────── */

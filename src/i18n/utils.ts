@@ -58,6 +58,51 @@ const ui = {
     'b5.card4.desc':  'La cerámica española frente a los nuevos actores globales. Clústeres, mercados y estrategias para defender la calidad como ventaja competitiva.',
     'b5.card5.title': 'Innovación y tecnología',
     'b5.card5.desc':  'La cerámica española frente a los nuevos actores globales. Clústeres, mercados y estrategias para defender la calidad como ventaja competitiva.',
+
+    /* ejes */
+    'eje.construccion':   'Construcción',
+    'eje.sostenibilidad': 'Sostenibilidad',
+    'eje.estrategia':     'Estrategia',
+
+    /* bloque 6 */
+    'b6.title':            'Quien da forma al debate',
+    'b6.cta':              'Ver todos los ponentes',
+    'b6.explorar':         'Explorar',
+    'b6.agenda':           'Ver en agenda',
+    'b6.tickets.headline': 'Consigue tu entrada y forma parte del congreso',
+    'b6.tickets.cta':      'Conseguir entradas',
+
+    /* bloque 7 */
+    'b7.title':  'Las temáticas más actuales como vértebras',
+    'b7.topic1': 'Hoja de ruta 2030: cogeneración, atomización, autoconsumo y hornos eléctricos',
+    'b7.topic2': 'Defendiendo la calidad en el mercado norteamericano',
+    'b7.topic3': 'Mala aplicación sistémica: consecuencias reputacionales del mal uso del producto y los fallos de diseño en la industria del azulejo',
+    'b7.topic4': 'Construcción off-site y avance de los sistemas modulares, ¡el futuro es brillante!',
+    'b7.topic5': 'Coexistencia de tecnologías — vías futuras hacia fábricas descarbonizadas (panel)',
+    'b7.topic6': 'Mineralización de cal agotada de filtros de la industria cerámica — Proyecto CCS4CER',
+    'b7.cta':    'Ver agenda completa',
+
+    /* bloque 8 */
+    'b8.date':     '10 — 11 junio\n2026',
+    'b8.venue':    'Auditorio y Palacio\nde Congresos',
+    'b8.city':     'Castellón,\nEspaña',
+    'b8.headline': '¿Listo para ver otra nueva dimensión?',
+    'b8.cta':      'Conseguir entradas',
+
+    /* footer */
+    'footer.organiza':    'Organiza:',
+    'footer.visit':       'Visítanos',
+    'footer.address':     'Cámara Oficial de Comercio, Industria, Navegación y Servicios de Castellón\n\nAvenida del Mar, 46\n12003 Castellón, España',
+    'footer.follow':      'Síguenos',
+    'footer.contact':     'Contacta',
+    'footer.email':       'qualicer@qualicer.org',
+    'footer.phone':       '+34 964 356 500',
+    'footer.legal':       'Legales',
+    'footer.legal1':      'Aviso legal',
+    'footer.legal2':      'Política de privacidad',
+    'footer.legal3':      'Política de cookies',
+    'footer.copyright':   '©2026 Qualicer – Todos los derechos reservados',
+    'footer.cta':         'Conseguir entradas',
   },
   en: {
     /* nav */
@@ -115,6 +160,51 @@ const ui = {
     'b5.card4.desc':  'Spanish ceramics facing new global players. Clusters, markets and strategies to defend quality as a competitive advantage.',
     'b5.card5.title': 'Innovation and technology',
     'b5.card5.desc':  'Spanish ceramics facing new global players. Clusters, markets and strategies to defend quality as a competitive advantage.',
+
+    /* ejes */
+    'eje.construccion':   'Construction',
+    'eje.sostenibilidad': 'Sustainability',
+    'eje.estrategia':     'Strategy',
+
+    /* bloque 6 */
+    'b6.title':            'Who shapes the debate',
+    'b6.cta':              'View all speakers',
+    'b6.explorar':         'Explore',
+    'b6.agenda':           'View in agenda',
+    'b6.tickets.headline': 'Get your ticket and be part of the congress',
+    'b6.tickets.cta':      'Get tickets',
+
+    /* bloque 7 */
+    'b7.title':  'The most current topics, the backbone of the programme',
+    'b7.topic1': 'Possible roadmap 2030: cogeneration, spray drying, self-consumption and electric kilns',
+    'b7.topic2': 'Defending quality in the North American market',
+    'b7.topic3': 'Systemic misapplication: the reputational consequences of product misuse and design failure on the tiling industry',
+    'b7.topic4': 'Off-site construction and pod advancement, the future is bright!',
+    'b7.topic5': 'Coexistence of technologies — future pathways for decarbonized factories (panel)',
+    'b7.topic6': 'Mineralization of exhausted lime from ceramic tile industry filters — Project CCS4CER',
+    'b7.cta':    'View full agenda',
+
+    /* bloque 8 */
+    'b8.date':     'June 10 — 11\n2026',
+    'b8.venue':    'Auditorium and\nCongress Centre',
+    'b8.city':     'Castellón,\nSpain',
+    'b8.headline': 'Ready to see a whole new dimension?',
+    'b8.cta':      'Get tickets',
+
+    /* footer */
+    'footer.organiza':    'Organises:',
+    'footer.visit':       'Visit us',
+    'footer.address':     'Cámara Oficial de Comercio, Industria, Navegación y Servicios de Castellón\n\nAvenida del Mar, 46\n12003 Castellón, Spain',
+    'footer.follow':      'Follow us',
+    'footer.contact':     'Contact',
+    'footer.email':       'qualicer@qualicer.org',
+    'footer.phone':       '+34 964 356 500',
+    'footer.legal':       'Legal',
+    'footer.legal1':      'Legal notice',
+    'footer.legal2':      'Privacy policy',
+    'footer.legal3':      'Cookie policy',
+    'footer.copyright':   '©2026 Qualicer – All rights reserved',
+    'footer.cta':         'Get tickets',
   },
 } as const;
 

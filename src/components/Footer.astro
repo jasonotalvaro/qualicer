@@ -1,0 +1,317 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t    = useTranslations(lang);
+
+const entradasHref = lang === 'en' ? '/en/entradas' : '/entradas';
+---
+
+<footer class="ft">
+
+  <!-- Logo grande -->
+  <img class="ft-logo" src="/img/logo_full.svg" alt="Qualicer 26" />
+
+  <!-- Bloque info -->
+  <div class="ft-info">
+
+    <!-- Fila principal: organiza (izq) + columnas (der) -->
+    <div class="ft-row">
+
+      <!-- Organiza -->
+      <div class="ft-organiza">
+        <span class="ft-organiza-label">{t('footer.organiza')}</span>
+        <div class="ft-organiza-logos">
+          <a href="https://www.laboratoriocarpi.com/" target="_blank" rel="noopener">
+            <img src="/img/sebas_blanco.svg" alt="Laboratorio Sebastián Carpi" />
+          </a>
+          <a href="https://iicv.net/" target="_blank" rel="noopener">
+            <img src="/img/cole_blanco.svg" alt="Colegio de Ingenieros Industriales" />
+          </a>
+        </div>
+      </div>
+
+      <!-- 4 columnas -->
+      <div class="ft-cols">
+
+        <div class="ft-col">
+          <span class="ft-col-heading">{t('footer.visit')}</span>
+          <a href="https://maps.app.goo.gl/LeHuWeqj3FqFmQhE7" target="_blank" rel="noopener" class="ft-col-body ft-address">{t('footer.address')}</a>
+        </div>
+
+        <div class="ft-col">
+          <span class="ft-col-heading">{t('footer.follow')}</span>
+          <div class="ft-col-links">
+            <a href="#" class="ft-link">Instagram</a>
+            <a href="#" class="ft-link">Linkedin</a>
+            <a href="#" class="ft-link">Facebook</a>
+          </div>
+        </div>
+
+        <div class="ft-col">
+          <span class="ft-col-heading">{t('footer.contact')}</span>
+          <div class="ft-col-links">
+            <a href={`mailto:${t('footer.email')}`} class="ft-link">{t('footer.email')}</a>
+            <a href={`tel:${t('footer.phone').replace(/\s/g,'')}`} class="ft-link">{t('footer.phone')}</a>
+          </div>
+        </div>
+
+        <div class="ft-col">
+          <span class="ft-col-heading">{t('footer.legal')}</span>
+          <div class="ft-col-links">
+            <a href="#" class="ft-link">{t('footer.legal1')}</a>
+            <a href="#" class="ft-link">{t('footer.legal2')}</a>
+            <a href="#" class="ft-link">{t('footer.legal3')}</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Barra copyright -->
+    <div class="ft-bar">
+      <span class="ft-copyright">{t('footer.copyright')}</span>
+      <a href={entradasHref} class="ft-btn">{t('footer.cta')}</a>
+    </div>
+
+  </div>
+
+</footer>
+
+<style>
+  /* ─── Base ──────────────────────────────────────────────── */
+  .ft {
+    background:    #0047AF;
+    border-radius: 30px 30px 0 0;
+    padding:       2.4rem 2.4rem 1.6rem;
+    display:       flex;
+    flex-direction: column;
+    gap:           6.4rem;  /* 128px */
+    margin-top:    9.8rem;
+  }
+
+  /* Logo grande: ocupa el ancho completo */
+  .ft-logo {
+    width:  100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Bloque info: dos filas */
+  .ft-info {
+    display:        flex;
+    flex-direction: column;
+    gap:            1.6rem; /* 32px */
+  }
+
+  /* Fila principal: organiza izq / columnas der */
+  .ft-row {
+    display:         flex;
+    flex-direction:  row;
+    justify-content: space-between;
+    align-items:     flex-end;
+  }
+
+  /* ─── Organiza ──────────────────────────────────────────── */
+  .ft-organiza {
+    display:        flex;
+    flex-direction: column;
+    gap:            0.6rem; /* 12px */
+    justify-content: flex-end;
+  }
+
+  .ft-organiza-label {
+    font-size:   0.6rem;  /* 12px */
+    font-weight: 400;
+    line-height: 1.1em;
+    color:       #FEFEFE;
+  }
+
+  .ft-organiza-logos {
+    display:     flex;
+    align-items: flex-end;
+    gap:         2.4rem;  /* 48px */
+  }
+
+  .ft-organiza-logos a {
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .ft-organiza-logos img {
+    display: block;
+    height:  auto;
+    width:   auto;
+  }
+
+  /* ─── Columnas de info ──────────────────────────────────── */
+  .ft-cols {
+    display: flex;
+    gap:     3.2rem;      /* space-between equivalente visual */
+    justify-content: space-between;
+    width:   52.85rem;    /* 1057px */
+  }
+
+  .ft-col {
+    display:        flex;
+    flex-direction: column;
+    gap:            1.8rem; /* 36px */
+  }
+
+  .ft-col-heading {
+    font-size:   1.1rem;  /* 22px */
+    font-weight: 500;
+    line-height: 1.2em;
+    color:       #FEFEFE;
+  }
+
+  .ft-col-body {
+    font-size:   0.7rem;  /* 14px */
+    font-weight: 400;
+    line-height: 1.4em;
+    color:       #FEFEFE;
+    white-space: pre-line;
+  }
+
+  .ft-address {
+    text-decoration: none;
+  }
+
+  .ft-address:hover { text-decoration: underline; }
+
+  .ft-col-links {
+    display:        flex;
+    flex-direction: column;
+    gap:            1.4rem; /* 28px */
+  }
+
+  .ft-link {
+    font-size:       0.7rem; /* 14px */
+    font-weight:     400;
+    line-height:     1.4em;
+    color:           #FEFEFE;
+    text-decoration: none;
+  }
+
+  .ft-link:hover { text-decoration: underline; }
+
+  /* ─── Barra copyright ───────────────────────────────────── */
+  .ft-bar {
+    display:         flex;
+    flex-direction:  row;
+    justify-content: space-between;
+    align-items:     flex-end;
+    padding-top:     1.6rem; /* 32px */
+    border-top:      1px solid #FEFEFE;
+  }
+
+  .ft-copyright {
+    font-size:   0.7rem; /* 14px */
+    font-weight: 400;
+    line-height: 1.4em;
+    color:       #FEFEFE;
+  }
+
+  /* Botón blanco con texto azul */
+  .ft-btn {
+    display:         inline-flex;
+    justify-content: center;
+    align-items:     center;
+    padding:         0.7rem 1.1rem 0.8rem;
+    background:      #FEFEFE;
+    color:           #0047AF;
+    border:          none;
+    border-radius:   100px;
+    font-family:     inherit;
+    font-size:       1rem;   /* 20px */
+    font-weight:     500;
+    line-height:     1;
+    text-decoration: none;
+    white-space:     nowrap;
+    cursor:          pointer;
+  }
+
+  /* ─── Mobile ────────────────────────────────────────────── */
+  @media (max-width: 767px) {
+    .ft {
+      padding:    18px 16px 16px;
+      gap:        64px;
+      margin-top: 196px;
+    }
+
+    /* Columnas: 2×2 grid */
+    .ft-row {
+      flex-direction: column;
+      align-items:    stretch;
+      gap:            64px;
+    }
+
+    .ft-cols {
+      width:          auto;
+      flex-direction: column;
+      gap:            64px;
+    }
+
+    /* Dentro de ft-cols, los 4 ft-col van en 2 filas de 2 */
+    .ft-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px 8px;
+    }
+
+    .ft-col-heading {
+      font-size: 18px;
+    }
+
+    .ft-col-body,
+    .ft-link {
+      font-size: 13px;
+    }
+
+    /* Organiza: va debajo de las columnas */
+    .ft-row {
+      display:        flex;
+      flex-direction: column;
+      gap:            64px;
+    }
+
+    /* Mover organiza al final visualmente */
+    .ft-organiza { order: 2; }
+    .ft-cols     { order: 1; }
+
+    .ft-organiza {
+      gap: 12px;
+    }
+
+    .ft-organiza-label {
+      font-size: 12px;
+    }
+
+    .ft-organiza-logos {
+      gap: 48px;
+    }
+
+    .ft-organiza-logos img {
+      height: auto;
+      width:  auto;
+    }
+
+    /* Barra copyright: columna, botón full-width */
+    .ft-bar {
+      flex-direction: column;
+      align-items:    stretch;
+      gap:            32px;
+      padding-top:    32px;
+    }
+
+    .ft-btn {
+      display:    flex;
+      width:      100%;
+      box-sizing: border-box;
+      font-size:  16px;
+      padding:    14px 22px 16px;
+    }
+
+    .ft-copyright { font-size: 13px; }
+  }
+</style>
