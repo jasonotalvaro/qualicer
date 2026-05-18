@@ -75,6 +75,24 @@ function slugPonente(p: Ponente) {
 
 const entradasHref = '/entradas/';
 const agendaHref   = '/agenda';
+
+const inspCards = [
+  {
+    gradient:  'linear-gradient(180deg, rgba(242,137,167,1) 0%, rgba(242,137,167,0) 100%)',
+    text:      '"Cada perspectiva añade una dimensión. Juntas, el volumen."',
+    threshold: 2,
+  },
+  {
+    gradient:  'linear-gradient(180deg, rgba(54,163,223,1) 0%, rgba(54,163,223,0) 100%)',
+    text:      '"La cerámica no se entiende por partes. Se entiende en su totalidad."',
+    threshold: 3,
+  },
+  {
+    gradient:  'linear-gradient(180deg, rgba(111,197,183,1) 0%, rgba(111,197,183,0) 100%)',
+    text:      '"Cada perspectiva añade una dimensión. Juntas, el volumen."',
+    threshold: 4,
+  },
+] as const;
 ---
 
 <Layout
@@ -139,40 +157,53 @@ const agendaHref   = '/agenda';
       </div>
 
       <div class="pon-grid" id="pon-grid">
-          {ponentes.map(p => {
+          {ponentes.map((p, i) => {
             const dias = [...(diasPorPonente.get(p._id) ?? [])].join(',');
             const img  = imgUrl(p);
+            const inspAfter = inspCards.find((_, ci) => i === [1, 2, 3][ci]);
             return (
-              <div
-                class="pon-card"
-                data-eje={p.eje}
-                data-dias={dias}
-              >
-                <div class="pon-card-img-wrap">
-                  {img
-                    ? <img class="pon-card-img" src={img} alt={`${p.nombre} ${p.apellido}`} loading="lazy" />
-                    : <div class="pon-card-img pon-card-img-ph"></div>
-                  }
-                </div>
-                <div class="pon-card-info">
-                  <div class="pon-card-top">
-                    <div class="pon-card-text">
-                      <div class="pon-card-name-wrap">
-                        <p class="pon-card-name">{p.nombre} {p.apellido}</p>
-                        {(p.empresa || cargoText(p)) && (
-                          <p class="pon-card-cargo">{[cargoText(p), p.empresa].filter(Boolean).join(' · ')}</p>
-                        )}
+              <>
+                <div
+                  class="pon-card"
+                  data-eje={p.eje}
+                  data-dias={dias}
+                >
+                  <div class="pon-card-img-wrap">
+                    {img
+                      ? <img class="pon-card-img" src={img} alt={`${p.nombre} ${p.apellido}`} loading="lazy" />
+                      : <div class="pon-card-img pon-card-img-ph"></div>
+                    }
+                  </div>
+                  <div class="pon-card-info">
+                    <div class="pon-card-top">
+                      <div class="pon-card-text">
+                        <div class="pon-card-name-wrap">
+                          <p class="pon-card-name">{p.nombre} {p.apellido}</p>
+                          {(p.empresa || cargoText(p)) && (
+                            <p class="pon-card-cargo">{[cargoText(p), p.empresa].filter(Boolean).join(' · ')}</p>
+                          )}
+                        </div>
+                        <span class="pon-card-tag" style={`background:${ejeColor[p.eje] ?? '#888'}`}>
+                          {t(`eje.${p.eje}` as any)}
+                        </span>
                       </div>
-                      <span class="pon-card-tag" style={`background:${ejeColor[p.eje] ?? '#888'}`}>
-                        {t(`eje.${p.eje}` as any)}
-                      </span>
+                      <button class="pon-card-btn" data-ponente={p._id} aria-haspopup="dialog">
+                        {t('ponentes.explorar' as any)}
+                      </button>
                     </div>
-                    <button class="pon-card-btn" data-ponente={p._id} aria-haspopup="dialog">
-                      {t('ponentes.explorar' as any)}
-                    </button>
                   </div>
                 </div>
-              </div>
+                {inspAfter && (
+                  <div
+                    class="pon-insp-card"
+                    data-threshold={inspAfter.threshold}
+                    style={`--insp-grad: ${inspAfter.gradient}`}
+                  >
+                    <p class="pon-insp-text">{inspAfter.text}</p>
+                    <img class="pon-insp-logo" src="/img/logo.svg" alt="Qualicer" />
+                  </div>
+                )}
+              </>
             );
           })}
         </div>
@@ -230,12 +261,22 @@ const agendaHref   = '/agenda';
   const cards   = () => Array.from(grid.querySelectorAll<HTMLElement>('.pon-card'));
   const active  = { eje: new Set<string>(), dia: new Set<string>() };
 
+  const inspCards = Array.from(document.querySelectorAll<HTMLElement>('.pon-insp-card'));
+
   function applyFilters() {
+    let visible = 0;
     cards().forEach(card => {
       const ejeOk = active.eje.size === 0 || active.eje.has(card.dataset.eje ?? '');
       const dias  = (card.dataset.dias ?? '').split(',').filter(Boolean);
       const diaOk = active.dia.size === 0 || dias.some(d => active.dia.has(d));
-      card.style.display = (ejeOk && diaOk) ? '' : 'none';
+      const show  = ejeOk && diaOk;
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+
+    inspCards.forEach(card => {
+      const threshold = parseInt(card.dataset.threshold ?? '0');
+      card.style.display = visible >= threshold ? '' : 'none';
     });
   }
 
@@ -254,6 +295,19 @@ const agendaHref   = '/agenda';
       applyFilters();
     });
   });
+
+  // Altura de inspiration cards = altura de una card de ponente
+  function syncInspHeight() {
+    if (window.matchMedia('(max-width: 767px)').matches) return;
+    const ref = document.querySelector<HTMLElement>('.pon-card');
+    if (!ref) return;
+    const h = ref.offsetHeight;
+    document.querySelectorAll<HTMLElement>('.pon-insp-card').forEach(c => {
+      c.style.minHeight = h + 'px';
+    });
+  }
+  syncInspHeight();
+  window.addEventListener('resize', syncInspHeight, { passive: true });
 
   // Filtros fijos en mobile
   if (window.matchMedia('(max-width: 767px)').matches) {
@@ -537,6 +591,30 @@ const agendaHref   = '/agenda';
 
   .pon-card-btn:hover { opacity: 0.7; }
 
+  /* ── Inspiration cards ── */
+  .pon-insp-card {
+    border-radius:    var(--radius-card);
+    overflow:         hidden;
+    display:          flex;
+    flex-direction:   column;
+    justify-content:  space-between;
+    padding:          1.4rem 1.6rem;
+    background-color: #FFFFFF;
+    background-image: var(--insp-grad);
+  }
+
+  .pon-insp-text {
+    font-size:   1.5rem;
+    font-weight: 600;
+    line-height: 1.1;
+    color:       var(--color-dark);
+  }
+
+  .pon-insp-logo {
+    width:      5.65rem; /* 113px */
+    align-self: flex-start;
+  }
+
   /* ── Mobile ── */
   @media (max-width: 767px) {
     .pon-page {
@@ -620,6 +698,8 @@ const agendaHref   = '/agenda';
       font-size: 16px;
       padding:   14px 22px;
     }
+
+    .pon-insp-card { display: none !important; }
   }
 
   /* ── Modal ── */
