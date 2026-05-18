@@ -4,7 +4,7 @@ export const defaultLang: Lang = 'es';
 const ui = {
   es: {
     /* nav */
-    'nav.home':      'Home',
+    'nav.home':      'Inicio',
     'nav.speakers':  'Ponentes',
     'nav.agenda':    'Agenda',
     'nav.manifesto': 'Manifesto',
@@ -64,8 +64,21 @@ const ui = {
     'eje.sostenibilidad': 'Sostenibilidad',
     'eje.estrategia':     'Estrategia',
 
+    /* agenda días */
+    'agenda.dia.miercoles': 'Miércoles 10 Junio',
+    'agenda.dia.jueves':    'Jueves 11 Junio',
+    'agenda.dia.viernes':   'Viernes 12 Junio',
+
+    /* página ponentes */
+    'ponentes.headline':    'Las personas que dan forma al debate',
+    'ponentes.desc':        'Investigadores, directivos y técnicos de referencia internacional que aportan su perspectiva al panorama cerámico global.',
+    'ponentes.label':       'Ponentes',
+    'ponentes.filtro.eje':  'Por eje:',
+    'ponentes.filtro.dia':  'Por día:',
+    'ponentes.explorar':    'Explorar',
+
     /* bloque 6 */
-    'b6.title':            'Quien da forma al debate',
+    'b6.title':            'Quienes dan forma al debate',
     'b6.cta':              'Ver todos los ponentes',
     'b6.explorar':         'Explorar',
     'b6.agenda':           'Ver en agenda',
@@ -165,6 +178,19 @@ const ui = {
     'eje.construccion':   'Construction',
     'eje.sostenibilidad': 'Sustainability',
     'eje.estrategia':     'Strategy',
+
+    /* página ponentes */
+    'ponentes.headline':    'The people who shape the debate',
+    'ponentes.desc':        'International researchers, executives and technical experts who bring their perspective to the global ceramics landscape.',
+    'ponentes.label':       'Speakers',
+    'ponentes.filtro.eje':  'By topic:',
+    'ponentes.filtro.dia':  'By day:',
+    'ponentes.explorar':    'Explore',
+
+    /* agenda días */
+    'agenda.dia.miercoles': 'Wednesday June 10',
+    'agenda.dia.jueves':    'Thursday June 11',
+    'agenda.dia.viernes':   'Friday June 12',
 
     /* bloque 6 */
     'b6.title':            'Who shapes the debate',

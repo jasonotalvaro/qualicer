@@ -1,0 +1,814 @@
+---
+import Layout    from '../../layouts/Layout.astro';
+import Header    from '../../components/Header.astro';
+import CTAEntradas from '../../components/CTAEntradas.astro';
+import Footer    from '../../components/Footer.astro';
+import { client, urlFor } from '../../lib/sanity';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t    = useTranslations(lang);
+
+interface Ponente {
+  _id:              string;
+  nombre:           string;
+  apellido:         string;
+  empresa?:         string;
+  eje:              'construccion' | 'sostenibilidad' | 'estrategia';
+  cargo?:           { es?: string; en?: string };
+  descripcion?:     { es?: string; en?: string };
+  imagenHorizontal?: any;
+  imagenVertical?:   any;
+}
+
+interface AgendaItem {
+  dia:      string;
+  ponentes: { _ref: string }[];
+}
+
+const [ponentes, agenda]: [Ponente[], AgendaItem[]] = await Promise.all([
+  client.fetch(`*[_type == "ponente"] | order(apellido asc) {
+    _id, nombre, apellido, empresa, eje, cargo, descripcion, imagenHorizontal, imagenVertical
+  }`),
+  client.fetch(`*[_type == "agenda" && defined(ponentes)] {
+    dia, "ponentes": ponentes[]{ _ref }
+  }`),
+]);
+
+// Mapa ponente._id → set de días
+const diasPorPonente = new Map<string, Set<string>>();
+for (const item of agenda) {
+  for (const ref of item.ponentes ?? []) {
+    if (!diasPorPonente.has(ref._ref)) diasPorPonente.set(ref._ref, new Set());
+    diasPorPonente.get(ref._ref)!.add(item.dia);
+  }
+}
+
+const ejeColor: Record<string, string> = {
+  construccion:   '#E9002B',
+  sostenibilidad: '#48B9A7',
+  estrategia:     '#36A3DF',
+};
+
+function cargoText(p: Ponente) {
+  return lang === 'en' ? (p.cargo?.en ?? p.cargo?.es ?? '') : (p.cargo?.es ?? '');
+}
+function descText(p: Ponente) {
+  return lang === 'en' ? (p.descripcion?.en ?? p.descripcion?.es ?? '') : (p.descripcion?.es ?? '');
+}
+
+function imgUrl(p: Ponente) {
+  if (p.imagenHorizontal) return urlFor(p.imagenHorizontal).width(888).height(462).url();
+  if (p.imagenVertical)   return urlFor(p.imagenVertical).width(888).height(462).fit('crop').url();
+  return '';
+}
+function imgVert(p: Ponente) {
+  if (p.imagenVertical)   return urlFor(p.imagenVertical).width(860).height(1194).url();
+  if (p.imagenHorizontal) return urlFor(p.imagenHorizontal).width(860).height(1194).fit('crop').url();
+  return '';
+}
+function slugPonente(p: Ponente) {
+  return `${p.nombre}-${p.apellido}`
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .toLowerCase().replace(/\s+/g, '-');
+}
+
+const entradasHref = '/en/entradas/';
+const agendaHref   = '/en/agenda';
+---
+
+<Layout
+  lang={lang}
+  title={`${t('ponentes.label' as any)} — Qualicer`}
+  description={t('ponentes.headline' as any)}
+>
+  <Header activePage="speakers" />
+
+  <main class="pon-page">
+
+    <!-- Cabecera: H1 izq · descripción der -->
+    <div class="pon-header">
+      <h1 class="pon-headline">{t('ponentes.headline' as any)}</h1>
+      <p class="pon-desc">{t('ponentes.desc' as any)}</p>
+    </div>
+
+    <!-- Sección: label + filtros + grid -->
+    <div class="pon-section">
+
+      <!-- Label "Speakers" -->
+      <p class="pon-label">{t('ponentes.label' as any)}</p>
+
+      <!-- Filtros en una sola fila -->
+      <div class="pon-filtros" id="filtros">
+        <div class="pon-filtro-group">
+          <span class="pon-filtro-label">{t('ponentes.filtro.eje' as any)}</span>
+          <div class="pon-filtro-tags">
+            {(['construccion','sostenibilidad','estrategia'] as const).map(eje => (
+              <button
+                class="pon-ftag"
+                data-filter="eje"
+                data-value={eje}
+                style={`--eje-color:${ejeColor[eje]}`}
+              >
+                <svg class="pon-ftag-check" width="14" height="12" viewBox="0 0 14 12" fill="none" aria-hidden="true">
+                  <path d="M1 6L5 10L13 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                {t(`eje.${eje}` as any)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div class="pon-filtro-group">
+          <span class="pon-filtro-label">{t('ponentes.filtro.dia' as any)}</span>
+          <div class="pon-filtro-tags">
+            {(['miercoles','jueves','viernes'] as const).map(dia => (
+              <button
+                class="pon-ftag pon-ftag--dia"
+                data-filter="dia"
+                data-value={dia}
+              >
+                <svg class="pon-ftag-check" width="14" height="12" viewBox="0 0 14 12" fill="none" aria-hidden="true">
+                  <path d="M1 6L5 10L13 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                {t(`agenda.dia.${dia}` as any)}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div class="pon-grid" id="pon-grid">
+          {ponentes.map(p => {
+            const dias = [...(diasPorPonente.get(p._id) ?? [])].join(',');
+            const img  = imgUrl(p);
+            return (
+              <div
+                class="pon-card"
+                data-eje={p.eje}
+                data-dias={dias}
+              >
+                <div class="pon-card-img-wrap">
+                  {img
+                    ? <img class="pon-card-img" src={img} alt={`${p.nombre} ${p.apellido}`} loading="lazy" />
+                    : <div class="pon-card-img pon-card-img-ph"></div>
+                  }
+                </div>
+                <div class="pon-card-info">
+                  <div class="pon-card-top">
+                    <div class="pon-card-text">
+                      <div class="pon-card-name-wrap">
+                        <p class="pon-card-name">{p.nombre} {p.apellido}</p>
+                        {(p.empresa || cargoText(p)) && (
+                          <p class="pon-card-cargo">{[cargoText(p), p.empresa].filter(Boolean).join(' · ')}</p>
+                        )}
+                      </div>
+                      <span class="pon-card-tag" style={`background:${ejeColor[p.eje] ?? '#888'}`}>
+                        {t(`eje.${p.eje}` as any)}
+                      </span>
+                    </div>
+                    <button class="pon-card-btn" data-ponente={p._id} aria-haspopup="dialog">
+                      {t('ponentes.explorar' as any)}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+    </div>
+
+    <!-- Modales fuera del grid (sin overflow:hidden ancestors) -->
+    {ponentes.map(p => (
+      <dialog class="pon-modal" id={`modal-${p._id}`} aria-label={`${p.nombre} ${p.apellido}`}>
+        <button class="pon-modal-close" aria-label="Close">&#x2715;</button>
+
+        {imgVert(p) && (
+          <img
+            class="pon-modal-img"
+            src={imgVert(p)}
+            alt={`${p.nombre} ${p.apellido}`}
+            loading="lazy"
+          />
+        )}
+
+        <div class="pon-modal-content">
+          <div class="pon-modal-top">
+            <div class="pon-modal-header">
+              <span class="pon-card-tag pon-modal-tag" style={`background:${ejeColor[p.eje] ?? '#888'}`}>
+                {t(`eje.${p.eje}` as any)}
+              </span>
+              <div class="pon-modal-name-wrap">
+                <p class="pon-modal-name">{p.nombre} {p.apellido}</p>
+                {cargoText(p) && <p class="pon-modal-cargo">{cargoText(p)}</p>}
+              </div>
+            </div>
+            {descText(p) && <p class="pon-modal-desc">{descText(p)}</p>}
+          </div>
+
+          <div class="pon-modal-btns">
+            <a class="pon-modal-sec-btn" href={`${agendaHref}#${slugPonente(p)}`}>
+              {t('b6.agenda' as any)}
+            </a>
+            <a class="pon-modal-primary-btn" href={entradasHref}>
+              {t('b6.tickets.cta' as any)}
+            </a>
+          </div>
+        </div>
+      </dialog>
+    ))}
+
+  </main>
+
+  <CTAEntradas />
+  <Footer />
+</Layout>
+
+<script>
+  const grid    = document.getElementById('pon-grid')!;
+  const cards   = () => Array.from(grid.querySelectorAll<HTMLElement>('.pon-card'));
+  const active  = { eje: new Set<string>(), dia: new Set<string>() };
+
+  function applyFilters() {
+    cards().forEach(card => {
+      const ejeOk = active.eje.size === 0 || active.eje.has(card.dataset.eje ?? '');
+      const dias  = (card.dataset.dias ?? '').split(',').filter(Boolean);
+      const diaOk = active.dia.size === 0 || dias.some(d => active.dia.has(d));
+      card.style.display = (ejeOk && diaOk) ? '' : 'none';
+    });
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.pon-ftag').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const group = btn.dataset.filter as 'eje' | 'dia';
+      const val   = btn.dataset.value ?? '';
+
+      if (active[group].has(val)) {
+        active[group].delete(val);
+        btn.classList.remove('is-active');
+      } else {
+        active[group].add(val);
+        btn.classList.add('is-active');
+      }
+      applyFilters();
+    });
+  });
+
+  // Fixed filters on mobile
+  if (window.matchMedia('(max-width: 767px)').matches) {
+    const hdr    = document.querySelector<HTMLElement>('.header');
+    const filtros = document.querySelector<HTMLElement>('.pon-filtros');
+    if (hdr && filtros) {
+      const ph = document.createElement('div');
+      filtros.after(ph);
+
+      const originalTop  = filtros.getBoundingClientRect().top + window.scrollY;
+      const cachedHdrH   = hdr.offsetHeight;
+
+      const headerH = () => hdr.classList.contains('header--hidden') ? 0 : cachedHdrH;
+
+      const update = () => {
+        if (window.scrollY + headerH() >= originalTop) {
+          if (!filtros.classList.contains('is-fixed')) {
+            ph.style.height = filtros.offsetHeight + 'px';
+            filtros.classList.add('is-fixed');
+          }
+          filtros.style.top = headerH() + 'px';
+        } else {
+          filtros.classList.remove('is-fixed');
+          filtros.style.top = '';
+          ph.style.height = '0';
+        }
+      };
+
+      new MutationObserver(update).observe(hdr, { attributes: true, attributeFilter: ['class'] });
+      window.addEventListener('scroll', update, { passive: true });
+      update();
+    }
+  }
+
+  // Modal
+  document.querySelectorAll<HTMLButtonElement>('.pon-card-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const modal = document.getElementById(`modal-${btn.dataset.ponente}`) as HTMLDialogElement | null;
+      modal?.showModal();
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('.pon-modal-close').forEach(btn => {
+    btn.addEventListener('click', () => {
+      (btn.closest('dialog') as HTMLDialogElement | null)?.close();
+    });
+  });
+
+  document.querySelectorAll<HTMLDialogElement>('.pon-modal').forEach(modal => {
+    modal.addEventListener('click', e => {
+      if (e.target === modal) modal.close();
+    });
+  });
+</script>
+
+<style>
+  .pon-page {
+    padding-top: 4rem;
+    background:  #EDEDED;
+    min-height:  100vh;
+  }
+
+  .pon-header {
+    display:         flex;
+    justify-content: space-between;
+    align-items:     flex-start;
+    padding:         2.6rem 2.4rem 3.2rem;
+  }
+
+  .pon-headline {
+    font-size:      6.5rem;
+    font-weight:    600;
+    line-height:    1;
+    letter-spacing: -0.04em;
+    color:          var(--color-dark);
+    max-width:      60.65rem;
+  }
+
+  .pon-desc {
+    font-size:   0.8rem;
+    font-weight: 400;
+    line-height: 1.4;
+    color:       var(--color-dark);
+    width:       22.9rem;
+    flex-shrink: 0;
+    padding-top: 1rem;
+  }
+
+  .pon-section {
+    display:        flex;
+    flex-direction: column;
+    gap:            0;
+    padding:        3.2rem 2.4rem 0;
+  }
+
+  .pon-filtros {
+    display:       flex;
+    align-items:   center;
+    gap:           1.6rem;
+    flex-wrap:     wrap;
+    margin-bottom: 3.2rem;
+  }
+
+  .pon-filtro-group {
+    display:     flex;
+    align-items: center;
+    gap:         0.4rem;
+    flex-wrap:   wrap;
+  }
+
+  .pon-filtro-label {
+    font-size:   0.8rem;
+    font-weight: 400;
+    line-height: 1.4;
+    color:       var(--color-dark);
+    white-space: nowrap;
+  }
+
+  .pon-filtro-tags {
+    display:   flex;
+    gap:       4px;
+    flex-wrap: wrap;
+  }
+
+  .pon-ftag {
+    display:        inline-flex;
+    align-items:    center;
+    gap:            6px;
+    padding:        4px 8px;
+    border-radius:  3px;
+    border:         1px solid var(--eje-color, #989898);
+    background:     transparent;
+    font-family:    var(--font);
+    font-size:      12px;
+    font-weight:    400;
+    letter-spacing: 0.01em;
+    color:          var(--eje-color, #989898);
+    cursor:         pointer;
+    transition:     background 0.15s, color 0.15s;
+  }
+
+  .pon-ftag--dia { --eje-color: #989898; }
+
+  .pon-ftag-check {
+    display: none;
+    width:   14px;
+    height:  12px;
+  }
+
+  .pon-ftag.is-active {
+    background:   color-mix(in srgb, var(--eje-color) 15%, transparent);
+    border-color: transparent;
+    color:        var(--eje-color, #989898);
+  }
+
+  .pon-ftag.is-active .pon-ftag-check { display: block; }
+
+  .pon-label {
+    font-size:     1.5rem;
+    font-weight:   600;
+    line-height:   1.1;
+    color:         var(--color-dark);
+    margin-bottom: 2.4rem;
+    order:         1;
+  }
+
+  .pon-grid { order: 2; }
+
+  .pon-grid {
+    display:               grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap:                   3.25rem 0.8rem;
+  }
+
+  .pon-card {
+    display:        flex;
+    flex-direction: column;
+    border-radius:  var(--radius-card);
+    overflow:       hidden;
+  }
+
+  .pon-card-img-wrap {
+    width:        100%;
+    aspect-ratio: 444 / 231;
+    overflow:     hidden;
+  }
+
+  .pon-card-img {
+    width:         100%;
+    height:        100%;
+    object-fit:    cover;
+    display:       block;
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+  }
+
+  .pon-card-img-ph { background: #d1d5db; }
+
+  .pon-card-info {
+    display:        flex;
+    flex-direction: column;
+    padding:        1.4rem 1.6rem;
+    background:     #FFFFFF;
+    border-radius:  0 0 var(--radius-card) var(--radius-card);
+    flex:           1;
+  }
+
+  .pon-card-top {
+    display:        flex;
+    flex-direction: column;
+    gap:            1.2rem;
+    height:         100%;
+  }
+
+  .pon-card-text {
+    display:         flex;
+    justify-content: space-between;
+    align-items:     flex-start;
+    gap:             0.4rem;
+    flex:            1;
+  }
+
+  .pon-card-name-wrap {
+    display:        flex;
+    flex-direction: column;
+    gap:            0.8rem;
+    min-width:      0;
+  }
+
+  .pon-card-name {
+    font-size:   1.1rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color:       var(--color-dark);
+  }
+
+  .pon-card-cargo {
+    font-size:   0.8rem;
+    font-weight: 400;
+    line-height: 1.4;
+    color:       var(--color-dark);
+    opacity:     0.5;
+  }
+
+  .pon-card-tag {
+    display:        inline-flex;
+    align-items:    center;
+    flex-shrink:    0;
+    padding:        4px 8px;
+    border-radius:  3px;
+    font-size:      12px;
+    font-weight:    400;
+    letter-spacing: 0.01em;
+    color:          #FEFEFE;
+    white-space:    nowrap;
+  }
+
+  .pon-card-btn {
+    display:         inline-flex;
+    align-self:      flex-end;
+    align-items:     center;
+    justify-content: center;
+    padding:         0.7rem 1.1rem 0.8rem;
+    border:          1px solid var(--color-dark);
+    border-radius:   var(--radius-pill);
+    background:      transparent;
+    font-family:     var(--font);
+    font-size:       1rem;
+    font-weight:     500;
+    line-height:     1;
+    color:           var(--color-dark);
+    text-decoration: none;
+    transition:      opacity 0.15s;
+  }
+
+  .pon-card-btn:hover { opacity: 0.7; }
+
+  @media (max-width: 767px) {
+    .pon-page {
+      padding-top: 52px;
+    }
+
+    .pon-header {
+      flex-direction: column;
+      gap:            0;
+      padding:        32px 16px 96px;
+    }
+
+    .pon-headline {
+      font-size:      46px;
+      line-height:    1;
+      letter-spacing: -0.04em;
+      max-width:      100%;
+    }
+
+    .pon-desc { display: none; }
+
+    .pon-section {
+      padding: 0;
+    }
+
+    .pon-label {
+      font-size:     22px;
+      line-height:   1.1;
+      padding:       0 16px;
+      margin-bottom: 16px;
+    }
+
+    .pon-filtros {
+      flex-direction: column;
+      align-items:    flex-start;
+      gap:            8px;
+      padding:        16px;
+      margin-bottom:  16px;
+    }
+
+    .pon-filtros.is-fixed {
+      position:   fixed;
+      left:       0;
+      right:      0;
+      top:        52px;
+      z-index:    50;
+      background: #EDEDED;
+      transition: top 0.3s ease;
+    }
+
+    .pon-filtro-group {
+      flex-wrap:   nowrap;
+      align-items: flex-start;
+      gap:         8px;
+    }
+
+    .pon-filtro-tags {
+      flex-wrap: wrap;
+      flex:      1;
+    }
+
+    .pon-filtro-label { font-size: 13px; }
+
+    .pon-grid {
+      grid-template-columns: 1fr;
+      gap:                   16px;
+      padding:               0 16px;
+    }
+
+    .pon-card-img-wrap {
+      aspect-ratio: unset;
+      height:       186px;
+    }
+
+    .pon-card-img   { border-radius: 18px 18px 0 0; }
+    .pon-card-info  { padding: 24px; }
+    .pon-card-name  { font-size: 18px; }
+    .pon-card-cargo { font-size: 13px; }
+
+    .pon-card-btn {
+      font-size: 16px;
+      padding:   14px 22px;
+    }
+  }
+
+  /* ── Modal ── */
+  .pon-modal {
+    box-sizing:    border-box;
+    border:        none;
+    border-radius: 30px;
+    padding:       1.6rem;
+    background:    var(--color-white);
+    box-shadow:    0 32px 80px rgba(0, 0, 0, 0.22);
+    width:         min(1225px, 92vw);
+    max-height:    90vh;
+    overflow-y:    auto;
+    overflow-x:    hidden;
+    margin:        auto;
+  }
+
+  dialog.pon-modal[open] {
+    display:        flex;
+    flex-direction: row;
+    align-items:    stretch;
+    gap:            2.4rem;
+  }
+
+  .pon-modal::backdrop { background: rgba(0, 0, 0, 0.5); }
+
+  .pon-modal-close {
+    position:    absolute;
+    top:         20px;
+    right:       20px;
+    background:  transparent;
+    border:      none;
+    font-size:   1.2rem;
+    line-height: 1;
+    cursor:      pointer;
+    color:       var(--color-dark);
+    padding:     4px;
+    z-index:     1;
+  }
+
+  .pon-modal-img {
+    width:         430px;
+    height:        597px;
+    object-fit:    cover;
+    border-radius: 15px;
+    flex-shrink:   0;
+    display:       block;
+    align-self:    flex-end;
+  }
+
+  .pon-modal-content {
+    flex:            1;
+    display:         flex;
+    flex-direction:  column;
+    justify-content: space-between;
+    min-width:       0;
+  }
+
+  .pon-modal-top {
+    display:        flex;
+    flex-direction: column;
+    gap:            3.2rem;
+  }
+
+  .pon-modal-header {
+    display:        flex;
+    flex-direction: column;
+    gap:            1.6rem;
+  }
+
+  .pon-modal-tag { align-self: flex-start; }
+
+  .pon-modal-name-wrap {
+    display:        flex;
+    flex-direction: column;
+    gap:            0.9rem;
+  }
+
+  .pon-modal-name {
+    font-size:   1.5rem;
+    font-weight: 600;
+    line-height: 1.1em;
+    color:       var(--color-dark);
+  }
+
+  .pon-modal-cargo {
+    font-size:   0.7rem;
+    font-weight: 400;
+    line-height: 1.4em;
+    color:       rgba(38, 38, 36, 0.5);
+  }
+
+  .pon-modal-desc {
+    font-size:   0.7rem;
+    font-weight: 400;
+    line-height: 1.4em;
+    color:       var(--color-dark);
+  }
+
+  .pon-modal-btns {
+    display:         flex;
+    flex-direction:  row;
+    gap:             0.4rem;
+    justify-content: flex-end;
+    flex-wrap:       wrap;
+  }
+
+  .pon-modal-sec-btn {
+    display:         inline-flex;
+    justify-content: center;
+    align-items:     center;
+    padding:         0.7rem 1.1rem 0.8rem;
+    border:          1px solid var(--color-dark);
+    border-radius:   100px;
+    background:      transparent;
+    font-family:     inherit;
+    font-size:       1rem;
+    font-weight:     500;
+    line-height:     1;
+    color:           var(--color-dark);
+    white-space:     nowrap;
+    cursor:          pointer;
+    text-decoration: none;
+  }
+
+  .pon-modal-primary-btn {
+    display:         inline-flex;
+    justify-content: center;
+    align-items:     center;
+    padding:         0.7rem 1.1rem 0.8rem;
+    border:          none;
+    border-radius:   100px;
+    background:      var(--color-primary);
+    font-family:     inherit;
+    font-size:       1rem;
+    font-weight:     500;
+    line-height:     1;
+    color:           var(--color-white);
+    white-space:     nowrap;
+    cursor:          pointer;
+    text-decoration: none;
+  }
+
+  @media (max-width: 767px) {
+    .pon-modal {
+      position:   fixed;
+      left:       50%;
+      top:        50%;
+      transform:  translate(-50%, -50%);
+      margin:     0;
+      width:      calc(100vw - 32px);
+      max-width:  358px;
+      max-height: 88vh;
+      padding:    60px 24px 24px;
+    }
+
+    .pon-modal-close {
+      top:       18px;
+      right:     18px;
+      font-size: 20px;
+      padding:   8px;
+    }
+
+    dialog.pon-modal[open] {
+      flex-direction: column;
+      align-items:    stretch;
+      gap:            24px;
+    }
+
+    .pon-modal-img {
+      width:      100%;
+      height:     280px;
+      align-self: auto;
+    }
+
+    .pon-modal-top    { gap: 24px; }
+    .pon-modal-header { gap: 16px; }
+    .pon-modal-name-wrap { gap: 8px; }
+
+    .pon-modal-name  { font-size: 20px; }
+    .pon-modal-cargo { font-size: 13px; }
+    .pon-modal-desc  { font-size: 13px; }
+
+    .pon-modal-btns {
+      flex-direction: column;
+      align-items:    stretch;
+      gap:            8px;
+      margin-top:     32px;
+    }
+
+    .pon-modal-btns .pon-modal-sec-btn,
+    .pon-modal-btns .pon-modal-primary-btn {
+      width:      100%;
+      box-sizing: border-box;
+      font-size:  16px;
+      padding:    14px 22px;
+      text-align: center;
+    }
+  }
+</style>
