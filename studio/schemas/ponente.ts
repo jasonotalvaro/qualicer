@@ -29,6 +29,11 @@ export default {
       validation: (R: any) => R.required(),
     },
     {
+      name:  'empresa',
+      title: 'Empresa',
+      type:  'string',
+    },
+    {
       name:  'cargo',
       title: 'Cargo',
       type:  'object',

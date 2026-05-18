@@ -31,6 +31,7 @@ export default {
         list: [
           { title: 'Miércoles 10 Junio', value: 'miercoles' },
           { title: 'Jueves 11 Junio',    value: 'jueves'    },
+          { title: 'Viernes 12 Junio',   value: 'viernes'   },
         ],
         layout: 'radio',
       },
@@ -60,21 +61,19 @@ export default {
       options: { list: EJES },
     },
     {
-      name:  'participantes',
-      title: 'Participantes',
-      type:  'array',
-      of: [
-        {
-          type:   'object',
-          fields: [
-            { name: 'nombre',  title: 'Nombre',  type: 'string' },
-            { name: 'empresa', title: 'Empresa', type: 'string' },
-          ],
-          preview: {
-            select: { title: 'nombre', subtitle: 'empresa' },
-          },
-        },
+      name:  'descripcion',
+      title: 'Descripción de la ponencia',
+      type:  'object',
+      fields: [
+        { name: 'es', title: 'Español', type: 'text', rows: 4 },
+        { name: 'en', title: 'English', type: 'text', rows: 4 },
       ],
+    },
+    {
+      name:  'ponentes',
+      title: 'Ponentes',
+      type:  'array',
+      of: [{ type: 'reference', to: [{ type: 'ponente' }] }],
     },
   ],
   preview: {

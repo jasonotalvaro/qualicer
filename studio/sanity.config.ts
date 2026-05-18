@@ -5,8 +5,8 @@ import { schemaTypes } from './schemas';
 export default defineConfig({
   name:    'qualicer',
   title:   'Qualicer CMS',
-  projectId: process.env.SANITY_STUDIO_PROJECT_ID!,
-  dataset:   process.env.SANITY_STUDIO_DATASET ?? 'production',
+  projectId: 'ok6yzqoe',
+  dataset:   'production',
   plugins: [structureTool()],
   schema:  { types: schemaTypes },
 });
