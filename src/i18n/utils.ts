@@ -105,7 +105,7 @@ const ui = {
     /* footer */
     'footer.organiza':    'Organiza:',
     'footer.visit':       'Visítanos',
-    'footer.address':     'Cámara Oficial de Comercio, Industria, Navegación y Servicios de Castellón\n\nAvenida del Mar, 46\n12003 Castellón, España',
+    'footer.address':     'Auditorio y Palacio de Congresos\n\nAv. de la Mare de Déu del Lledó, 50,\n12004 Castelló de la Plana, Castellón, España',
     'footer.follow':      'Síguenos',
     'footer.contact':     'Contacta',
     'footer.email':       'qualicer@qualicer.org',
@@ -220,7 +220,7 @@ const ui = {
     /* footer */
     'footer.organiza':    'Organises:',
     'footer.visit':       'Visit us',
-    'footer.address':     'Cámara Oficial de Comercio, Industria, Navegación y Servicios de Castellón\n\nAvenida del Mar, 46\n12003 Castellón, Spain',
+    'footer.address':     'Auditorium and Congress Centre\n\nAv. de la Mare de Déu del Lledó, 50,\n12004 Castelló de la Plana, Castellón, Spain',
     'footer.follow':      'Follow us',
     'footer.contact':     'Contact',
     'footer.email':       'qualicer@qualicer.org',
