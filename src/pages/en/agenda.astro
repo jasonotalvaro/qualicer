@@ -1,0 +1,580 @@
+---
+import Layout      from '../../layouts/Layout.astro';
+import Header      from '../../components/Header.astro';
+import CTAEntradas from '../../components/CTAEntradas.astro';
+import Footer      from '../../components/Footer.astro';
+import { client, urlFor } from '../../lib/sanity';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t    = useTranslations(lang);
+
+interface PonRef {
+  _id:          string;
+  nombre:       string;
+  apellido:     string;
+  empresa?:     string;
+  cargo?:       { es?: string; en?: string };
+  imagenVertical?: any;
+}
+
+interface Sesion {
+  _id:         string;
+  dia:         'miercoles' | 'jueves' | 'viernes';
+  hora:        string;
+  titulo:      { es?: string; en?: string };
+  eje?:        'construccion' | 'sostenibilidad' | 'estrategia';
+  descripcion?: { es?: string; en?: string };
+  ponentes?:   PonRef[];
+}
+
+const raw: Sesion[] = await client.fetch(`
+  *[_type == "agenda"] {
+    _id, dia, hora, titulo, eje, descripcion,
+    ponentes[]-> { _id, nombre, apellido, empresa, cargo, imagenVertical }
+  }
+`);
+
+const DIA_ORDER: Record<string, number> = { miercoles: 0, jueves: 1, viernes: 2 };
+const sesiones = [...raw].sort((a, b) => {
+  const d = (DIA_ORDER[a.dia] ?? 9) - (DIA_ORDER[b.dia] ?? 9);
+  return d !== 0 ? d : a.hora.localeCompare(b.hora);
+});
+
+const DIAS = ['miercoles', 'jueves', 'viernes'] as const;
+
+const ejeColor: Record<string, string> = {
+  construccion:   '#E9002B',
+  sostenibilidad: '#48B9A7',
+  estrategia:     '#36A3DF',
+};
+
+const diaHeader: Record<string, string> = {
+  miercoles: 'Wednesday, 10 June',
+  jueves:    'Thursday, 11 June',
+  viernes:   'Friday, 12 June',
+};
+
+function tituloText(s: Sesion) {
+  return s.titulo?.en ?? s.titulo?.es ?? '';
+}
+function descText(s: Sesion) {
+  return s.descripcion?.en ?? s.descripcion?.es ?? '';
+}
+function cargoText(p: PonRef) {
+  return p.cargo?.en ?? p.cargo?.es ?? '';
+}
+function imgCircle(p: PonRef) {
+  if (p.imagenVertical) return urlFor(p.imagenVertical).width(96).height(96).fit('crop').url();
+  return '';
+}
+---
+
+<Layout
+  lang={lang}
+  title={`Agenda — Qualicer`}
+  description="Two days, five dimensions. Full programme of the Qualicer 2026 congress."
+>
+  <Header activePage="agenda" />
+
+  <main class="ag-page">
+
+    <!-- Hero -->
+    <div class="ag-hero">
+      <h1 class="ag-headline">Two days, five dimensions</h1>
+    </div>
+
+    <!-- Filters -->
+    <div class="ag-filtros" id="ag-filtros">
+      <div class="ag-filtro-group">
+        <span class="ag-filtro-label">{t('ponentes.filtro.eje' as any)}</span>
+        <div class="ag-filtro-tags">
+          {(['construccion','sostenibilidad','estrategia'] as const).map(eje => (
+            <button
+              class="ag-ftag"
+              data-filter="eje"
+              data-value={eje}
+              style={`--eje-color:${ejeColor[eje]}`}
+            >
+              <svg class="ag-ftag-check" width="14" height="12" viewBox="0 0 14 12" fill="none" aria-hidden="true">
+                <path d="M1 6L5 10L13 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              {t(`eje.${eje}` as any)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div class="ag-filtro-group">
+        <span class="ag-filtro-label">{t('ponentes.filtro.dia' as any)}</span>
+        <div class="ag-filtro-tags">
+          {DIAS.map(dia => (
+            <button
+              class="ag-ftag ag-ftag--dia"
+              data-filter="dia"
+              data-value={dia}
+            >
+              <svg class="ag-ftag-check" width="14" height="12" viewBox="0 0 14 12" fill="none" aria-hidden="true">
+                <path d="M1 6L5 10L13 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              {t(`agenda.dia.${dia}` as any)}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Sessions grouped by day -->
+    <div class="ag-content" id="ag-content">
+      {DIAS.map(dia => {
+        const grupo = sesiones.filter(s => s.dia === dia);
+        if (grupo.length === 0) return null;
+        return (
+          <section class="ag-dia-section" data-dia={dia}>
+            <h2 class="ag-dia-header">{diaHeader[dia]}</h2>
+            <div class="ag-lista">
+              {grupo.map(s => (
+                <article
+                  class="ag-card"
+                  data-sesion={s._id}
+                  data-eje={s.eje ?? ''}
+                  data-dia={s.dia}
+                >
+                  <div class="ag-meta">
+                    <span class="ag-hora">{s.hora}</span>
+                    {s.eje && (
+                      <span class="ag-tag ag-tag--mob" style={`background:${ejeColor[s.eje]}`}>
+                        {t(`eje.${s.eje}` as any)}
+                      </span>
+                    )}
+                  </div>
+
+                  <div class="ag-body">
+                    <div class="ag-titulo-wrap">
+                      <p class="ag-titulo">{tituloText(s)}</p>
+                      {s.eje && (
+                        <span class="ag-tag ag-tag--desk" style={`background:${ejeColor[s.eje]}`}>
+                          {t(`eje.${s.eje}` as any)}
+                        </span>
+                      )}
+                    </div>
+                    {s.ponentes && s.ponentes.length > 0 && (
+                      <div class="ag-ponentes">
+                        {s.ponentes.map(p => (
+                          <div class="ag-ponente-row">
+                            <span class="ag-pon-name">{p.nombre} {p.apellido}</span>
+                            {(p.empresa || cargoText(p)) && (
+                              <span class="ag-pon-company">
+                                {[cargoText(p), p.empresa].filter(Boolean).join(' · ')}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        );
+      })}
+    </div>
+
+  </main>
+
+  {sesiones.map(s => (
+    <dialog class="ag-modal" id={`ag-modal-${s._id}`}>
+      <button class="ag-modal-close" aria-label="Close">&#x2715;</button>
+      <div class="ag-modal-inner">
+        <div class="ag-modal-top">
+          <div class="ag-modal-meta">
+            <span class="ag-hora ag-modal-hora">{s.hora}</span>
+            {s.eje && (
+              <span class="ag-tag" style={`background:${ejeColor[s.eje ?? '']}`}>
+                {t(`eje.${s.eje}` as any)}
+              </span>
+            )}
+          </div>
+          <p class="ag-modal-titulo">{tituloText(s)}</p>
+          {descText(s) && <p class="ag-modal-desc">{descText(s)}</p>}
+        </div>
+
+        {s.ponentes && s.ponentes.length > 0 && (
+          <div class="ag-modal-ponentes">
+            {s.ponentes.map(p => {
+              const img = imgCircle(p);
+              return (
+                <div class="ag-modal-ponente">
+                  {img
+                    ? <img class="ag-modal-pon-img" src={img} alt={`${p.nombre} ${p.apellido}`} loading="lazy" />
+                    : <div class="ag-modal-pon-img ag-modal-pon-img-ph"></div>
+                  }
+                  <div class="ag-modal-pon-info">
+                    <p class="ag-modal-pon-name">{p.nombre} {p.apellido}</p>
+                    {(p.empresa || cargoText(p)) && (
+                      <p class="ag-modal-pon-cargo">
+                        {[cargoText(p), p.empresa].filter(Boolean).join(' · ')}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </dialog>
+  ))}
+
+  <CTAEntradas />
+  <Footer />
+</Layout>
+
+<script>
+  const active: Record<string, Set<string>> = { eje: new Set(), dia: new Set() };
+
+  function applyFilters() {
+    document.querySelectorAll<HTMLElement>('.ag-card').forEach(card => {
+      const ejeOk = active.eje.size === 0 || active.eje.has(card.dataset.eje ?? '');
+      const diaOk = active.dia.size === 0 || active.dia.has(card.dataset.dia ?? '');
+      card.style.display = ejeOk && diaOk ? '' : 'none';
+    });
+    document.querySelectorAll<HTMLElement>('.ag-dia-section').forEach(section => {
+      const hasVisible = Array.from(section.querySelectorAll<HTMLElement>('.ag-card'))
+        .some(c => c.style.display !== 'none');
+      section.style.display = hasVisible ? '' : 'none';
+    });
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.ag-ftag').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const group = btn.dataset.filter as 'eje' | 'dia';
+      const val   = btn.dataset.value ?? '';
+      if (active[group].has(val)) {
+        active[group].delete(val);
+        btn.classList.remove('is-active');
+      } else {
+        active[group].add(val);
+        btn.classList.add('is-active');
+      }
+      applyFilters();
+    });
+  });
+
+  if (window.matchMedia('(max-width: 767px)').matches) {
+    const hdr    = document.querySelector<HTMLElement>('.header');
+    const filtros = document.getElementById('ag-filtros');
+    if (hdr && filtros) {
+      const ph = document.createElement('div');
+      filtros.after(ph);
+      const originalTop = filtros.getBoundingClientRect().top + window.scrollY;
+      const cachedHdrH  = hdr.offsetHeight;
+      const headerH = () => hdr.classList.contains('header--hidden') ? 0 : cachedHdrH;
+      const update = () => {
+        if (window.scrollY + headerH() >= originalTop) {
+          if (!filtros.classList.contains('is-fixed')) {
+            ph.style.height = filtros.offsetHeight + 'px';
+            filtros.classList.add('is-fixed');
+          }
+          filtros.style.top = headerH() + 'px';
+        } else {
+          filtros.classList.remove('is-fixed');
+          filtros.style.top = '';
+          ph.style.height   = '0';
+        }
+      };
+      new MutationObserver(update).observe(hdr, { attributes: true, attributeFilter: ['class'] });
+      window.addEventListener('scroll', update, { passive: true });
+      update();
+    }
+  }
+
+  document.querySelectorAll<HTMLElement>('.ag-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const modal = document.getElementById(`ag-modal-${card.dataset.sesion}`) as HTMLDialogElement | null;
+      modal?.showModal();
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('.ag-modal-close').forEach(btn => {
+    btn.addEventListener('click', () => {
+      (btn.closest('dialog') as HTMLDialogElement | null)?.close();
+    });
+  });
+
+  document.querySelectorAll<HTMLDialogElement>('.ag-modal').forEach(modal => {
+    modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
+  });
+</script>
+
+<style>
+  .ag-page {
+    padding-top: 4rem;
+    background:  #EDEDED;
+    min-height:  100vh;
+  }
+
+  .ag-hero { padding: 6.4rem 2.4rem 3.2rem; }
+
+  .ag-headline {
+    font-size:      6.5rem;
+    font-weight:    600;
+    line-height:    1;
+    letter-spacing: -0.04em;
+    color:          var(--color-dark);
+  }
+
+  .ag-filtros {
+    display:       flex;
+    align-items:   center;
+    gap:           1.6rem;
+    flex-wrap:     wrap;
+    padding:       0 2.4rem;
+    margin-bottom: 3.2rem;
+  }
+
+  .ag-filtro-group { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+
+  .ag-filtro-label {
+    font-size:   0.8rem;
+    font-weight: 400;
+    line-height: 1.4;
+    color:       var(--color-dark);
+    white-space: nowrap;
+  }
+
+  .ag-filtro-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+
+  .ag-ftag {
+    display:        inline-flex;
+    align-items:    center;
+    gap:            6px;
+    padding:        4px 8px;
+    border-radius:  3px;
+    border:         1px solid var(--eje-color, #989898);
+    background:     transparent;
+    font-family:    var(--font);
+    font-size:      12px;
+    font-weight:    400;
+    letter-spacing: 0.01em;
+    color:          var(--eje-color, #989898);
+    cursor:         pointer;
+    transition:     background 0.15s, color 0.15s;
+  }
+
+  .ag-ftag--dia { --eje-color: #989898; }
+  .ag-ftag-check { display: none; width: 14px; height: 12px; }
+
+  .ag-ftag.is-active {
+    background:   color-mix(in srgb, var(--eje-color) 15%, transparent);
+    border-color: transparent;
+    color:        var(--eje-color, #989898);
+  }
+
+  .ag-ftag.is-active .ag-ftag-check { display: block; }
+
+  .ag-content { padding: 0 2.4rem 6.4rem; }
+
+  .ag-dia-section { margin-bottom: 6.4rem; }
+  .ag-dia-section:last-child { margin-bottom: 0; }
+
+  .ag-dia-header {
+    font-size:      2.4rem;
+    font-weight:    600;
+    line-height:    1.1;
+    letter-spacing: -0.02em;
+    color:          var(--color-dark);
+    margin-bottom:  2.4rem;
+  }
+
+  .ag-lista { display: flex; flex-direction: column; gap: 0.8rem; }
+
+  .ag-card {
+    display:        flex;
+    flex-direction: row;
+    align-items:    flex-end;
+    gap:            4.8rem;
+    padding:        1.9rem 1.6rem;
+    border-radius:  1.5rem;
+    background:     #FEFEFE;
+    cursor:         pointer;
+    transition:     opacity 0.15s;
+  }
+
+  .ag-card:hover { opacity: 0.85; }
+
+  .ag-meta { display: flex; flex-shrink: 0; align-self: flex-end; }
+
+  .ag-hora {
+    font-size:   1.5rem;
+    font-weight: 400;
+    line-height: 1.1;
+    color:       var(--color-dark);
+    white-space: nowrap;
+  }
+
+  .ag-tag {
+    display:        inline-flex;
+    align-items:    center;
+    padding:        4px 8px;
+    border-radius:  3px;
+    font-size:      12px;
+    font-weight:    400;
+    letter-spacing: 0.01em;
+    color:          #FEFEFE;
+    white-space:    nowrap;
+    align-self:     flex-start;
+  }
+
+  .ag-tag--mob  { display: none; }
+  .ag-tag--desk { display: inline-flex; }
+
+  .ag-body {
+    display:        flex;
+    flex-direction: row;
+    align-items:    flex-end;
+    gap:            4.8rem;
+    flex:           1;
+  }
+
+  .ag-titulo-wrap {
+    display:        flex;
+    flex-direction: column;
+    gap:            2.1rem;
+    max-width:      33.2rem;
+    flex-shrink:    0;
+  }
+
+  .ag-titulo {
+    font-size:   1.5rem;
+    font-weight: 600;
+    line-height: 1.1;
+    color:       var(--color-dark);
+  }
+
+  .ag-ponentes { display: flex; flex-direction: column; gap: 0.8rem; flex: 1; max-width: 36.3rem; }
+
+  .ag-ponente-row { display: flex; flex-direction: column; gap: 2px; }
+
+  .ag-pon-name    { font-size: 0.8rem; font-weight: 600; line-height: 1.4; color: var(--color-dark); }
+  .ag-pon-company { font-size: 0.8rem; font-weight: 400; line-height: 1.4; color: var(--color-dark); opacity: 0.6; }
+
+  @media (max-width: 767px) {
+    .ag-page { padding-top: 52px; }
+    .ag-hero { padding: 32px 16px 64px; }
+    .ag-headline { font-size: 46px; letter-spacing: -0.04em; }
+
+    .ag-filtros {
+      flex-direction: column;
+      align-items:    flex-start;
+      gap:            8px;
+      padding:        16px;
+      margin-bottom:  16px;
+    }
+
+    .ag-filtros.is-fixed {
+      position:   fixed;
+      left:       0;
+      right:      0;
+      top:        52px;
+      z-index:    50;
+      background: #EDEDED;
+      transition: top 0.3s ease;
+    }
+
+    .ag-filtro-group { flex-wrap: nowrap; align-items: flex-start; gap: 8px; }
+    .ag-filtro-tags  { flex-wrap: wrap; flex: 1; }
+    .ag-filtro-label { font-size: 13px; }
+
+    .ag-content { padding: 0 16px 64px; }
+    .ag-dia-section { margin-bottom: 48px; }
+    .ag-dia-header { font-size: 28px; margin-bottom: 16px; }
+    .ag-lista { gap: 16px; }
+
+    .ag-card {
+      flex-direction: column;
+      align-items:    stretch;
+      gap:            32px;
+      padding:        24px;
+      border-radius:  30px;
+    }
+
+    .ag-meta { flex-direction: row; justify-content: space-between; align-items: flex-end; align-self: auto; }
+
+    .ag-tag--mob  { display: inline-flex; }
+    .ag-tag--desk { display: none; }
+    .ag-hora { font-size: 24px; }
+
+    .ag-body { flex-direction: column; align-items: stretch; gap: 42px; }
+    .ag-titulo-wrap { max-width: 100%; gap: 0; }
+    .ag-titulo { font-size: 22px; }
+    .ag-ponentes { max-width: 100%; gap: 16px; }
+    .ag-pon-name    { font-size: 13px; }
+    .ag-pon-company { font-size: 13px; }
+  }
+
+  .ag-modal {
+    box-sizing:    border-box;
+    border:        none;
+    border-radius: 30px;
+    padding:       2rem;
+    background:    var(--color-white);
+    box-shadow:    0 32px 80px rgba(0, 0, 0, 0.22);
+    width:         min(860px, 92vw);
+    max-height:    90vh;
+    overflow-y:    auto;
+    margin:        auto;
+  }
+
+  dialog.ag-modal[open] { display: flex; flex-direction: column; }
+  .ag-modal::backdrop { background: rgba(0, 0, 0, 0.5); }
+
+  .ag-modal-close {
+    position: absolute; top: 20px; right: 20px;
+    background: transparent; border: none; font-size: 1.2rem;
+    line-height: 1; cursor: pointer; color: var(--color-dark); padding: 4px; z-index: 1;
+  }
+
+  .ag-modal-inner { display: flex; flex-direction: column; gap: 2rem; }
+  .ag-modal-top   { display: flex; flex-direction: column; gap: 1.2rem; }
+  .ag-modal-meta  { display: flex; align-items: center; gap: 0.8rem; }
+
+  .ag-modal-hora  { font-size: 1rem; font-weight: 400; color: var(--color-dark); opacity: 0.6; }
+
+  .ag-modal-titulo { font-size: 1.5rem; font-weight: 600; line-height: 1.1; color: var(--color-dark); }
+  .ag-modal-desc   { font-size: 0.8rem; font-weight: 400; line-height: 1.5; color: var(--color-dark); }
+
+  .ag-modal-ponentes {
+    display: flex; flex-direction: column; gap: 0.8rem;
+    border-top: 1px solid rgba(38, 38, 36, 0.15); padding-top: 1.6rem;
+  }
+
+  .ag-modal-ponente { display: flex; align-items: center; gap: 0.8rem; }
+
+  .ag-modal-pon-img {
+    width: 2.4rem; height: 2.4rem; border-radius: 50%;
+    object-fit: cover; flex-shrink: 0; display: block;
+  }
+  .ag-modal-pon-img-ph { background: #d1d5db; }
+
+  .ag-modal-pon-info  { display: flex; flex-direction: column; gap: 2px; }
+  .ag-modal-pon-name  { font-size: 0.85rem; font-weight: 600; line-height: 1.3; color: var(--color-dark); }
+  .ag-modal-pon-cargo { font-size: 0.7rem; font-weight: 400; line-height: 1.4; color: var(--color-dark); opacity: 0.6; }
+
+  @media (max-width: 767px) {
+    .ag-modal {
+      position: fixed; left: 50%; top: 50%;
+      transform: translate(-50%, -50%); margin: 0;
+      width: calc(100vw - 32px); max-width: 358px;
+      max-height: 88vh; padding: 56px 24px 24px;
+    }
+
+    .ag-modal-close  { top: 18px; right: 18px; font-size: 20px; padding: 8px; }
+    .ag-modal-titulo { font-size: 20px; }
+    .ag-modal-desc   { font-size: 13px; }
+    .ag-modal-pon-img  { width: 40px; height: 40px; }
+    .ag-modal-pon-name { font-size: 14px; }
+    .ag-modal-pon-cargo { font-size: 12px; }
+  }
+</style>
