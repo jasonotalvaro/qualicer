@@ -232,9 +232,11 @@ function imgCircle(p: PonRef) {
     if (hdr && filtros) {
       const ph = document.createElement('div');
       filtros.after(ph);
-      const originalTop = filtros.getBoundingClientRect().top + window.scrollY;
-      const cachedHdrH  = hdr.offsetHeight;
+
+      let originalTop = 0;
+      const cachedHdrH = hdr.offsetHeight;
       const headerH = () => hdr.classList.contains('header--hidden') ? 0 : cachedHdrH;
+
       const update = () => {
         if (window.scrollY + headerH() >= originalTop) {
           if (!filtros.classList.contains('is-fixed')) {
@@ -248,9 +250,14 @@ function imgCircle(p: PonRef) {
           ph.style.height   = '0';
         }
       };
+
+      document.fonts.ready.then(() => {
+        originalTop = filtros.getBoundingClientRect().top + window.scrollY;
+        update();
+      });
+
       new MutationObserver(update).observe(hdr, { attributes: true, attributeFilter: ['class'] });
       window.addEventListener('scroll', update, { passive: true });
-      update();
     }
   }
 </script>
@@ -278,6 +285,8 @@ function imgCircle(p: PonRef) {
 
   /* ── Filtros ── */
   .ag-filtros-outer {
+    grid-column:   2;
+    grid-row:      1;
     margin-bottom: 3.2rem;
   }
 
@@ -345,10 +354,10 @@ function imgCircle(p: PonRef) {
 
   /* ── Sección de día ── */
   .ag-dia-section {
-    display:        flex;
-    flex-direction: row;
-    gap:            2.4rem;
-    margin-bottom:  6.4rem;
+    display:               grid;
+    grid-template-columns: 28.25rem 1fr;
+    column-gap:            2.4rem;
+    margin-bottom:         6.4rem;
   }
 
   .ag-dia-section:last-child { margin-bottom: 0; }
@@ -359,24 +368,25 @@ function imgCircle(p: PonRef) {
     line-height:    1.1;
     letter-spacing: -0.02em;
     color:          var(--color-dark);
-    width:          28.25rem;
-    flex-shrink:    0;
-    align-self:     flex-start;
+    grid-column:    1;
+    grid-row:       2;
+    align-self:     start;
     position:       sticky;
     top:            4rem;
   }
 
+  /* display:contents hace que ag-filtros-outer y ag-lista participen
+     directamente en el grid de ag-dia-section */
   .ag-lista-col {
-    display:        flex;
-    flex-direction: column;
-    flex:           1;
-    min-width:      0;
+    display: contents;
   }
 
   .ag-lista {
     display:        flex;
     flex-direction: column;
     gap:            0.8rem;
+    grid-column:    2;
+    grid-row:       2;
   }
 
   /* ── Card ── */
@@ -499,7 +509,7 @@ function imgCircle(p: PonRef) {
       letter-spacing: -0.04em;
     }
 
-    .ag-filtros-outer { margin-bottom: 16px; }
+    .ag-filtros-outer { grid-column: unset; grid-row: unset; margin-bottom: 16px; }
 
     .ag-filtros {
       flex-direction: column;
@@ -531,18 +541,20 @@ function imgCircle(p: PonRef) {
 
     .ag-content { padding: 0 16px 64px; }
 
-    .ag-dia-section { flex-direction: column; gap: 0; margin-bottom: 48px; }
+    .ag-dia-section { display: flex; flex-direction: column; gap: 0; margin-bottom: 48px; }
 
     .ag-dia-header {
-      font-size:     28px;
-      width:         auto;
-      position:      static;
-      align-self:    auto;
-      flex-shrink:   unset;
-      margin-bottom: 32px;
+      font-size:      21px;
+      grid-column:    unset;
+      grid-row:       unset;
+      position:       static;
+      align-self:     auto;
+      margin-bottom:  32px;
     }
 
-    .ag-lista { gap: 16px; }
+    .ag-lista-col { display: flex; flex-direction: column; }
+
+    .ag-lista { grid-column: unset; grid-row: unset; gap: 16px; }
 
     /* Card mobile: columna */
     .ag-card {
