@@ -72,26 +72,25 @@ function slugPonente(p: Ponente) {
     .toLowerCase().replace(/\s+/g, '-');
 }
 
-const entradasHref = '/en/entradas/';
+const entradasHref = 'https://tickets.qualicer2026.com';
 const agendaHref   = '/en/agenda';
 
-const inspCards = [
+const INSP_DESIGNS = [
   {
-    gradient:  'linear-gradient(180deg, rgba(242,137,167,1) 0%, rgba(242,137,167,0) 100%)',
-    text:      '"Every perspective adds a dimension. Together, the volume."',
-    threshold: 2,
+    gradient: 'linear-gradient(180deg, rgba(242,137,167,1) 0%, rgba(242,137,167,0) 100%)',
+    text:     '"Every perspective adds a dimension. Together, the volume."',
   },
   {
-    gradient:  'linear-gradient(180deg, rgba(54,163,223,1) 0%, rgba(54,163,223,0) 100%)',
-    text:      '"Ceramics cannot be understood in parts. It must be understood as a whole."',
-    threshold: 3,
+    gradient: 'linear-gradient(180deg, rgba(54,163,223,1) 0%, rgba(54,163,223,0) 100%)',
+    text:     '"Ceramics cannot be understood in parts. It must be understood as a whole."',
   },
   {
-    gradient:  'linear-gradient(180deg, rgba(111,197,183,1) 0%, rgba(111,197,183,0) 100%)',
-    text:      '"Every perspective adds a dimension. Together, the volume."',
-    threshold: 4,
+    gradient: 'linear-gradient(180deg, rgba(111,197,183,1) 0%, rgba(111,197,183,0) 100%)',
+    text:     '"Every perspective adds a dimension. Together, the volume."',
   },
 ] as const;
+
+const numInsps = Math.ceil(ponentes.length / 9) * 3;
 ---
 
 <Layout
@@ -156,53 +155,53 @@ const inspCards = [
       </div>
 
       <div class="pon-grid" id="pon-grid">
-          {ponentes.map((p, i) => {
+          {ponentes.map((p) => {
             const dias = [...(diasPorPonente.get(p._id) ?? [])].join(',');
             const img  = imgUrl(p);
-            const inspAfter = inspCards.find((_, ci) => i === [1, 2, 3][ci]);
             return (
-              <>
-                <div
-                  class="pon-card"
-                  data-eje={p.eje}
-                  data-dias={dias}
-                >
-                  <div class="pon-card-img-wrap">
-                    {img
-                      ? <img class="pon-card-img" src={img} alt={`${p.nombre} ${p.apellido}`} loading="lazy" />
-                      : <div class="pon-card-img pon-card-img-ph"></div>
-                    }
-                  </div>
-                  <div class="pon-card-info">
-                    <div class="pon-card-top">
-                      <div class="pon-card-text">
-                        <div class="pon-card-name-wrap">
-                          <p class="pon-card-name">{p.nombre} {p.apellido}</p>
-                          {cargoText(p) && (
-                            <p class="pon-card-cargo">{cargoText(p)}</p>
-                          )}
-                        </div>
-                        <span class="pon-card-tag" style={`background:${ejeColor[p.eje] ?? '#888'}`}>
-                          {t(`eje.${p.eje}` as any)}
-                        </span>
+              <div
+                class="pon-card"
+                data-eje={p.eje}
+                data-dias={dias}
+              >
+                <div class="pon-card-img-wrap">
+                  {img
+                    ? <img class="pon-card-img" src={img} alt={`${p.nombre} ${p.apellido}`} loading="lazy" />
+                    : <div class="pon-card-img pon-card-img-ph"></div>
+                  }
+                </div>
+                <div class="pon-card-info">
+                  <div class="pon-card-top">
+                    <div class="pon-card-text">
+                      <div class="pon-card-name-wrap">
+                        <p class="pon-card-name">{p.nombre} {p.apellido}</p>
+                        {cargoText(p) && (
+                          <p class="pon-card-cargo">{cargoText(p)}</p>
+                        )}
                       </div>
-                      <button class="pon-card-btn" data-ponente={p._id} aria-haspopup="dialog">
-                        {t('ponentes.explorar' as any)}
-                      </button>
+                      <span class="pon-card-tag" style={`background:${ejeColor[p.eje] ?? '#888'}`}>
+                        {t(`eje.${p.eje}` as any)}
+                      </span>
                     </div>
+                    <button class="pon-card-btn" data-ponente={p._id} aria-haspopup="dialog">
+                      {t('ponentes.explorar' as any)}
+                    </button>
                   </div>
                 </div>
-                {inspAfter && (
-                  <div
-                    class="pon-insp-card"
-                    data-threshold={inspAfter.threshold}
-                    style={`--insp-grad: ${inspAfter.gradient}`}
-                  >
-                    <p class="pon-insp-text">{inspAfter.text}</p>
-                    <img class="pon-insp-logo" src="/img/logo.svg" alt="Qualicer" />
-                  </div>
-                )}
-              </>
+              </div>
+            );
+          })}
+          {Array.from({ length: numInsps }, (_, i) => {
+            const design = INSP_DESIGNS[i % 3];
+            return (
+              <div
+                class="pon-insp-card"
+                data-insp-idx={i}
+                style={`--insp-grad: ${design.gradient}; display: none;`}
+              >
+                <p class="pon-insp-text">{design.text}</p>
+                <img class="pon-insp-logo" src="/img/logo.svg" alt="Qualicer" />
+              </div>
             );
           })}
         </div>
@@ -256,27 +255,52 @@ const inspCards = [
 </Layout>
 
 <script>
-  const grid    = document.getElementById('pon-grid')!;
-  const cards   = () => Array.from(grid.querySelectorAll<HTMLElement>('.pon-card'));
-  const active  = { eje: new Set<string>(), dia: new Set<string>() };
+  const grid      = document.getElementById('pon-grid')!;
+  const realCards = () => Array.from(grid.querySelectorAll<HTMLElement>('.pon-card'));
+  const inspEls   = Array.from(grid.querySelectorAll<HTMLElement>('.pon-insp-card'));
+  const active    = { eje: new Set<string>(), dia: new Set<string>() };
+  const isMobile  = window.matchMedia('(max-width: 767px)');
 
-  const inspCards = Array.from(document.querySelectorAll<HTMLElement>('.pon-insp-card'));
+  const D_REAL_OFF = [1, 2, 4, 6, 7, 8, 9, 10, 11];
+  const D_INSP_OFF = [3, 5, 12];
+  const D_INSP_MIN = [2, 4, 9];
 
   function applyFilters() {
-    let visible = 0;
-    cards().forEach(card => {
+    grid.style.opacity = '0.4';
+    const visible: HTMLElement[] = [];
+    realCards().forEach(card => {
       const ejeOk = active.eje.size === 0 || active.eje.has(card.dataset.eje ?? '');
       const dias  = (card.dataset.dias ?? '').split(',').filter(Boolean);
       const diaOk = active.dia.size === 0 || dias.some(d => active.dia.has(d));
       const show  = ejeOk && diaOk;
       card.style.display = show ? '' : 'none';
-      if (show) visible++;
+      if (show) visible.push(card);
     });
 
-    inspCards.forEach(card => {
-      const threshold = parseInt(card.dataset.threshold ?? '0');
-      card.style.display = visible >= threshold ? '' : 'none';
+    const n      = visible.length;
+    const mobile = isMobile.matches;
+
+    visible.forEach((card, i) => {
+      card.style.order = mobile
+        ? String(4 * Math.floor(i / 3) + (i % 3) + 1)
+        : String(12 * Math.floor(i / 9) + D_REAL_OFF[i % 9]);
     });
+
+    inspEls.forEach((insp, j) => {
+      const cycle = Math.floor(j / 3);
+      const wi    = j % 3;
+      let show: boolean, order: number;
+      if (mobile) {
+        show  = n >= 3 * (j + 1);
+        order = 4 * (j + 1);
+      } else {
+        show  = n >= 9 * cycle + D_INSP_MIN[wi];
+        order = 12 * cycle + D_INSP_OFF[wi];
+      }
+      insp.style.display = show ? '' : 'none';
+      insp.style.order   = String(order);
+    });
+    requestAnimationFrame(() => { grid.style.opacity = ''; });
   }
 
   document.querySelectorAll<HTMLButtonElement>('.pon-ftag').forEach(btn => {
@@ -295,9 +319,8 @@ const inspCards = [
     });
   });
 
-  // Inspiration card height = speaker card height
   function syncInspHeight() {
-    if (window.matchMedia('(max-width: 767px)').matches) return;
+    if (isMobile.matches) return;
     const ref = document.querySelector<HTMLElement>('.pon-card');
     if (!ref) return;
     const h = ref.offsetHeight;
@@ -307,38 +330,8 @@ const inspCards = [
   }
   syncInspHeight();
   window.addEventListener('resize', syncInspHeight, { passive: true });
+  applyFilters();
 
-  // Fixed filters on mobile
-  if (window.matchMedia('(max-width: 767px)').matches) {
-    const hdr    = document.querySelector<HTMLElement>('.header');
-    const filtros = document.querySelector<HTMLElement>('.pon-filtros');
-    if (hdr && filtros) {
-      const ph = document.createElement('div');
-      filtros.after(ph);
-
-      const originalTop  = filtros.getBoundingClientRect().top + window.scrollY;
-      const cachedHdrH   = hdr.offsetHeight;
-
-      const headerH = () => hdr.classList.contains('header--hidden') ? 0 : cachedHdrH;
-
-      const update = () => {
-        if (window.scrollY + headerH() >= originalTop) {
-          if (!filtros.classList.contains('is-fixed')) {
-            ph.style.height = filtros.offsetHeight + 'px';
-            filtros.classList.add('is-fixed');
-          }
-          filtros.style.top = headerH() + 'px';
-        } else {
-          filtros.classList.remove('is-fixed');
-          filtros.style.top = '';
-          ph.style.height = '0';
-        }
-      };
-
-      new MutationObserver(update).observe(hdr, { attributes: true, attributeFilter: ['class'] });
-      window.addEventListener('scroll', update, { passive: true });
-      update();
-    }
   }
 
   // Modal
@@ -374,6 +367,9 @@ const inspCards = [
     justify-content: space-between;
     align-items:     flex-start;
     padding:         2.6rem 2.4rem 3.2rem;
+    max-width:       1920px;
+    margin-left:     auto;
+    margin-right:    auto;
   }
 
   .pon-headline {
@@ -400,6 +396,9 @@ const inspCards = [
     flex-direction: column;
     gap:            0;
     padding:        3.2rem 2.4rem 0;
+    max-width:      1920px;
+    margin-left:    auto;
+    margin-right:   auto;
   }
 
   .pon-filtros {
@@ -479,6 +478,7 @@ const inspCards = [
     display:               grid;
     grid-template-columns: repeat(4, 1fr);
     gap:                   3.25rem 0.8rem;
+    transition:            opacity 0.2s ease;
   }
 
   .pon-card {
@@ -646,15 +646,16 @@ const inspCards = [
       margin-bottom:  16px;
     }
 
-    .pon-filtros.is-fixed {
-      position:   fixed;
-      left:       0;
-      right:      0;
-      top:        52px;
+    .pon-filtros {
+      position:   sticky;
+      top:        60px;
       z-index:    50;
       background: #EDEDED;
-      transition: top 0.3s ease;
+      transition: top 0.25s ease;
     }
+
+    body:has(.header--hidden) .pon-filtros { top: 0; }
+
 
     .pon-filtro-group {
       flex-wrap:   nowrap;
@@ -691,7 +692,18 @@ const inspCards = [
       padding:   14px 22px;
     }
 
-    .pon-insp-card { display: none !important; }
+    .pon-insp-card {
+      height:        328px;
+      padding:       24px;
+      border-radius: 30px;
+    }
+
+    .pon-insp-text {
+      font-size:   21px;
+      line-height: 1.1;
+    }
+
+    .pon-insp-logo { width: 113px; }
   }
 
   /* ── Modal ── */

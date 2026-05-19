@@ -21,7 +21,7 @@ const ui = {
     'hero.date':        '10 — 11 junio\n2026',
     'hero.venue':       'Auditorio y Palacio\nde Congresos',
     'hero.city':        'Castellón,\nEspaña',
-    'hero.organizers':  'Organizadores:',
+    'hero.organizers':  'Organiza:',
     'hero.program':     'Ver programa',
     'hero.tickets':     'Conseguir entradas',
 
@@ -136,7 +136,7 @@ const ui = {
     'hero.date':        'June 10 — 11\n2026',
     'hero.venue':       'Auditorium and\nCongress Centre',
     'hero.city':        'Castellón,\nSpain',
-    'hero.organizers':  'Organizers:',
+    'hero.organizers':  'Organises:',
     'hero.program':     'View programme',
     'hero.tickets':     'Get tickets',
 

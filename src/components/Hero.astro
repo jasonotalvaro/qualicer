@@ -4,6 +4,9 @@ import { getLangFromUrl, useTranslations } from '../i18n/utils';
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
+const agendaHref   = lang === 'en' ? '/en/agenda' : '/agenda';
+const entradasHref = 'https://tickets.qualicer2026.com';
+
 /* Split \n into array for multiline rendering */
 function lines(str: string) {
   return str.split('\n');
@@ -83,8 +86,8 @@ function lines(str: string) {
 
     <!-- RIGHT: CTAs (alineados al fondo por align-items: flex-end del padre) -->
     <div class="hero-ctas">
-      <a href="#programa" class="btn-secondary">{t('hero.program' as any)}</a>
-      <a href="#entradas" class="btn-primary">{t('hero.tickets' as any)}</a>
+      <a href={agendaHref} class="btn-secondary">{t('hero.program' as any)}</a>
+      <a href={entradasHref} target="_blank" rel="noopener" class="btn-primary">{t('hero.tickets' as any)}</a>
     </div>
 
   </div>
@@ -272,8 +275,10 @@ function lines(str: string) {
     .hero-card {
       width: 100%;
       height: auto;
+      flex: 1;
       margin-top: 60px;
       border-radius: 30px;
+      justify-content: space-between;
     }
 
     .hero-card-top {
@@ -286,8 +291,11 @@ function lines(str: string) {
     }
 
     .hero-headline {
-      font-size: 52px;
+      font-size: 44px;
+      line-height: 1;
       letter-spacing: -0.03em;
+      flex-direction: row;
+      gap: 0.25em;
     }
 
     .hero-desc {
@@ -313,16 +321,22 @@ function lines(str: string) {
     }
 
     .hero-card-bottom {
-      margin-top: 24px;
+      margin-top: auto;
+      gap: 24px;
     }
 
     .hero-organizers {
-      display: none;
+      display: flex;
+      width: 100%;
     }
 
     .hero-org-label {
-      font-size: 11px;
+      font-size: 12px;
     }
+
+    .hero-org-logos { gap: 48px; }
+    .hero-org-logos a:first-child img { width: 130px; }
+    .hero-org-logos a:last-child  img { width: 111px; }
 
     .hero-ctas {
       width: 100%;
@@ -337,7 +351,7 @@ function lines(str: string) {
       justify-content: center;
       font-size: 16px;
       font-weight: 500;
-      line-height: 1.4;
+      line-height: 1;
       padding: 14px 22px;
     }
   }

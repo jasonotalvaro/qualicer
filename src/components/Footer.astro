@@ -4,7 +4,7 @@ import { getLangFromUrl, useTranslations } from '../i18n/utils';
 const lang = getLangFromUrl(Astro.url);
 const t    = useTranslations(lang);
 
-const entradasHref = lang === 'en' ? '/en/entradas' : '/entradas';
+const entradasHref = 'https://tickets.qualicer2026.com';
 ---
 
 <footer class="ft">
@@ -72,7 +72,7 @@ const entradasHref = lang === 'en' ? '/en/entradas' : '/entradas';
     <!-- Barra copyright -->
     <div class="ft-bar">
       <span class="ft-copyright">{t('footer.copyright')}</span>
-      <a href={entradasHref} class="ft-btn">{t('footer.cta')}</a>
+      <a href={entradasHref} target="_blank" rel="noopener" class="ft-btn">{t('footer.cta')}</a>
     </div>
 
   </div>

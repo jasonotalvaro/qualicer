@@ -61,7 +61,7 @@ function imgVert(p: Ponente) {
 
 const agendaBase   = lang === 'en' ? '/en/agenda'    : '/agenda';
 const ponentesHref = lang === 'en' ? '/en/ponentes/' : '/ponentes/';
-const entradasHref = lang === 'en' ? '/en/entradas/' : '/entradas/';
+const entradasHref = 'https://tickets.qualicer2026.com';
 ---
 
 <section class="b6">
@@ -135,7 +135,7 @@ const entradasHref = lang === 'en' ? '/en/entradas/' : '/entradas/';
           <a class="b6-sec-btn" href={`${agendaBase}#${slugPonente(p)}`}>
             {t('b6.agenda' as any)}
           </a>
-          <a class="btn-primary" href={entradasHref}>
+          <a class="btn-primary" href={entradasHref} target="_blank" rel="noopener">
             {t('b6.tickets.cta' as any)}
           </a>
         </div>
