@@ -41,6 +41,7 @@ const sesiones = [...raw].sort((a, b) => {
 });
 
 const DIAS = ['miercoles', 'jueves', 'viernes'] as const;
+const DIAS_WITH_SESSIONS = DIAS.filter(dia => sesiones.some(s => s.dia === dia));
 
 const ejeColor: Record<string, string> = {
   construccion:   '#E9002B',
@@ -80,100 +81,103 @@ function imgCircle(p: PonRef) {
 
     <!-- Hero -->
     <div class="ag-hero">
-      <h1 class="ag-headline">Dos días, cinco dimensiones</h1>
-    </div>
-
-    <!-- Filtros -->
-    <div class="ag-filtros" id="ag-filtros">
-      <div class="ag-filtro-group">
-        <span class="ag-filtro-label">{t('ponentes.filtro.eje' as any)}</span>
-        <div class="ag-filtro-tags">
-          {(['construccion','sostenibilidad','estrategia'] as const).map(eje => (
-            <button
-              class="ag-ftag"
-              data-filter="eje"
-              data-value={eje}
-              style={`--eje-color:${ejeColor[eje]}`}
-            >
-              <svg class="ag-ftag-check" width="14" height="12" viewBox="0 0 14 12" fill="none" aria-hidden="true">
-                <path d="M1 6L5 10L13 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              {t(`eje.${eje}` as any)}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div class="ag-filtro-group">
-        <span class="ag-filtro-label">{t('ponentes.filtro.dia' as any)}</span>
-        <div class="ag-filtro-tags">
-          {DIAS.map(dia => (
-            <button
-              class="ag-ftag ag-ftag--dia"
-              data-filter="dia"
-              data-value={dia}
-            >
-              <svg class="ag-ftag-check" width="14" height="12" viewBox="0 0 14 12" fill="none" aria-hidden="true">
-                <path d="M1 6L5 10L13 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              {t(`agenda.dia.${dia}` as any)}
-            </button>
-          ))}
-        </div>
-      </div>
+      <h1 class="ag-headline">Dos días,<br>cinco dimensiones</h1>
     </div>
 
     <!-- Sesiones agrupadas por día -->
     <div class="ag-content" id="ag-content">
-      {DIAS.map(dia => {
+      {DIAS_WITH_SESSIONS.map((dia, diaIndex) => {
         const grupo = sesiones.filter(s => s.dia === dia);
-        if (grupo.length === 0) return null;
         return (
           <section class="ag-dia-section" data-dia={dia}>
             <h2 class="ag-dia-header">{diaHeader[dia]}</h2>
-            <div class="ag-lista">
-              {grupo.map(s => (
-                <article
-                  class="ag-card"
-                  data-sesion={s._id}
-                  data-eje={s.eje ?? ''}
-                  data-dia={s.dia}
-                >
-                  <!-- Mobile: hora + tag en fila | Desktop: columna hora -->
-                  <div class="ag-meta">
-                    <span class="ag-hora">{s.hora}</span>
-                    {s.eje && (
-                      <span class="ag-tag ag-tag--mob" style={`background:${ejeColor[s.eje]}`}>
-                        {t(`eje.${s.eje}` as any)}
-                      </span>
-                    )}
+            <div class="ag-lista-col">
+              {diaIndex === 0 && (
+                <div class="ag-filtros-outer">
+                  <div class="ag-filtros" id="ag-filtros">
+                    <div class="ag-filtro-group">
+                      <span class="ag-filtro-label">{t('ponentes.filtro.eje' as any)}</span>
+                      <div class="ag-filtro-tags">
+                        {(['construccion','sostenibilidad','estrategia'] as const).map(eje => (
+                          <button
+                            class="ag-ftag"
+                            data-filter="eje"
+                            data-value={eje}
+                            style={`--eje-color:${ejeColor[eje]}`}
+                          >
+                            <svg class="ag-ftag-check" width="14" height="12" viewBox="0 0 14 12" fill="none" aria-hidden="true">
+                              <path d="M1 6L5 10L13 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            {t(`eje.${eje}` as any)}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div class="ag-filtro-group">
+                      <span class="ag-filtro-label">{t('ponentes.filtro.dia' as any)}</span>
+                      <div class="ag-filtro-tags">
+                        {DIAS.map(dia => (
+                          <button
+                            class="ag-ftag ag-ftag--dia"
+                            data-filter="dia"
+                            data-value={dia}
+                          >
+                            <svg class="ag-ftag-check" width="14" height="12" viewBox="0 0 14 12" fill="none" aria-hidden="true">
+                              <path d="M1 6L5 10L13 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            {t(`agenda.dia.${dia}` as any)}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-
-                  <!-- Desktop: fila título+tag / ponentes | Mobile: columna -->
-                  <div class="ag-body">
-                    <div class="ag-titulo-wrap">
-                      <p class="ag-titulo">{tituloText(s)}</p>
+                </div>
+              )}
+              <div class="ag-lista">
+                {grupo.map(s => (
+                  <article
+                    class="ag-card"
+                    data-sesion={s._id}
+                    data-eje={s.eje ?? ''}
+                    data-dia={s.dia}
+                  >
+                    <div class="ag-meta">
+                      <span class="ag-hora">{s.hora}</span>
                       {s.eje && (
-                        <span class="ag-tag ag-tag--desk" style={`background:${ejeColor[s.eje]}`}>
+                        <span class="ag-tag ag-tag--mob" style={`background:${ejeColor[s.eje]}`}>
                           {t(`eje.${s.eje}` as any)}
                         </span>
                       )}
                     </div>
-                    {s.ponentes && s.ponentes.length > 0 && (
-                      <div class="ag-ponentes">
-                        {s.ponentes.map(p => (
-                          <div class="ag-ponente-row">
-                            <span class="ag-pon-name">{p.nombre} {p.apellido}</span>
-                            {cargoText(p) && (
-                              <span class="ag-pon-company">{cargoText(p)}</span>
-                            )}
-                          </div>
-                        ))}
+                    <div class="ag-body">
+                      <div class="ag-titulo-row">
+                        <p class="ag-titulo">{tituloText(s)}</p>
+                        {s.eje && (
+                          <span class="ag-tag ag-tag--desk" style={`background:${ejeColor[s.eje]}`}>
+                            {t(`eje.${s.eje}` as any)}
+                          </span>
+                        )}
                       </div>
-                    )}
-                  </div>
-                </article>
-              ))}
+                      <div class="ag-ponentes-row">
+                        {s.ponentes && s.ponentes.length > 0 && (
+                          <p class="ag-ponentes-list">
+                            {s.ponentes.map((p, i) => (
+                              <>
+                                {i > 0 && <span class="ag-pon-sep"> | </span>}
+                                <span class="ag-pon-item">
+                                  <strong class="ag-pon-name">{p.nombre} {p.apellido}</strong>
+                                  {cargoText(p) && <span class="ag-pon-cargo"> ({cargoText(p)})</span>}
+                                </span>
+                              </>
+                            ))}
+                          </p>
+                        )}
+                        <a class="ag-mas-info" href="#">Más información</a>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </div>
           </section>
         );
@@ -182,48 +186,6 @@ function imgCircle(p: PonRef) {
 
   </main>
 
-  <!-- Modales (fuera del main para evitar z-index issues) -->
-  {sesiones.map(s => (
-    <dialog class="ag-modal" id={`ag-modal-${s._id}`}>
-      <button class="ag-modal-close" aria-label="Cerrar">&#x2715;</button>
-      <div class="ag-modal-inner">
-        <div class="ag-modal-top">
-          <div class="ag-modal-meta">
-            <span class="ag-hora ag-modal-hora">{s.hora}</span>
-            {s.eje && (
-              <span class="ag-tag" style={`background:${ejeColor[s.eje ?? '']}`}>
-                {t(`eje.${s.eje}` as any)}
-              </span>
-            )}
-          </div>
-          <p class="ag-modal-titulo">{tituloText(s)}</p>
-          {descText(s) && <p class="ag-modal-desc">{descText(s)}</p>}
-        </div>
-
-        {s.ponentes && s.ponentes.length > 0 && (
-          <div class="ag-modal-ponentes">
-            {s.ponentes.map(p => {
-              const img = imgCircle(p);
-              return (
-                <div class="ag-modal-ponente">
-                  {img
-                    ? <img class="ag-modal-pon-img" src={img} alt={`${p.nombre} ${p.apellido}`} loading="lazy" />
-                    : <div class="ag-modal-pon-img ag-modal-pon-img-ph"></div>
-                  }
-                  <div class="ag-modal-pon-info">
-                    <p class="ag-modal-pon-name">{p.nombre} {p.apellido}</p>
-                    {cargoText(p) && (
-                      <p class="ag-modal-pon-cargo">{cargoText(p)}</p>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    </dialog>
-  ))}
 
   <CTAEntradas />
   <Footer />
@@ -291,24 +253,6 @@ function imgCircle(p: PonRef) {
       update();
     }
   }
-
-  /* ── Modal ── */
-  document.querySelectorAll<HTMLElement>('.ag-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const modal = document.getElementById(`ag-modal-${card.dataset.sesion}`) as HTMLDialogElement | null;
-      modal?.showModal();
-    });
-  });
-
-  document.querySelectorAll<HTMLButtonElement>('.ag-modal-close').forEach(btn => {
-    btn.addEventListener('click', () => {
-      (btn.closest('dialog') as HTMLDialogElement | null)?.close();
-    });
-  });
-
-  document.querySelectorAll<HTMLDialogElement>('.ag-modal').forEach(modal => {
-    modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
-  });
 </script>
 
 <style>
@@ -333,13 +277,15 @@ function imgCircle(p: PonRef) {
   }
 
   /* ── Filtros ── */
-  .ag-filtros {
-    display:       flex;
-    align-items:   center;
-    gap:           1.6rem;
-    flex-wrap:     wrap;
-    padding:       0 2.4rem;
+  .ag-filtros-outer {
     margin-bottom: 3.2rem;
+  }
+
+  .ag-filtros {
+    display:        flex;
+    flex-direction: row;
+    align-items:    flex-start;
+    gap:            3.2rem;
   }
 
   .ag-filtro-group {
@@ -399,7 +345,10 @@ function imgCircle(p: PonRef) {
 
   /* ── Sección de día ── */
   .ag-dia-section {
-    margin-bottom: 6.4rem;
+    display:        flex;
+    flex-direction: row;
+    gap:            2.4rem;
+    margin-bottom:  6.4rem;
   }
 
   .ag-dia-section:last-child { margin-bottom: 0; }
@@ -410,7 +359,18 @@ function imgCircle(p: PonRef) {
     line-height:    1.1;
     letter-spacing: -0.02em;
     color:          var(--color-dark);
-    margin-bottom:  2.4rem;
+    width:          28.25rem;
+    flex-shrink:    0;
+    align-self:     flex-start;
+    position:       sticky;
+    top:            4rem;
+  }
+
+  .ag-lista-col {
+    display:        flex;
+    flex-direction: column;
+    flex:           1;
+    min-width:      0;
   }
 
   .ag-lista {
@@ -421,35 +381,32 @@ function imgCircle(p: PonRef) {
 
   /* ── Card ── */
   .ag-card {
-    display:       flex;
+    display:        flex;
     flex-direction: row;
-    align-items:   flex-end;
-    gap:           4.8rem;
-    padding:       1.9rem 1.6rem;
-    border-radius: 1.5rem;
-    background:    #FEFEFE;
-    cursor:        pointer;
-    transition:    opacity 0.15s;
+    align-items:    flex-end;
+    gap:            1.6rem;
+    padding:        1.9rem 1.6rem;
+    border-radius:  1.5rem;
+    background:     #FEFEFE;
+    transition:     opacity 0.15s;
   }
 
-  .ag-card:hover { opacity: 0.85; }
-
-  /* Columna 1: hora (desktop) */
+  /* Hora */
   .ag-meta {
     display:    flex;
     flex-shrink: 0;
-    align-self: flex-end;
+    align-self: flex-start;
   }
 
   .ag-hora {
-    font-size:   1.5rem;
+    font-size:   1.1rem;
     font-weight: 400;
     line-height: 1.1;
     color:       var(--color-dark);
     white-space: nowrap;
   }
 
-  /* Tag — visible solo en desktop dentro del título, oculto en mobile (aparece en ag-meta) */
+  /* Tag */
   .ag-tag {
     display:        inline-flex;
     align-items:    center;
@@ -460,28 +417,28 @@ function imgCircle(p: PonRef) {
     letter-spacing: 0.01em;
     color:          #FEFEFE;
     white-space:    nowrap;
-    align-self:     flex-start;
+    flex-shrink:    0;
   }
 
   .ag-tag--mob  { display: none; }
   .ag-tag--desk { display: inline-flex; }
 
-  /* Columnas 2+3: body (título + ponentes en fila desktop) */
+  /* Body: columna de filas */
   .ag-body {
-    display:     flex;
-    flex-direction: row;
-    align-items: flex-end;
-    gap:         4.8rem;
-    flex:        1;
-  }
-
-  /* Columna 2: título + tag */
-  .ag-titulo-wrap {
     display:        flex;
     flex-direction: column;
     gap:            2.1rem;
-    max-width:      33.2rem;
-    flex-shrink:    0;
+    flex:           1;
+    min-width:      0;
+  }
+
+  /* Fila 1: título (izq) + tag (der) */
+  .ag-titulo-row {
+    display:         flex;
+    flex-direction:  row;
+    justify-content: space-between;
+    align-items:     flex-start;
+    gap:             1.6rem;
   }
 
   .ag-titulo {
@@ -489,37 +446,47 @@ function imgCircle(p: PonRef) {
     font-weight: 600;
     line-height: 1.1;
     color:       var(--color-dark);
+    max-width:   33.2rem;
+    flex-shrink: 0;
   }
 
-  /* Columna 3: ponentes */
-  .ag-ponentes {
-    display:        flex;
-    flex-direction: column;
-    gap:            0.8rem;
-    flex:           1;
-    max-width:      36.3rem;
+  /* Fila 2: ponentes (izq) + "Más información" (der) */
+  .ag-ponentes-row {
+    display:         flex;
+    flex-direction:  row;
+    justify-content: space-between;
+    align-items:     flex-end;
+    gap:             1.6rem;
   }
 
-  .ag-ponente-row {
-    display:        flex;
-    flex-direction: column;
-    gap:            2px;
-  }
-
-  .ag-pon-name {
-    font-size:   0.8rem;
-    font-weight: 600;
-    line-height: 1.4;
-    color:       var(--color-dark);
-  }
-
-  .ag-pon-company {
+  .ag-ponentes-list {
     font-size:   0.8rem;
     font-weight: 400;
     line-height: 1.4;
     color:       var(--color-dark);
-    opacity:     0.6;
+    max-width:   36.3rem;
+    flex-shrink: 0;
   }
+
+  .ag-pon-name  { font-weight: 600; }
+  .ag-pon-cargo { font-weight: 400; }
+  .ag-pon-sep   { opacity: 0.4; }
+
+  .ag-mas-info {
+    display:               inline-block;
+    font-size:             0.7rem;
+    font-weight:           400;
+    line-height:           1.4;
+    color:                 var(--color-dark);
+    text-decoration:       underline;
+    text-underline-offset: 2px;
+    opacity:               0.7;
+    cursor:                pointer;
+    white-space:           nowrap;
+    flex-shrink:           0;
+  }
+
+  .ag-mas-info:hover { opacity: 1; }
 
   /* ── Mobile ── */
   @media (max-width: 767px) {
@@ -532,12 +499,14 @@ function imgCircle(p: PonRef) {
       letter-spacing: -0.04em;
     }
 
+    .ag-filtros-outer { margin-bottom: 16px; }
+
     .ag-filtros {
       flex-direction: column;
       align-items:    flex-start;
       gap:            8px;
-      padding:        16px;
-      margin-bottom:  16px;
+      padding:        0;
+      flex:           unset;
     }
 
     .ag-filtros.is-fixed {
@@ -547,6 +516,7 @@ function imgCircle(p: PonRef) {
       top:        52px;
       z-index:    50;
       background: #EDEDED;
+      padding:    12px 16px;
       transition: top 0.3s ease;
     }
 
@@ -561,11 +531,15 @@ function imgCircle(p: PonRef) {
 
     .ag-content { padding: 0 16px 64px; }
 
-    .ag-dia-section { margin-bottom: 48px; }
+    .ag-dia-section { flex-direction: column; gap: 0; margin-bottom: 48px; }
 
     .ag-dia-header {
       font-size:     28px;
-      margin-bottom: 16px;
+      width:         auto;
+      position:      static;
+      align-self:    auto;
+      flex-shrink:   unset;
+      margin-bottom: 32px;
     }
 
     .ag-lista { gap: 16px; }
@@ -574,12 +548,12 @@ function imgCircle(p: PonRef) {
     .ag-card {
       flex-direction: column;
       align-items:    stretch;
-      gap:            32px;
+      gap:            24px;
       padding:        24px;
       border-radius:  30px;
     }
 
-    /* Fila superior: hora + tag */
+    /* Fila hora + tag */
     .ag-meta {
       flex-direction:  row;
       justify-content: space-between;
@@ -592,168 +566,27 @@ function imgCircle(p: PonRef) {
 
     .ag-hora { font-size: 24px; }
 
-    /* Body: columna título + ponentes */
-    .ag-body {
+    .ag-body { gap: 24px; }
+
+    /* Título row: apila en mobile */
+    .ag-titulo-row {
       flex-direction: column;
-      align-items:    stretch;
-      gap:            42px;
+      gap:            0;
     }
 
-    .ag-titulo-wrap {
-      max-width: 100%;
-      gap:       0;
+    .ag-titulo { font-size: 22px; max-width: 100%; }
+
+    /* Ponentes row: apila en mobile */
+    .ag-ponentes-row {
+      flex-direction: column;
+      align-items:    flex-start;
+      gap:            12px;
     }
 
-    .ag-titulo { font-size: 22px; }
-
-    .ag-ponentes {
-      max-width: 100%;
-      gap:       16px;
-    }
-
-    .ag-pon-name    { font-size: 13px; }
-    .ag-pon-company { font-size: 13px; }
+    .ag-ponentes-list { font-size: 14px; max-width: 100%; }
+    .ag-pon-item      { display: block; }
+    .ag-pon-sep       { display: none; }
+    .ag-mas-info      { font-size: 13px; align-self: flex-end; }
   }
 
-  /* ── Modal ── */
-  .ag-modal {
-    box-sizing:    border-box;
-    border:        none;
-    border-radius: 30px;
-    padding:       2rem;
-    background:    var(--color-white);
-    box-shadow:    0 32px 80px rgba(0, 0, 0, 0.22);
-    width:         min(860px, 92vw);
-    max-height:    90vh;
-    overflow-y:    auto;
-    margin:        auto;
-  }
-
-  dialog.ag-modal[open] {
-    display:        flex;
-    flex-direction: column;
-  }
-
-  .ag-modal::backdrop { background: rgba(0, 0, 0, 0.5); }
-
-  .ag-modal-close {
-    position:    absolute;
-    top:         20px;
-    right:       20px;
-    background:  transparent;
-    border:      none;
-    font-size:   1.2rem;
-    line-height: 1;
-    cursor:      pointer;
-    color:       var(--color-dark);
-    padding:     4px;
-    z-index:     1;
-  }
-
-  .ag-modal-inner {
-    display:        flex;
-    flex-direction: column;
-    gap:            2rem;
-  }
-
-  .ag-modal-top {
-    display:        flex;
-    flex-direction: column;
-    gap:            1.2rem;
-  }
-
-  .ag-modal-meta {
-    display:     flex;
-    align-items: center;
-    gap:         0.8rem;
-  }
-
-  .ag-modal-hora {
-    font-size:   1rem;
-    font-weight: 400;
-    color:       var(--color-dark);
-    opacity:     0.6;
-  }
-
-  .ag-modal-titulo {
-    font-size:   1.5rem;
-    font-weight: 600;
-    line-height: 1.1;
-    color:       var(--color-dark);
-  }
-
-  .ag-modal-desc {
-    font-size:   0.8rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color:       var(--color-dark);
-  }
-
-  .ag-modal-ponentes {
-    display:        flex;
-    flex-direction: column;
-    gap:            0.8rem;
-    border-top:     1px solid rgba(38, 38, 36, 0.15);
-    padding-top:    1.6rem;
-  }
-
-  .ag-modal-ponente {
-    display:     flex;
-    align-items: center;
-    gap:         0.8rem;
-  }
-
-  .ag-modal-pon-img {
-    width:       2.4rem;
-    height:      2.4rem;
-    border-radius: 50%;
-    object-fit:  cover;
-    flex-shrink: 0;
-    display:     block;
-  }
-
-  .ag-modal-pon-img-ph { background: #d1d5db; }
-
-  .ag-modal-pon-info {
-    display:        flex;
-    flex-direction: column;
-    gap:            2px;
-  }
-
-  .ag-modal-pon-name {
-    font-size:   0.85rem;
-    font-weight: 600;
-    line-height: 1.3;
-    color:       var(--color-dark);
-  }
-
-  .ag-modal-pon-cargo {
-    font-size:   0.7rem;
-    font-weight: 400;
-    line-height: 1.4;
-    color:       var(--color-dark);
-    opacity:     0.6;
-  }
-
-  @media (max-width: 767px) {
-    .ag-modal {
-      position:   fixed;
-      left:       50%;
-      top:        50%;
-      transform:  translate(-50%, -50%);
-      margin:     0;
-      width:      calc(100vw - 32px);
-      max-width:  358px;
-      max-height: 88vh;
-      padding:    56px 24px 24px;
-    }
-
-    .ag-modal-close   { top: 18px; right: 18px; font-size: 20px; padding: 8px; }
-    .ag-modal-titulo  { font-size: 20px; }
-    .ag-modal-desc    { font-size: 13px; }
-
-    .ag-modal-pon-img  { width: 40px; height: 40px; }
-    .ag-modal-pon-name { font-size: 14px; }
-    .ag-modal-pon-cargo { font-size: 12px; }
-  }
 </style>
