@@ -13,7 +13,6 @@ interface Ponente {
   _id:              string;
   nombre:           string;
   apellido:         string;
-  empresa?:         string;
   eje:              'construccion' | 'sostenibilidad' | 'estrategia';
   cargo?:           { es?: string; en?: string };
   descripcion?:     { es?: string; en?: string };
@@ -28,7 +27,7 @@ interface AgendaItem {
 
 const [ponentes, agenda]: [Ponente[], AgendaItem[]] = await Promise.all([
   client.fetch(`*[_type == "ponente"] | order(apellido asc) {
-    _id, nombre, apellido, empresa, eje, cargo, descripcion, imagenHorizontal, imagenVertical
+    _id, nombre, apellido, eje, cargo, descripcion, imagenHorizontal, imagenVertical
   }`),
   client.fetch(`*[_type == "agenda" && defined(ponentes)] {
     dia, "ponentes": ponentes[]{ _ref }
@@ -179,8 +178,8 @@ const inspCards = [
                       <div class="pon-card-text">
                         <div class="pon-card-name-wrap">
                           <p class="pon-card-name">{p.nombre} {p.apellido}</p>
-                          {(p.empresa || cargoText(p)) && (
-                            <p class="pon-card-cargo">{[cargoText(p), p.empresa].filter(Boolean).join(' · ')}</p>
+                          {cargoText(p) && (
+                            <p class="pon-card-cargo">{cargoText(p)}</p>
                           )}
                         </div>
                         <span class="pon-card-tag" style={`background:${ejeColor[p.eje] ?? '#888'}`}>

@@ -13,7 +13,6 @@ interface PonRef {
   _id:          string;
   nombre:       string;
   apellido:     string;
-  empresa?:     string;
   cargo?:       { es?: string; en?: string };
   imagenVertical?: any;
 }
@@ -31,7 +30,7 @@ interface Sesion {
 const raw: Sesion[] = await client.fetch(`
   *[_type == "agenda"] {
     _id, dia, hora, titulo, eje, descripcion,
-    ponentes[]-> { _id, nombre, apellido, empresa, cargo, imagenVertical }
+    ponentes[]-> { _id, nombre, apellido, cargo, imagenVertical }
   }
 `);
 
@@ -163,10 +162,8 @@ function imgCircle(p: PonRef) {
                         {s.ponentes.map(p => (
                           <div class="ag-ponente-row">
                             <span class="ag-pon-name">{p.nombre} {p.apellido}</span>
-                            {(p.empresa || cargoText(p)) && (
-                              <span class="ag-pon-company">
-                                {[cargoText(p), p.empresa].filter(Boolean).join(' · ')}
-                              </span>
+                            {cargoText(p) && (
+                              <span class="ag-pon-company">{cargoText(p)}</span>
                             )}
                           </div>
                         ))}
@@ -212,10 +209,8 @@ function imgCircle(p: PonRef) {
                   }
                   <div class="ag-modal-pon-info">
                     <p class="ag-modal-pon-name">{p.nombre} {p.apellido}</p>
-                    {(p.empresa || cargoText(p)) && (
-                      <p class="ag-modal-pon-cargo">
-                        {[cargoText(p), p.empresa].filter(Boolean).join(' · ')}
-                      </p>
+                    {cargoText(p) && (
+                      <p class="ag-modal-pon-cargo">{cargoText(p)}</p>
                     )}
                   </div>
                 </div>
