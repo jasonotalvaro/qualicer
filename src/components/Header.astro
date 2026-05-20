@@ -252,7 +252,7 @@ const navLinks = [
     font-family:  var(--font);
     font-size:    1rem;
     font-weight:  500;
-    line-height:  1.4em;
+    line-height:  1em;
     color:        var(--color-dark);
     background:   transparent;
     border:       none;
@@ -268,29 +268,27 @@ const navLinks = [
   .btn-dropdown:hover { opacity: 0.7; }
 
   .lang-menu {
-    position:    absolute;
-    top:         calc(100% + 0.3rem);
-    left:        0;
-    min-width:   100%;
-    display:     flex;
+    position:       absolute;
+    top:            100%;
+    left:           0;
+    min-width:      100%;
+    display:        flex;
     flex-direction: column;
-    background:  rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(8.5px);
-    -webkit-backdrop-filter: blur(8.5px);
-    border:      1px solid var(--color-dark);
-    border-radius: 8px;
-    overflow:    hidden;
-    z-index:     10;
+    background:     transparent;
+    border:         none;
+    border-radius:  0;
+    overflow:       visible;
+    z-index:        10;
   }
 
   .lang-option {
     font-family:     var(--font);
     font-size:       1rem;
     font-weight:     500;
-    line-height:     1.4em;
-    padding:         0.5rem 0.8rem;
+    line-height:     1em;
+    padding:         0;
     color:           var(--color-dark);
-    text-align:      center;
+    text-align:      left;
     white-space:     nowrap;
     text-decoration: none;
     transition:      opacity 0.15s ease;
@@ -306,6 +304,15 @@ const navLinks = [
     transform: rotate(180deg);
   }
 
+  details[open] .lang-menu {
+    animation: langFadeIn 0.15s ease forwards;
+  }
+
+  @keyframes langFadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
   /* ── Dark-bg variant (manifesto desktop) ── */
   @media (min-width: 768px) {
     .header--dark {
@@ -319,10 +326,6 @@ const navLinks = [
     .header--dark .btn-nav.active { text-decoration-color: #FEFEFE; }
     .header--dark .header-logo img { filter: brightness(0) invert(1); }
     .header--dark .btn-primary { background: #FEFEFE; color: #0047AF; }
-    .header--dark .lang-menu {
-      background: rgba(0, 71, 175, 0.95);
-      border-color: rgba(254, 254, 254, 0.2);
-    }
     .header--dark .lang-option { color: #FEFEFE; }
   }
 

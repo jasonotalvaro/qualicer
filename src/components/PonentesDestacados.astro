@@ -5,6 +5,13 @@ import { client, urlFor } from '../lib/sanity';
 const lang = getLangFromUrl(Astro.url);
 const t    = useTranslations(lang);
 
+interface SesionRef {
+  _id:    string;
+  titulo: { es?: string; en?: string };
+  dia:    string;
+  hora:   string;
+}
+
 interface Ponente {
   _id:              string;
   nombre:           string;
@@ -14,11 +21,15 @@ interface Ponente {
   descripcion?:     { es?: string; en?: string };
   imagenHorizontal?: any;
   imagenVertical?:   any;
+  sesiones?:        SesionRef[];
 }
 
-const todos: Ponente[] = await client.fetch(
-  `*[_type == "ponente"]{ _id, nombre, apellido, eje, cargo, descripcion, imagenHorizontal, imagenVertical }`
-);
+const todos: Ponente[] = await client.fetch(`
+  *[_type == "ponente"]{
+    _id, nombre, apellido, eje, cargo, descripcion, imagenHorizontal, imagenVertical,
+    "sesiones": *[_type == "agenda" && references(^._id)] | order(dia, hora) { _id, titulo, dia, hora }
+  }
+`);
 
 const ponentes = todos;
 
@@ -103,8 +114,16 @@ const entradasHref = 'https://tickets.qualicer2026.com';
 
       {imgVert(p) && (
         <img
-          class="b6-modal-img"
+          class="b6-modal-img b6-modal-img--vert"
           src={imgVert(p)}
+          alt={`${p.nombre} ${p.apellido}`}
+          loading="lazy"
+        />
+      )}
+      {imgHoriz(p) && (
+        <img
+          class="b6-modal-img b6-modal-img--horiz"
+          src={imgHoriz(p)}
           alt={`${p.nombre} ${p.apellido}`}
           loading="lazy"
         />
@@ -124,6 +143,25 @@ const entradasHref = 'https://tickets.qualicer2026.com';
           </div>
           {descText(p) && <p class="b6-modal-desc">{descText(p)}</p>}
         </div>
+
+        <!-- PONENCIAS asociadas -->
+        {p.sesiones && p.sesiones.length > 0 && (
+          <div class="b6-modal-sesiones">
+            <span class="b6-modal-ses-label">{lang === 'en' ? 'Sessions:' : 'Ponencias:'}</span>
+            <div class="b6-modal-ses-list">
+              {p.sesiones.map(s => (
+                <div class="b6-modal-ses-item">
+                  <p class="b6-modal-ses-titulo">
+                    {lang === 'en' ? (s.titulo?.en ?? s.titulo?.es ?? '') : (s.titulo?.es ?? '')}
+                  </p>
+                  <p class="b6-modal-ses-meta">
+                    {t(`agenda.dia.${s.dia}` as any)} — {s.hora}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <!-- BOTTOM: Ver en agenda + Conseguir entradas -->
         <div class="b6-modal-btns">
@@ -361,6 +399,8 @@ const entradasHref = 'https://tickets.qualicer2026.com';
     align-self:    flex-end;
   }
 
+  .b6-modal-img--horiz { display: none; }
+
   /* Columna de contenido: space-between → texto arriba, botones abajo */
   .b6-modal-content {
     flex:            1;
@@ -413,6 +453,46 @@ const entradasHref = 'https://tickets.qualicer2026.com';
     color:       var(--color-dark);
   }
 
+  /* PONENCIAS */
+  .b6-modal-sesiones {
+    display:        flex;
+    flex-direction: column;
+    gap:            1.1rem;
+  }
+
+  .b6-modal-ses-label {
+    font-size:   0.8rem;
+    font-weight: 400;
+    line-height: 1.4em;
+    color:       #989898;
+  }
+
+  .b6-modal-ses-list {
+    display:        flex;
+    flex-direction: column;
+    gap:            1.8rem;
+  }
+
+  .b6-modal-ses-item {
+    display:        flex;
+    flex-direction: column;
+    gap:            1.2rem;
+  }
+
+  .b6-modal-ses-titulo {
+    font-size:   1.1rem;
+    font-weight: 700;
+    line-height: 1.2em;
+    color:       var(--color-dark);
+  }
+
+  .b6-modal-ses-meta {
+    font-size:   0.8rem;
+    font-weight: 600;
+    line-height: 1.4em;
+    color:       #989898;
+  }
+
   /* BOTTOM: botones en row, alineados a la derecha */
   .b6-modal-btns {
     display:         flex;
@@ -435,7 +515,7 @@ const entradasHref = 'https://tickets.qualicer2026.com';
       gap:        24px;
     }
 
-    .b6-title  { font-size: 20px !important; }
+    .b6-title  { font-size: 21px !important; }
 
     .b6-cta-desktop { display: none; }
 
@@ -493,41 +573,63 @@ const entradasHref = 'https://tickets.qualicer2026.com';
       width:         calc(100vw - 32px);
       max-width:     358px;
       max-height:    88vh;
-      padding:       60px 24px 24px; /* top extra para la X */
+      padding:       24px;
+      overflow:      hidden;
     }
 
     .b6-modal-close {
-      top:       18px;
-      right:     18px;
+      top:       0;
+      right:     24px;
       font-size: 20px;
-      padding:   8px;
+      padding:   0;
     }
 
     dialog.b6-modal[open] {
       flex-direction: column;
       align-items:    stretch;
       gap:            24px;
+      overflow:       hidden;
     }
 
-    .b6-modal-img {
-      width:      100%;
-      height:     280px;
-      align-self: auto;
+    .b6-modal-content {
+      flex:       1;
+      min-height: 0;
+      overflow-y: auto;
     }
 
-    .b6-modal-top    { gap: 24px; }
+    .b6-modal-img--vert  { display: none; }
+    .b6-modal-img--horiz {
+      display:      block;
+      width:        100%;
+      aspect-ratio: 292 / 183;
+      height:       auto;
+      object-fit:   cover;
+      align-self:   auto;
+    }
+
+    .b6-modal-top    { gap: 24px; margin-bottom: 16px; }
     .b6-modal-header { gap: 16px; }
     .b6-modal-name-wrap { gap: 8px; }
 
-    .b6-modal-name  { font-size: 20px; }
-    .b6-modal-cargo { font-size: 13px; }
-    .b6-modal-desc  { font-size: 13px; }
+    .b6-modal-name      { font-size: 20px; }
+    .b6-modal-cargo     { font-size: 13px; }
+    .b6-modal-desc      { font-size: 13px; }
+    .b6-modal-sesiones   { gap: 12px; }
+    .b6-modal-ses-list   { gap: 16px; }
+    .b6-modal-ses-item   { gap: 8px; }
+    .b6-modal-ses-label  { font-size: 13px; }
+    .b6-modal-ses-titulo { font-size: 13px; }
+    .b6-modal-ses-meta   { font-size: 13px; }
 
     .b6-modal-btns {
-      flex-direction: column;
-      align-items:    stretch;
-      gap:            8px;
-      margin-top:     32px;
+      position:         sticky;
+      bottom:           0;
+      flex-direction:   column;
+      align-items:      stretch;
+      gap:              8px;
+      margin-top:       auto;
+      background:       var(--color-white);
+      padding-top:      12px;
     }
 
     .b6-modal-btns .b6-sec-btn,

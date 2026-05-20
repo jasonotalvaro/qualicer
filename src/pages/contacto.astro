@@ -1,0 +1,669 @@
+---
+import Layout  from '../layouts/Layout.astro';
+import Header  from '../components/Header.astro';
+import Footer  from '../components/Footer.astro';
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t    = useTranslations(lang);
+
+const EMAIL = 'info@qualicer2026.com';
+const PHONE = '+34 964 72 31 40';
+const MAPS_URL = 'https://www.google.com/maps/search/?api=1&query=Auditorio+Palacio+de+Congresos+Castellon+España';
+const PRIVACY_URL = `https://lawwwing.com/documents/94c7c612-ec3d-4a1a-b53b-aea50ae4bb5b/privacy-notice/${lang}/`;
+---
+
+<Layout title="Contacto — Qualicer 2026" lang={lang}>
+  <link slot="head" rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <Header />
+
+  <main class="cont-page">
+    <div class="cont-inner">
+
+      <!-- Hero -->
+      <h1 class="cont-h1">{t('contact.hero')}</h1>
+
+      <!-- Contacto directo -->
+      <section class="cont-section">
+        <div class="cont-row">
+          <div class="cont-col-left">
+            <h2 class="cont-sec-title">{t('contact.direct.title')}</h2>
+          </div>
+          <div class="cont-col-right cont-cards">
+            <div class="cont-card">
+              <div class="cont-card-info">
+                <p class="cont-card-label">{t('contact.email.label')}</p>
+                <p class="cont-card-value">{EMAIL}</p>
+              </div>
+              <a class="cont-btn-sec" href={`mailto:${EMAIL}`}>{t('contact.email.btn')}</a>
+            </div>
+            <div class="cont-card">
+              <div class="cont-card-info">
+                <p class="cont-card-label">{t('contact.phone.label')}</p>
+                <p class="cont-card-value">{PHONE}</p>
+              </div>
+              <a class="cont-btn-sec" href={`tel:+34964723140`}>{t('contact.phone.btn')}</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Déjanos un mensaje -->
+      <section class="cont-section">
+        <div class="cont-row">
+          <div class="cont-col-left">
+            <h2 class="cont-sec-title">{t('contact.form.title')}</h2>
+          </div>
+          <div class="cont-col-right">
+            <div class="cont-form-card">
+              <form class="cont-form" name="contacto" method="POST" action="/contact.php">
+
+                <div class="cont-form-body">
+                  <!-- Selector de perfil -->
+                  <div class="cont-profile-wrap">
+                    <p class="cont-profile-label">{t('contact.form.profile.label')}</p>
+                    <div class="cont-profile-group" role="group">
+                      <label class="cont-profile-opt">
+                        <input type="radio" name="perfil" value="general" checked />
+                        <span>{t('contact.form.profile.general')}</span>
+                      </label>
+                      <label class="cont-profile-opt">
+                        <input type="radio" name="perfil" value="sector" />
+                        <span>{t('contact.form.profile.sector')}</span>
+                      </label>
+                      <label class="cont-profile-opt">
+                        <input type="radio" name="perfil" value="prensa" />
+                        <span>{t('contact.form.profile.press')}</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Campos -->
+                  <div class="cont-fields">
+                    <div class="cont-fields-grid">
+                      <input class="cont-input" type="text"  name="nombre"  placeholder={t('contact.form.nombre')}  />
+                      <input class="cont-input" type="text"  name="cargo"   placeholder={t('contact.form.cargo')}   />
+                      <input class="cont-input" type="email" name="email"   placeholder={t('contact.form.email')}   />
+                      <input class="cont-input" type="text"  name="empresa" placeholder={t('contact.form.empresa')} />
+                      <textarea class="cont-textarea" name="mensaje" placeholder={t('contact.form.mensaje')}></textarea>
+                    </div>
+
+                    <!-- Checkboxes -->
+                    <div class="cont-checks">
+                      <label class="cont-check">
+                        <input type="checkbox" name="privacy" required />
+                        <span>{t('contact.form.privacy.before')}<a class="cont-privacy-link" href={PRIVACY_URL} target="_blank" rel="noopener">{t('contact.form.privacy.link')}</a>{t('contact.form.privacy.after')}</span>
+                      </label>
+                      <label class="cont-check">
+                        <input type="checkbox" name="comms" />
+                        <span>{t('contact.form.comms')}</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="cont-form-footer">
+                  <p class="cont-form-msg" aria-live="polite"></p>
+                  <button class="cont-btn-sec" type="submit">{t('contact.form.submit')}</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dónde nos ubicamos -->
+      <section class="cont-section cont-map-sec">
+        <div class="cont-map-card">
+          <div id="cont-map" class="cont-map-img"></div>
+          <div class="cont-map-info">
+            <div class="cont-map-text">
+              <h2 class="cont-map-title" set:html={t('contact.map.title')} />
+              <div class="cont-map-addr">
+                <p class="cont-map-venue">{t('contact.map.venue')}</p>
+                <p class="cont-map-address" set:html={t('contact.map.address')} />
+              </div>
+            </div>
+            <a class="cont-btn-sec" href={MAPS_URL} target="_blank" rel="noopener noreferrer">
+              {t('contact.map.btn')}
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /.cont-inner -->
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  /* ─── Page ─────────────────────────────────────────── */
+  .cont-page {
+    background:  #EDEDED;
+    padding-top: 4rem; /* 80px — clears fixed header */
+    min-height:  100vh;
+  }
+
+  .cont-inner {
+    max-width:      91.2rem; /* 1824px */
+    margin:         0 auto;
+    display:        flex;
+    flex-direction: column;
+    gap:            9.8rem; /* 196px between sections */
+  }
+
+  /* ─── Hero ─────────────────────────────────────────── */
+  .cont-h1 {
+    padding-top:    2.6rem; /* 52px — igual que agenda/ponentes */
+    font-size:      6.5rem;
+    font-weight:    600;
+    line-height:    1em;
+    letter-spacing: -0.04em;
+    color:          #262624;
+  }
+
+  /* ─── Two-column row ────────────────────────────────── */
+  .cont-row {
+    display:         flex;
+    flex-direction:  row;
+    justify-content: space-between;
+    align-items:     flex-start;
+  }
+
+  .cont-sec-title {
+    font-size:      2.4rem;
+    font-weight:    600;
+    line-height:    1.1em;
+    letter-spacing: -0.02em;
+    color:          #262624;
+  }
+
+  .cont-col-right {
+    width:     45.15rem; /* 903px */
+    flex-shrink: 0;
+  }
+
+  /* ─── Contact cards ─────────────────────────────────── */
+  .cont-cards {
+    display: flex;
+    flex-direction: row;
+    gap:    0.8rem; /* 16px */
+  }
+
+  .cont-card {
+    flex:           1;
+    background:     #FEFEFE;
+    border-radius:  1.5rem; /* 30px */
+    padding:        1.6rem; /* 32px */
+    display:        flex;
+    flex-direction: column;
+    gap:            4.8rem; /* 96px */
+  }
+
+  .cont-card-info {
+    display:        flex;
+    flex-direction: column;
+    gap:            0.4rem;
+  }
+
+  .cont-card-label {
+    font-size:   1.05rem;
+    font-weight: 600;
+    line-height: 1.1em;
+    color:       #262624;
+  }
+
+  .cont-card-value {
+    font-size:   1.1rem;
+    font-weight: 400;
+    line-height: 1.2em;
+    color:       #989898;
+  }
+
+  /* ─── Buttons ───────────────────────────────────────── */
+  .cont-btn-sec {
+    display:          inline-flex;
+    justify-content:  center;
+    align-items:      center;
+    gap:              0.5rem;
+    padding:          0.7rem 1.1rem 0.8rem;
+    border:           1px solid #262624;
+    border-radius:    100px;
+    background:       transparent;
+    font-family:      inherit;
+    font-size:        1rem;
+    font-weight:      500;
+    line-height:      1;
+    color:            #262624;
+    white-space:      nowrap;
+    cursor:           pointer;
+    text-decoration:  none;
+  }
+
+  /* ─── Form card ─────────────────────────────────────── */
+  .cont-form-card {
+    background:     #FEFEFE;
+    border-radius:  1.5rem;
+    padding:        1.6rem;
+    display:        flex;
+    flex-direction: column;
+    gap:            4.8rem; /* 96px — between form body and submit */
+  }
+
+  .cont-form {
+    display:        flex;
+    flex-direction: column;
+    gap:            3.2rem; /* 64px */
+  }
+
+  .cont-form-body {
+    display:        flex;
+    flex-direction: column;
+    gap:            3.2rem; /* 64px */
+  }
+
+  /* Profile selector */
+  .cont-profile-wrap {
+    display:        flex;
+    flex-direction: column;
+    gap:            0.8rem; /* 16px */
+  }
+
+  .cont-profile-label {
+    font-size:   0.8rem;
+    font-weight: 400;
+    line-height: 1.4em;
+    color:       #262624;
+  }
+
+  .cont-profile-group {
+    display:       flex;
+    flex-direction: row;
+    background:    #EDEDED;
+    border-radius: 50rem; /* 1000px */
+    padding:       4px;
+  }
+
+  .cont-profile-opt {
+    flex:    1;
+    cursor:  pointer;
+  }
+
+  .cont-profile-opt input[type="radio"] {
+    display: none;
+  }
+
+  .cont-profile-opt span {
+    display:          flex;
+    justify-content:  center;
+    align-items:      center;
+    padding:          0.7rem 1.1rem 0.8rem;
+    border-radius:    100px;
+    font-size:        1rem;
+    font-weight:      400;
+    line-height:      1.4em;
+    color:            #262624;
+    white-space:      nowrap;
+    transition:       background 0.15s;
+  }
+
+  .cont-profile-opt input[type="radio"]:checked + span {
+    background:  #FEFEFE;
+    font-weight: 500;
+  }
+
+  /* Fields */
+  .cont-fields {
+    display:        flex;
+    flex-direction: column;
+    gap:            3rem; /* 48px between fields grid and checkboxes (close to 48px = 2.4rem) */
+  }
+
+  .cont-fields-grid {
+    display:               grid;
+    grid-template-columns: 1fr 1fr;
+    gap:                   0.8rem; /* 16px */
+  }
+
+  .cont-input,
+  .cont-textarea {
+    border:      1px solid #262624;
+    border-radius: 5px;
+    padding:     0.8rem; /* 16px */
+    font-family: inherit;
+    font-size:   1.1rem; /* 22px */
+    font-weight: 400;
+    line-height: 1.2em;
+    color:       #262624;
+    background:  #FFFFFF;
+    outline:     none;
+    width:       100%;
+    box-sizing:  border-box;
+  }
+
+  .cont-input::placeholder,
+  .cont-textarea::placeholder {
+    color: #989898;
+  }
+
+  .cont-textarea {
+    grid-column: 1 / -1;
+    height:      5.8rem; /* 116px */
+    resize:      vertical;
+  }
+
+  /* Checkboxes */
+  .cont-checks {
+    display:        flex;
+    flex-direction: column;
+    gap:            0.4rem; /* 8px */
+  }
+
+  .cont-check {
+    display:     flex;
+    align-items: flex-start;
+    gap:         0.4rem;
+    cursor:      pointer;
+  }
+
+  .cont-check input[type="checkbox"] {
+    flex-shrink: 0;
+    margin-top:  2px;
+    width:       16px;
+    height:      16px;
+    cursor:      pointer;
+  }
+
+  .cont-check span {
+    font-size:   0.8rem;
+    font-weight: 400;
+    line-height: 1.4em;
+    color:       #262624;
+  }
+
+  .cont-privacy-link {
+    color:           #262624;
+    text-decoration: underline;
+  }
+
+  .cont-form-footer {
+    display:         flex;
+    align-items:     center;
+    justify-content: flex-end;
+    gap:             1rem;
+  }
+
+  .cont-form-msg {
+    font-size:   0.85rem;
+    font-weight: 400;
+    line-height: 1.4em;
+    color:       #262624;
+    flex:        1;
+  }
+
+  .cont-form-msg--err { color: #c0392b; }
+  .cont-form-msg--ok  { color: #27ae60; }
+
+  /* ─── Map section ───────────────────────────────────── */
+  .cont-map-card {
+    background:     #FFFFFF;
+    border-radius:  1.5rem;
+    display:        flex;
+    flex-direction: row;
+    align-items:    flex-end;
+    overflow:       hidden;
+  }
+
+  .cont-map-img {
+    width:       45.55rem; /* 911px */
+    height:      29.85rem; /* 597px */
+    flex-shrink: 0;
+    background:  #D0D0D0;
+  }
+
+  .cont-map-info {
+    flex:            1;
+    display:         flex;
+    flex-direction:  row;
+    justify-content: space-between;
+    align-items:     flex-end;
+    align-self:      stretch;
+    padding:         1.6rem;
+  }
+
+  .cont-map-text {
+    display:        flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-self:     stretch;
+    gap:            1.1rem; /* 22px */
+  }
+
+  .cont-map-title {
+    font-size:      2.4rem;
+    font-weight:    600;
+    line-height:    1.1em;
+    letter-spacing: -0.02em;
+    color:          #262624;
+  }
+
+  .cont-map-addr {
+    display:        flex;
+    flex-direction: column;
+    gap:            0.2rem;
+  }
+
+  .cont-map-venue {
+    font-size:   0.8rem;
+    font-weight: 600;
+    line-height: 1.4em;
+    color:       #262624;
+  }
+
+  .cont-map-address {
+    font-size:   0.8rem;
+    font-weight: 400;
+    line-height: 1.4em;
+    color:       #262624;
+  }
+
+  :global(.leaflet-bottom.leaflet-right) { display: none; }
+
+  /* ─── Mobile ────────────────────────────────────────── */
+  @media (max-width: 767px) {
+    .cont-page {
+      padding-top:   52px;
+      margin-bottom: -68px;
+    }
+
+    .cont-inner {
+      max-width: 100%;
+      padding:   0 16px;
+      gap:       128px;
+    }
+
+    .cont-h1 {
+      padding-top:    32px;
+      font-size:      44px;
+      letter-spacing: -0.02em;
+    }
+
+    /* Two-column → single column */
+    .cont-row {
+      flex-direction: column;
+      gap:            32px;
+    }
+
+    .cont-col-right {
+      width: 100%;
+    }
+
+    .cont-sec-title {
+      font-size: 21px;
+    }
+
+    /* Cards stacked */
+    .cont-card,
+    .cont-form-card,
+    .cont-map-card    { border-radius: 30px; }
+
+    .cont-cards {
+      flex-direction: column;
+      gap:            8px;
+    }
+
+    .cont-card {
+      padding: 24px;
+      gap:     96px;
+    }
+
+    .cont-card-label { font-size: 21px; }
+    .cont-card-value { font-size: 18px; }
+
+    .cont-btn-sec {
+      width:      100%;
+      box-sizing: border-box;
+      font-size:  16px;
+      padding:    14px 22px;
+      text-align: center;
+      justify-content: center;
+    }
+
+    /* Form */
+    .cont-form-card {
+      padding: 24px;
+      gap:     48px;
+    }
+
+    .cont-form        { gap: 64px; }
+    .cont-form-body   { gap: 64px; }
+    .cont-fields      { gap: 48px; }
+    .cont-fields-grid { gap: 16px; }
+
+    .cont-profile-label     { font-size: 14px; margin-bottom: 16px; }
+    .cont-profile-opt span  { font-size: 12px; padding: 8px; }
+
+    .cont-fields-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .cont-input,
+    .cont-textarea {
+      font-size: 16px;
+      padding:   14px 12px;
+    }
+
+    .cont-textarea {
+      height: 120px;
+    }
+
+    .cont-checks {
+      gap: 24px;
+    }
+
+    .cont-check span {
+      font-size: 14px;
+    }
+
+    .cont-form-footer .cont-btn-sec {
+      width: 100%;
+    }
+
+    /* Map */
+    .cont-map-card {
+      flex-direction: column;
+    }
+
+    .cont-map-img {
+      width:  100%;
+      height: 291px;
+    }
+
+    .cont-map-info {
+      flex:           none;
+      flex-direction: column;
+      height:         360px;
+      padding:        32px 24px;
+      gap:            22px;
+    }
+
+    .cont-map-text {
+      flex:            1;
+      justify-content: space-between;
+      gap:             0;
+    }
+
+    .cont-map-addr   { gap: 22px; }
+
+    .cont-map-title {
+      font-size:      40px;
+      letter-spacing: -0.02em;
+    }
+
+    .cont-map-venue   { font-size: 14px; }
+    .cont-map-address { font-size: 16px; }
+
+    .cont-map-info .cont-btn-sec {
+      width: 100%;
+    }
+  }
+</style>
+
+<script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const mapEl = document.getElementById('cont-map');
+    if (!mapEl || typeof L === 'undefined') return;
+
+    const map = L.map('cont-map', { zoomControl: false }).setView([39.9933111, -0.0240476], 16);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+    }).addTo(map);
+
+    const marker = L.icon({
+      iconUrl: '/img/map-marker.svg',
+      iconSize:   [97, 97],
+      iconAnchor: [48, 77],
+    });
+
+    L.marker([39.9933111, -0.0240476], { icon: marker }).addTo(map);
+  });
+</script>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('.cont-form');
+  const msg  = document.querySelector<HTMLElement>('.cont-form-msg');
+  const btn  = form?.querySelector<HTMLButtonElement>('button[type="submit"]');
+
+  if (form && msg && btn) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      btn.disabled = true;
+      msg.textContent = '';
+      msg.className = 'cont-form-msg';
+
+      try {
+        const res  = await fetch('/contact.php', { method: 'POST', body: new FormData(form) });
+        const data = await res.json() as { ok: boolean; message: string };
+
+        if (data.ok) {
+          msg.textContent = '¡Mensaje enviado! Te contactaremos pronto.';
+          msg.className = 'cont-form-msg cont-form-msg--ok';
+          form.reset();
+        } else {
+          msg.textContent = 'Hubo un error al enviar. Por favor, inténtalo de nuevo.';
+          msg.className = 'cont-form-msg cont-form-msg--err';
+        }
+      } catch {
+        msg.textContent = 'Error de conexión. Por favor, inténtalo de nuevo.';
+        msg.className = 'cont-form-msg cont-form-msg--err';
+      }
+
+      btn.disabled = false;
+    });
+  }
+</script>

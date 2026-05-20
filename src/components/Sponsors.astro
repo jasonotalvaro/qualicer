@@ -3,120 +3,178 @@ import { getLangFromUrl, useTranslations } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
-
-const sponsors = [
-  { file: 'equipe',    alt: 'Equipe' },
-  { file: 'grespania', alt: 'Grespania Ceramica' },
-  { file: 'iberdrola', alt: 'Iberdrola' },
-  { file: 'italcer',   alt: 'Equipe ItalCer' },
-  { file: 'kale',      alt: 'Kale Seramik' },
-  { file: 'kerajet',   alt: 'KERAjet' },
-  { file: 'sicer',     alt: 'Sicer' },
-  { file: 'alcora',    alt: "L'Alcora Ajuntament" },
-  { file: 'systemfoc', alt: 'SystemFoc' },
-  { file: 'schluter',  alt: 'Schlüter Systems' },
-];
 ---
 
 <section class="b4">
-  <div class="b4-header">
+  <div class="b4-inner">
     <h2 class="b4-title">{t('b4.title' as any)}</h2>
-  </div>
-  <div class="b4-logos" id="b4-logos">
-    {sponsors.map(s => (
-      <img src={`/img/sponsors/${s.file}.svg`} alt={s.alt} class="b4-logo" draggable="false" />
-    ))}
+
+    <div class="b4-grid">
+
+      <!-- Fila 1: Institucional principal — 1 card -->
+      <div class="b4-card b4-row--1">
+        <div class="b4-inst-group">
+          <img src="/img/sponsors/gva.svg"   alt="Generalitat Valenciana" class="b4-logo" draggable="false" />
+          <img src="/img/sponsors/ivace.svg" alt="IVACE+i"                class="b4-logo" draggable="false" />
+        </div>
+        <img src="/img/sponsors/diputacio.svg" alt="Diputació de Castelló" class="b4-logo" draggable="false" />
+      </div>
+
+      <!-- Fila 2: Ayuntamientos — 1 card -->
+      <div class="b4-card b4-row--2">
+        <img src="/img/sponsors/onda.svg"      alt="Ajuntament d'Onda"       class="b4-logo" draggable="false" />
+        <img src="/img/sponsors/alcora.svg"  alt="L'Alcora Ajuntament"     class="b4-logo" draggable="false" />
+        <img src="/img/sponsors/almassora.svg" alt="Ajuntament d'Almassora" class="b4-logo" draggable="false" />
+        <img src="/img/sponsors/castello.svg"  alt="Ajuntament de Castelló" class="b4-logo" draggable="false" />
+        <img src="/img/sponsors/villa.svg"     alt="Ajuntament de Vila-real" class="b4-logo" draggable="false" />
+      </div>
+
+      <!-- Fila 3: Patrocinadores — 2 cards -->
+      <div class="b4-row--3">
+        <div class="b4-card b4-cell--left">
+          <img src="/img/sponsors/iberdrola.svg" alt="Iberdrola" class="b4-logo" draggable="false" />
+        </div>
+        <div class="b4-card b4-cell--right">
+          <img src="/img/sponsors/italcer.svg"   alt="ItalCer"          class="b4-logo" draggable="false" />
+          <img src="/img/sponsors/kale.svg"      alt="Kale Seramik"     class="b4-logo" draggable="false" />
+          <img src="/img/sponsors/grespania.svg" alt="Grespania"        class="b4-logo" draggable="false" />
+        </div>
+      </div>
+
+      <!-- Fila 4: Colaboradores — 2 cards -->
+      <div class="b4-row--4">
+        <div class="b4-card b4-cell--colabs">
+          <img src="/img/sponsors/systemfoc.svg" alt="SystemFoc"            class="b4-logo" draggable="false" />
+          <img src="/img/sponsors/schluter.svg"  alt="Schlüter Systems"     class="b4-logo" draggable="false" />
+          <img src="/img/sponsors/goetics.svg"     alt="Göetics Producciones"  class="b4-logo" draggable="false" />
+          <img src="/img/sponsors/sicer.svg"     alt="Sicer"                class="b4-logo" draggable="false" />
+        </div>
+        <div class="b4-card b4-cell--tc">
+          <img src="/img/sponsors/tc.svg" alt="TC Técnica Cerámica" class="b4-logo" draggable="false" />
+        </div>
+      </div>
+
+    </div>
   </div>
 </section>
 
-<script>
-  const logos = document.getElementById('b4-logos') as HTMLElement;
-  if (logos) {
-    const rootFs  = parseFloat(getComputedStyle(document.documentElement).fontSize);
-    const padLeft = parseFloat(getComputedStyle(logos).paddingLeft);
-
-    const isMobile  = window.innerWidth <= 767;
-    const isWide    = window.innerWidth > 1920;
-    const init = () => {
-      if (isWide) return;
-      logos.scrollLeft = isMobile ? 60 : padLeft + 3 * rootFs;
-    };
-    // esperar a que los SVG tengan dimensiones
-    if (document.readyState === 'complete') init();
-    else window.addEventListener('load', init);
-
-    let dragging = false, startX = 0, startScroll = 0;
-
-    logos.addEventListener('mousedown', (e) => {
-      dragging    = true;
-      startX      = e.clientX;
-      startScroll = logos.scrollLeft;
-      logos.style.cursor = 'grabbing';
-      e.preventDefault();
-    });
-
-    window.addEventListener('mouseup', () => {
-      dragging = false;
-      logos.style.cursor = 'grab';
-    });
-
-    window.addEventListener('mousemove', (e) => {
-      if (!dragging) return;
-      logos.scrollLeft = startScroll - (e.clientX - startX);
-    });
-  }
-</script>
-
 <style>
-  /* ── Desktop ──────────────────────────────────────────── */
+  /* ── Sección ──────────────────────────────────────────── */
   .b4 {
     width: 100%;
     margin-top: 9.8rem;
   }
 
-  .b4-header {
+  .b4-inner {
     max-width: 1920px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto;
     padding: 0 2.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem; /* ~39px */
   }
 
   .b4-title {
-    font-size: 1.5rem;          /* 30px — DESKTOP H1 */
+    font-size: 1.5rem;
     font-weight: 600;
     line-height: 1.1em;
     color: var(--color-dark);
-    height: 3.5rem;             /* 70px */
+  }
+
+  /* Grid principal */
+  .b4-grid {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    gap: 0.4rem; /* 8px */
   }
 
-  .b4-logos {
-    display: flex;
-    align-items: center;
-    gap: 6.1rem;
-    padding: 1.6rem 2.4rem;
-    overflow-x: auto;
-    scrollbar-width: none;
-    cursor: grab;
-    user-select: none;
-  }
-
-  .b4-logos::-webkit-scrollbar {
-    display: none;
-  }
-
-  @media (min-width: 1921px) {
-    .b4-logos {
-      justify-content: center;
-    }
+  /* Card base */
+  .b4-card {
+    background:     #FEFEFE;
+    border-radius:  var(--radius-card);
+    display:        flex;
+    align-items:    center;
   }
 
   .b4-logo {
+    display:     block;
+    height:      auto;
+    width:       auto;
     flex-shrink: 0;
-    display: block;
-    height: auto;
-    pointer-events: none;
+  }
+
+  /* ── Fila 1: Institucional ──────────────────────────── */
+  .b4-row--1 {
+    justify-content: center;
+    gap:     15.1rem; /* 302px */
+    padding: 1rem 3.2rem 1rem 0;
+  }
+
+  .b4-inst-group {
+    display:     flex;
+    align-items: center;
+    gap:         2.4rem; /* 48px */
+  }
+
+  .b4-row--1 .b4-logo {
+    max-height: 3.5rem;
+  }
+
+  /* ── Fila 2: Ayuntamientos ──────────────────────────── */
+  .b4-row--2 {
+    justify-content: space-between;
+    padding: 1.5rem 8.1rem; /* 30px 162px */
+  }
+
+  .b4-row--2 .b4-logo {
+    max-height: 3rem;
+  }
+
+  /* ── Filas 3 y 4: contenedor doble ─────────────────── */
+  .b4-row--3,
+  .b4-row--4 {
+    display: flex;
+    gap:     0.4rem; /* 8px */
+  }
+
+  /* Fila 3 — celdas */
+  .b4-cell--left {
+    width:           30.05rem; /* 601px */
+    flex-shrink:     0;
+    height:          5rem;
+    justify-content: center;
+    padding:         1.5rem 3.2rem;
+  }
+
+  .b4-cell--right {
+    flex:            1;
+    height:          5rem;
+    justify-content: space-between;
+    padding:         1.5rem 9.2rem; /* 30px 184px */
+  }
+
+  .b4-row--3 .b4-logo {
+    max-height: 2.5rem;
+  }
+
+  /* Fila 4 — celdas */
+  .b4-cell--colabs {
+    flex:            1;
+    height:          5rem;
+    justify-content: space-between;
+    padding:         1.5rem 6.65rem; /* 30px 133px */
+  }
+
+  .b4-cell--tc {
+    width:           29.85rem; /* 597px */
+    flex-shrink:     0;
+    height:          5rem;
+    justify-content: center;
+    padding:         1.5rem 3.2rem;
+  }
+
+  .b4-row--4 .b4-logo {
+    max-height: 2rem;
   }
 
   /* ── Mobile ───────────────────────────────────────────── */
@@ -125,21 +183,101 @@ const sponsors = [
       margin-top: 196px;
     }
 
-    .b4-header {
+    .b4-inner {
       padding: 0 16px;
+      gap: 24px;
     }
 
     .b4-title {
-      font-size: 20px !important;
-      height: auto;
-      margin-bottom: 24px;
+      font-size: 21px;
     }
 
-    .b4-logos {
-      gap: 48px;
-      padding: 16px 16px;
-      cursor: default;
-      overscroll-behavior-x: contain;
+    .b4-grid {
+      gap: 8px;
     }
+
+    .b4-card {
+      border-radius: 30px;
+    }
+
+    /* Fila 1: grupo inst en fila, diputació debajo */
+    .b4-row--1 {
+      flex-direction: column;
+      align-items:    center;
+      padding:        16px;
+      gap:            24px;
+    }
+
+    .b4-row--1 .b4-logo                    { max-height: none; }
+    .b4-inst-group                         { gap: 20px; }
+    .b4-inst-group img:nth-child(1)        { width: 83.5px;  height: auto; }
+    .b4-inst-group img:nth-child(2)        { width: 130.6px; height: auto; }
+    .b4-row--1 > img                       { width: 92px;    height: auto; }
+
+    /* Fila 2: wrap */
+    .b4-row--2 {
+      flex-wrap:       wrap;
+      justify-content: center;
+      padding:         16px;
+      gap:             16px 40px;
+    }
+
+    .b4-row--2 .b4-logo             { max-height: none; }
+    .b4-row--2 img:nth-child(1)     { width: 67px;   height: auto; }
+    .b4-row--2 img:nth-child(2)     { width: 66px;   height: auto; }
+    .b4-row--2 img:nth-child(3)     { width: 69px;   height: auto; }
+    .b4-row--2 img:nth-child(4)     { width: 73.5px; height: auto; }
+    .b4-row--2 img:nth-child(5)     { width: 39.5px; height: auto; }
+
+    /* Filas 3 y 4: apilar celdas */
+    .b4-row--3,
+    .b4-row--4 {
+      flex-direction: column;
+    }
+
+    .b4-row--3 { gap: 8px; }
+    .b4-row--4 { gap: 8px; }
+
+    .b4-cell--left,
+    .b4-cell--right {
+      width:           100%;
+      height:          auto;
+      flex-shrink:     unset;
+      justify-content: center;
+      flex-wrap:       wrap;
+      padding:         24px;
+      gap:             16px 32px;
+    }
+
+    .b4-cell--colabs,
+    .b4-cell--tc {
+      width:           100%;
+      height:          auto;
+      flex-shrink:     unset;
+      justify-content: center;
+      flex-wrap:       wrap;
+      padding:         16px;
+      gap:             16px 32px;
+    }
+
+    .b4-row--3 .b4-logo                { max-height: none; }
+    .b4-cell--left img                 { width: 84px;   height: auto; }
+    .b4-cell--right img:nth-child(1)   { width: 60px;   height: auto; }
+    .b4-cell--right img:nth-child(2)   { width: 80px;   height: auto; }
+    .b4-cell--right img:nth-child(3)   { width: 70.5px; height: auto; }
+    .b4-row--4 .b4-logo                { max-height: none; }
+    .b4-cell--tc                       { padding: 24px; }
+    .b4-cell--tc img                   { width: 49px; height: auto; }
+    .b4-cell--colabs {
+      display:               grid;
+      grid-template-columns: 89px 73px;
+      column-gap:            68px;
+      row-gap:               16px;
+      justify-content:       center;
+    }
+    .b4-cell--colabs img:nth-child(1) { width: 89px;   height: auto; grid-column: 1; grid-row: 1; }
+    .b4-cell--colabs img:nth-child(2) { width: 46.5px; height: auto; grid-column: 1; grid-row: 2; }
+    .b4-cell--colabs img:nth-child(3) { width: 73px;   height: auto; grid-column: 2; grid-row: 1; }
+    .b4-cell--colabs img:nth-child(4) { width: 63px;   height: auto; grid-column: 2; grid-row: 2; }
   }
 </style>
