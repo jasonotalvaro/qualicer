@@ -1,0 +1,597 @@
+---
+import Layout      from '../layouts/Layout.astro';
+import Header      from '../components/Header.astro';
+import Footer      from '../components/Footer.astro';
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t    = useTranslations(lang);
+const isEN = lang === 'en';
+
+const entradasHref = 'https://tickets.qualicer2026.com';
+
+const c = {
+  hero: {
+    p: isEN
+      ? 'The ceramic sector is at a pivotal moment. Decarbonisation. Electrification. Regulatory pressure. New markets. Evolving construction systems. Artificial intelligence in processes. Everything happens at once. And none of these transformations can be understood in isolation.'
+      : 'El sector cerámico está en un momento bisagra. Descarbonización. Electrificación. Presión regulatoria. Nuevos mercados. Sistemas constructivos que evolucionan. Inteligencia artificial en los procesos. Todo ocurre al mismo tiempo. Y ninguna de estas transformaciones puede entenderse de forma aislada.',
+  },
+  historia: {
+    label: isEN ? 'From plane to volume' : 'Del plano al volumen',
+    h2a:   isEN ? '36 years placing ceramic quality at the centre of international debate.' : '36 años poniendo la calidad cerámica en el centro del debate internacional.',
+    h2b:   isEN ? 'Multiple perspectives. Multiple topics. Still on the same plane.' : 'Varias perspectivas. Múltiples temas. Aún en el mismo plano.',
+    h2c:   isEN ? 'Five dimensions. One forum. Qualicer 2026.' : 'Cinco dimensiones. Un solo foro. Qualicer 2026.',
+    body:  isEN
+      ? 'Since its creation in 1990, the congress has established itself as a global reference space for professionals, companies, institutions and experts linked to the ceramic flooring sector.\n\nQualicer, with its history, has been the perfect meeting point for debate on fundamental aspects of the ceramic sector. And that experience gives us the responsibility to make the next step real.'
+      : 'Desde su creación en 1990, el congreso se ha consolidado como un espacio de referencia mundial para profesionales, empresas, instituciones y expertos vinculados al sector del recubrimiento cerámico.\n\nQualicer, con su trayectoria, ha sido el encuentro perfecto para el debate sobre aspectos fundamentales del sector cerámico. Y esa experiencia nos da la responsabilidad de hacer real el siguiente paso.',
+  },
+  ejes: {
+    desc: isEN
+      ? 'Qualicer was born when the ceramic sector needed a meeting space. Three decades later, we continue to bring new voices, new disciplines and new geographies to our international congress.'
+      : 'Qualicer nació cuando el sector cerámico necesitaba un espacio de encuentro. Tres décadas después, seguimos incorporando nuevas voces, nuevas disciplinas y nuevas geografías a nuestro congreso internacional.',
+  },
+  compromiso: {
+    h2: isEN
+      ? 'Our commitment is\nto understand the ceramic sector\nin all its dimensions'
+      : 'Nuestro compromiso es\nentender el sector cerámico\nen todas sus dimensiones',
+  },
+  cta: {
+    date:     isEN ? '10 — 11 June\n2026'              : '10 — 11 junio\n2026',
+    venue:    isEN ? 'Auditorium and\nCongress Centre' : 'Auditorio y Palacio\nde Congresos',
+    city:     isEN ? 'Castellón,\nSpain'               : 'Castellón,\nEspaña',
+    headline: isEN ? 'You now have the full context.\nWill you miss it?' : 'Ya tienes el contexto completo.\n¿Te lo vas a perder?',
+    cta:      isEN ? 'Get tickets'                     : 'Conseguir entradas',
+  },
+};
+
+const ejCards = [
+  { gif: 'calidad',        gradient: 'linear-gradient(0deg, rgba(0, 71, 175, 0.00) 0%, #0047AF 139.17%)',    title: t('b5.card1.title' as any), desc: t('b5.card1.desc' as any) },
+  { gif: 'futuro',         gradient: 'linear-gradient(0deg, rgba(233, 0, 43, 0.00) 0%, #E9002B 139.17%)',    title: t('b5.card2.title' as any), desc: t('b5.card2.desc' as any) },
+  { gif: 'estrategia',     gradient: 'linear-gradient(0deg, rgba(54, 163, 223, 0.00) 0%, #36A3DF 139.17%)',  title: t('b5.card3.title' as any), desc: t('b5.card3.desc' as any) },
+  { gif: 'sostenibilidad', gradient: 'linear-gradient(0deg, rgba(111, 197, 183, 0.00) 0%, #6FC5B7 139.17%)', title: t('b5.card4.title' as any), desc: t('b5.card4.desc' as any) },
+  { gif: 'innovacion',     gradient: 'linear-gradient(0deg, rgba(242, 137, 167, 0.00) 0%, #F289A7 139.17%)', title: t('b5.card5.title' as any), desc: t('b5.card5.desc' as any) },
+];
+---
+
+<Layout
+  lang={lang}
+  title={isEN ? 'Manifesto — Qualicer 2026' : 'Manifesto — Qualicer 2026'}
+  description={isEN
+    ? 'Our commitment is to understand the ceramic sector in all its dimensions.'
+    : 'Nuestro compromiso es entender el sector cerámico en todas sus dimensiones.'}
+>
+  <Header activePage="manifesto" darkBg={true} />
+
+  <main class="man-page">
+
+    <!-- ── Hero ── -->
+    <section class="man-hero">
+      <div class="man-inner man-hero-inner">
+        <h1 class="man-h1">Now,<br>the full view</h1>
+        <p class="man-hero-p">{c.hero.p}</p>
+      </div>
+    </section>
+
+    <!-- ── Historia (panel blanco) ── -->
+    <section class="man-historia">
+      <div class="man-inner man-historia-inner">
+        <div class="man-hist-text">
+          <span class="man-hist-label">{c.historia.label}</span>
+          <div class="man-hist-h2s">
+            <h2 class="man-hist-h2">{c.historia.h2a}</h2>
+            <h2 class="man-hist-h2">{c.historia.h2b}</h2>
+            <h2 class="man-hist-h2">{c.historia.h2c}</h2>
+          </div>
+        </div>
+        <video class="man-hist-vid" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+          <source src="/videos/banner.mp4" type="video/mp4" />
+        </video>
+      </div>
+    </section>
+
+    <!-- ── Cuerpo histórico (azul) ── -->
+    <section class="man-body-sec">
+      <div class="man-inner">
+        <p class="man-body-text">{c.historia.body}</p>
+      </div>
+    </section>
+
+    <!-- ── Ejes transversales ── -->
+    <section class="man-ejes">
+      <div class="man-inner man-ejes-inner">
+        <div class="man-ejes-left">
+          <h2 class="man-ejes-title">{t('b5.title' as any)}</h2>
+          <p class="man-ejes-desc">{c.ejes.desc}</p>
+        </div>
+        <div class="man-ejes-cards">
+          {ejCards.map(card => (
+            <div class="man-ej-card" style={`--grad: ${card.gradient}`}>
+              <div class="man-ej-gif-wrap">
+                <div class="man-ej-overlay"></div>
+                <img class="man-ej-gif" src={`/img/${card.gif}.gif`} alt="" />
+              </div>
+              <div class="man-ej-text">
+                <p class="man-ej-title">{card.title}</p>
+                <p class="man-ej-desc">{card.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Compromiso ── -->
+    <section class="man-compromiso">
+      <div class="man-inner man-compromiso-inner">
+        <img class="man-comp-logo" src="/img/logo_full.svg" alt="Qualicer 2026" />
+        <p class="man-comp-label">Now, the full view</p>
+        <h2 class="man-comp-h2">{c.compromiso.h2}</h2>
+      </div>
+    </section>
+
+    <!-- ── CTA ── -->
+    <section class="man-cta-sec">
+      <div class="man-cta-card">
+        <video class="man-cta-vid-d" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+          <source src="/videos/banner.mp4" type="video/mp4" />
+        </video>
+        <div class="man-cta-right">
+          <video class="man-cta-vid-m" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+            <source src="/videos/banner.mp4" type="video/mp4" />
+          </video>
+          <div class="man-cta-body">
+            <div class="man-cta-meta">
+              <span class="man-cta-meta-item">{c.cta.date}</span>
+              <div class="man-cta-venues">
+                <span class="man-cta-meta-item">{c.cta.venue}</span>
+                <span class="man-cta-meta-item">{c.cta.city}</span>
+              </div>
+            </div>
+            <h2 class="man-cta-title">{c.cta.headline}</h2>
+            <a href={entradasHref} target="_blank" rel="noopener" class="man-cta-btn">{c.cta.cta}</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer inverted={true} />
+</Layout>
+
+<style is:global>
+  body { background: #0047AF; }
+</style>
+
+<style>
+  /* ─── Page ─────────────────────────────────────────────── */
+  .man-page {
+    background: #0047AF;
+  }
+
+  /* ─── Inner wrapper ─────────────────────────────────────── */
+  .man-inner {
+    max-width: 1920px;
+    width:     100%;
+    margin:    0 auto;
+    padding:   0 2.4rem;
+  }
+
+  /* ─── Hero ──────────────────────────────────────────────── */
+  .man-hero {
+    height: 100vh;
+  }
+
+  .man-hero-inner {
+    height:                100%;
+    padding-top:           6rem;
+    padding-bottom:        2.4rem;
+    display:               grid;
+    grid-template-columns: 1fr 52.65rem;
+    align-items:           end;
+  }
+
+  .man-h1 {
+    align-self:     start;
+    font-size:      6.5rem;
+    font-weight:    600;
+    line-height:    1;
+    letter-spacing: -0.04em;
+    color:          #FEFEFE;
+  }
+
+  .man-hero-p {
+    font-size:      2.4rem;
+    font-weight:    600;
+    line-height:    1.1em;
+    letter-spacing: -0.02em;
+    color:          #FEFEFE;
+  }
+
+  /* ─── Historia (panel blanco) ───────────────────────────── */
+  .man-historia {
+    background: #FEFEFE;
+  }
+
+  .man-historia-inner {
+    padding-top:     9.8rem;
+    padding-bottom:  9.8rem;
+    display:         flex;
+    flex-direction:  row;
+    justify-content: space-between;
+    align-items:     stretch;
+  }
+
+  .man-hist-text {
+    flex:            1;
+    display:         flex;
+    flex-direction:  column;
+    justify-content: space-between;
+  }
+
+  .man-hist-label {
+    font-size:   1.5rem;
+    font-weight: 600;
+    line-height: 1.1em;
+    color:       #0047AF;
+  }
+
+  .man-hist-h2s {
+    max-width:      26.1rem;
+    display:        flex;
+    flex-direction: column;
+    gap:            1.6rem;
+  }
+
+  .man-hist-h2 {
+    font-size:        1.5rem;
+    font-weight:      600;
+    line-height:      1.1em;
+    color:            #0047AF;
+    animation:        hist-dim 9s infinite;
+    animation-delay:  0s;
+  }
+
+  .man-hist-h2:nth-child(2) { animation-delay: -6s; }
+  .man-hist-h2:nth-child(3) { animation-delay: -3s; }
+
+  @keyframes hist-dim {
+    0%    { opacity: 1;   }
+    28%   { opacity: 1;   }
+    33.3% { opacity: 0.2; }
+    95%   { opacity: 0.2; }
+    100%  { opacity: 1;   }
+  }
+
+  .man-hist-vid {
+    width:        52.65rem;
+    flex-shrink:  0;
+    border-radius: 15px;
+    aspect-ratio: 16 / 10;
+    object-fit:   cover;
+    display:      block;
+  }
+
+  /* ─── Cuerpo histórico ──────────────────────────────────── */
+  .man-body-sec .man-inner {
+    padding-top:    9.8rem;
+    padding-bottom: 0;
+  }
+
+  .man-body-text {
+    max-width:      60.55rem;
+    font-size:      2.4rem;
+    font-weight:    600;
+    line-height:    1.1em;
+    letter-spacing: -0.02em;
+    color:          #FEFEFE;
+    white-space:    pre-line;
+  }
+
+  /* ─── Ejes ──────────────────────────────────────────────── */
+  .man-ejes-inner {
+    padding-top:     9.8rem;
+    padding-bottom:  9.8rem;
+    display:         flex;
+    flex-direction:  row;
+    justify-content: space-between;
+    align-items:     flex-start;
+  }
+
+  .man-ejes-left {
+    width:          23.2rem;
+    flex-shrink:    0;
+    display:        flex;
+    flex-direction: column;
+    gap:            2.4rem;
+  }
+
+  .man-ejes-title {
+    font-size:   1.5rem;
+    font-weight: 600;
+    line-height: 1.1em;
+    color:       #FEFEFE;
+  }
+
+  .man-ejes-desc {
+    font-size:   1.1rem;
+    font-weight: 400;
+    line-height: 1.4em;
+    color:       #FEFEFE;
+  }
+
+  .man-ejes-cards {
+    width:          60.55rem;
+    flex-shrink:    0;
+    display:        flex;
+    flex-direction: column;
+    gap:            0.4rem;
+  }
+
+  .man-ej-card {
+    height:         17.5rem;
+    display:        flex;
+    flex-direction: row;
+    background:     #FEFEFE;
+    border-radius:  30px;
+    overflow:       hidden;
+  }
+
+  .man-ej-gif-wrap {
+    width:           22.2rem;
+    flex-shrink:     0;
+    position:        relative;
+    overflow:        hidden;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+  }
+
+  .man-ej-overlay {
+    position:       absolute;
+    inset:          0;
+    background:     var(--grad);
+    pointer-events: none;
+    z-index:        1;
+  }
+
+  .man-ej-gif {
+    width:      19rem;
+    height:     10.9rem;
+    object-fit: cover;
+    display:    block;
+  }
+
+  .man-ej-text {
+    flex:            1;
+    display:         flex;
+    flex-direction:  column;
+    justify-content: space-between;
+    padding:         1.6rem;
+  }
+
+  .man-ej-title {
+    font-size:   2.4rem;
+    font-weight: 600;
+    line-height: 1.1em;
+    color:       #0047AF;
+  }
+
+  .man-ej-desc {
+    font-size:   1.1rem;
+    font-weight: 400;
+    line-height: 1.2em;
+    color:       #0047AF;
+  }
+
+  /* ─── Compromiso ────────────────────────────────────────── */
+  .man-compromiso {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .man-compromiso::before {
+    content:        '';
+    position:       absolute;
+    inset:          0;
+    background:     radial-gradient(42.72% 42.89% at 50% 56.02%, rgba(255, 255, 255, 0.50) 0%, rgba(255, 255, 255, 0.00) 100%);
+    opacity:        0.5;
+    pointer-events: none;
+  }
+
+  .man-compromiso-inner {
+    padding-top:    9.8rem;
+    padding-bottom: 14.8rem;
+    position:       relative;
+    z-index:        1;
+    display:        flex;
+    flex-direction: column;
+    align-items:    center;
+    text-align:     center;
+    gap:            2.4rem;
+  }
+
+  .man-comp-logo {
+    width:   9.1rem;
+    height:  auto;
+    display: block;
+  }
+
+  .man-comp-label {
+    font-size:      2.4rem;
+    font-weight:    600;
+    line-height:    1.1em;
+    letter-spacing: -0.02em;
+    color:          #FEFEFE;
+  }
+
+  .man-comp-h2 {
+    font-size:      6.5rem;
+    font-weight:    600;
+    line-height:    1;
+    letter-spacing: -0.04em;
+    color:          #FEFEFE;
+    white-space:    pre-line;
+  }
+
+  /* ─── CTA ───────────────────────────────────────────────── */
+  .man-cta-sec {
+    max-width: 1920px;
+    margin:    0 auto;
+    padding:   0 2.4rem;
+  }
+
+  .man-cta-card {
+    display:        flex;
+    flex-direction: row;
+    align-items:    flex-end;
+    gap:            1.6rem;
+    border-radius:  30px;
+    background:     #FFFFFF;
+    overflow:       hidden;
+  }
+
+  .man-cta-vid-d {
+    width:       45.55rem;
+    height:      29.85rem;
+    object-fit:  cover;
+    flex-shrink: 0;
+    display:     block;
+  }
+
+  .man-cta-vid-m { display: none; }
+
+  .man-cta-right {
+    flex:           1;
+    display:        flex;
+    flex-direction: column;
+    align-self:     stretch;
+  }
+
+  .man-cta-body {
+    flex:            1;
+    display:         flex;
+    flex-direction:  column;
+    justify-content: space-between;
+    padding:         1.6rem 1.6rem 1.6rem 0;
+  }
+
+  .man-cta-meta {
+    display:     flex;
+    gap:         3.2rem;
+    align-items: flex-start;
+  }
+
+  .man-cta-venues {
+    display: flex;
+    gap:     1rem;
+  }
+
+  .man-cta-meta-item {
+    font-size:   0.8rem;
+    font-weight: 400;
+    line-height: 1.2em;
+    color:       #0047AF;
+    white-space: pre-line;
+  }
+
+  .man-cta-title {
+    width:          26.55rem;
+    font-size:      2.4rem;
+    font-weight:    600;
+    line-height:    1.1em;
+    letter-spacing: -0.02em;
+    color:          #0047AF;
+    white-space:    pre-line;
+  }
+
+  .man-cta-btn {
+    align-self:      flex-end;
+    display:         inline-flex;
+    justify-content: center;
+    align-items:     center;
+    padding:         0.7rem 1.1rem 0.8rem;
+    background:      #0047AF;
+    color:           #FEFEFE;
+    border:          none;
+    border-radius:   100px;
+    font-family:     inherit;
+    font-size:       1rem;
+    font-weight:     500;
+    line-height:     1;
+    text-decoration: none;
+    white-space:     nowrap;
+    cursor:          pointer;
+    transition:      opacity 0.15s ease;
+  }
+
+  .man-cta-btn:hover { opacity: 0.85; }
+
+  /* ─── Mobile ────────────────────────────────────────────── */
+  @media (max-width: 767px) {
+    .man-inner { padding: 0 16px; }
+
+    /* Hero */
+    .man-hero          { height: 100vh; }
+    .man-hero-inner    { height: 100%; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; padding-top: 80px; padding-bottom: 32px; }
+    .man-h1            { align-self: auto; font-size: 44px; font-weight: 600; line-height: 1em; letter-spacing: -0.02em; }
+    .man-hero-p        { font-size: 21px; font-weight: 600; line-height: 1.1em; letter-spacing: 0; }
+
+    /* Historia — mobile order: label → video → h2s */
+    .man-historia-inner { flex-direction: column; align-items: stretch; gap: 0; padding-top: 32px; padding-bottom: 32px; }
+    .man-hist-text      { display: contents; }
+    .man-hist-label     { order: 1; font-size: 18px; font-weight: 700; line-height: 1.2em; margin-bottom: 64px; }
+    .man-hist-vid       { order: 2; width: 100%; height: 528px; aspect-ratio: unset; margin-bottom: 16px; }
+    .man-hist-h2s       { order: 3; max-width: 100%; gap: 24px; }
+    .man-hist-h2        { font-size: 18px; font-weight: 700; line-height: 1.2em; }
+
+    /* Body */
+    .man-body-sec .man-inner { padding-top: 32px; padding-bottom: 0; }
+    .man-body-text           { max-width: 100%; font-size: 21px; font-weight: 600; line-height: 1.1em; }
+
+    /* Ejes */
+    .man-ejes-inner    { flex-direction: column; align-items: stretch; gap: 32px; padding-top: 64px; padding-bottom: 64px; }
+    .man-ejes-left     { width: 100%; gap: 32px; }
+    .man-ejes-title    { font-size: 18px; font-weight: 700; line-height: 1.2em; }
+    .man-ejes-desc     { font-size: 16px; }
+    .man-ejes-cards    { width: 100%; gap: 8px; }
+    .man-ej-card       { height: auto; flex-direction: column; border-radius: 30px; }
+    .man-ej-gif-wrap   { width: 100%; height: 222px; }
+    .man-ej-gif        { width: 100%; height: 100%; }
+    .man-ej-text       { padding: 24px; justify-content: flex-start; flex-direction: column; gap: 32px; }
+    .man-ej-title      { font-size: 21px; font-weight: 600; line-height: 1.1; }
+    .man-ej-desc       { font-size: 16px; font-weight: 400; line-height: 1.4; }
+
+    /* Compromiso */
+    .man-compromiso         { overflow: visible; }
+    .man-compromiso::before { display: none; }
+    .man-compromiso::after {
+      content:        '';
+      position:       absolute;
+      width:          639px;
+      height:         574px;
+      left:           -92px;
+      top:            -50px;
+      background:     radial-gradient(45.4% 36.01% at 50.09% 51.15%, rgba(255, 255, 255, 0.50) 0%, rgba(255, 255, 255, 0.00) 100%);
+      opacity:        0.5;
+      pointer-events: none;
+    }
+    .man-compromiso-inner { padding-top: 64px; padding-bottom: 64px; gap: 64px; }
+    .man-comp-logo        { width: 134px; }
+    .man-comp-label       { font-size: 32px; font-weight: 600; line-height: 1.2em; }
+    .man-comp-h2          { font-size: 44px; letter-spacing: -0.02em; }
+
+    /* CTA */
+    .man-cta-sec       { padding: 0 16px; }
+    .man-cta-card      { flex-direction: column; align-items: stretch; gap: 0; }
+    .man-cta-vid-d     { display: none; }
+    .man-cta-vid-m     { display: block; width: 100%; height: 235px; object-fit: cover; }
+    .man-cta-right     { flex: unset; }
+    .man-cta-body      { padding: 32px 16px 16px; gap: 64px; justify-content: flex-start; }
+    .man-cta-meta      { justify-content: space-between; gap: 0; }
+    .man-cta-venues    { gap: 20px; }
+    .man-cta-meta-item { font-size: 12px; }
+    .man-cta-title     { width: auto; font-size: 44px; font-weight: 600; line-height: 1em; letter-spacing: -0.02em; }
+    .man-cta-btn       { align-self: stretch; display: flex; width: 100%; font-size: 16px; padding: 14px 22px 16px; }
+  }
+</style>

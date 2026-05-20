@@ -4,14 +4,26 @@ import { getLangFromUrl, useTranslations } from '../i18n/utils';
 const lang = getLangFromUrl(Astro.url);
 const t    = useTranslations(lang);
 
+interface Props { inverted?: boolean; }
+const { inverted = false } = Astro.props;
+
 const entradasHref = 'https://tickets.qualicer2026.com';
+
+const BASE_LEGAL = 'https://lawwwing.com/documents/94c7c612-ec3d-4a1a-b53b-aea50ae4bb5b';
+const l = lang === 'en' ? 'en' : 'es';
+const legal = {
+  aviso:     `${BASE_LEGAL}/legal-notice/${l}/`,
+  terminos:  `${BASE_LEGAL}/terms-and-conditions/${l}/`,
+  privacidad: `${BASE_LEGAL}/privacy-notice/${l}/`,
+  cookies:   `${BASE_LEGAL}/cookie-policy/${l}/`,
+};
 ---
 
-<footer class="ft">
+<footer class:list={['ft', { 'ft--inv': inverted }]}>
   <div class="ft-inner">
 
   <!-- Logo grande -->
-  <img class="ft-logo" src="/img/logo_full.svg" alt="Qualicer 26" />
+  <img class="ft-logo" src={inverted ? '/img/logo_full_azul.svg' : '/img/logo_full.svg'} alt="Qualicer 26" />
 
   <!-- Bloque info -->
   <div class="ft-info">
@@ -24,10 +36,10 @@ const entradasHref = 'https://tickets.qualicer2026.com';
         <span class="ft-organiza-label">{t('footer.organiza')}</span>
         <div class="ft-organiza-logos">
           <a href="https://www.laboratoriocarpi.com/" target="_blank" rel="noopener">
-            <img src="/img/sebas_blanco.svg" alt="Laboratorio Sebastián Carpi" />
+            <img src={inverted ? '/img/sebas_azul.svg' : '/img/sebas_blanco.svg'} alt="Laboratorio Sebastián Carpi" />
           </a>
           <a href="https://iicv.net/" target="_blank" rel="noopener">
-            <img src="/img/cole_blanco.svg" alt="Colegio de Ingenieros Industriales" />
+            <img src={inverted ? '/img/cole_azul.svg' : '/img/cole_blanco.svg'} alt="Colegio de Ingenieros Industriales" />
           </a>
         </div>
       </div>
@@ -60,9 +72,10 @@ const entradasHref = 'https://tickets.qualicer2026.com';
         <div class="ft-col">
           <span class="ft-col-heading">{t('footer.legal')}</span>
           <div class="ft-col-links">
-            <a href="#" class="ft-link">{t('footer.legal1')}</a>
-            <a href="#" class="ft-link">{t('footer.legal2')}</a>
-            <a href="#" class="ft-link">{t('footer.legal3')}</a>
+            <a href={legal.aviso}     target="_blank" rel="noopener" class="ft-link">{t('footer.legal1')}</a>
+            <a href={legal.terminos}  target="_blank" rel="noopener" class="ft-link">{t('footer.legal4' as any)}</a>
+            <a href={legal.privacidad} target="_blank" rel="noopener" class="ft-link">{t('footer.legal2')}</a>
+            <a href={legal.cookies}   target="_blank" rel="noopener" class="ft-link">{t('footer.legal3')}</a>
           </div>
         </div>
 
@@ -237,6 +250,16 @@ const entradasHref = 'https://tickets.qualicer2026.com';
     white-space:     nowrap;
     cursor:          pointer;
   }
+
+  /* ─── Inverted (manifesto) ──────────────────────────────── */
+  .ft--inv { background: #FEFEFE; }
+  .ft--inv .ft-organiza-label,
+  .ft--inv .ft-col-heading,
+  .ft--inv .ft-col-body,
+  .ft--inv .ft-link,
+  .ft--inv .ft-copyright { color: #0047AF; }
+  .ft--inv .ft-bar { border-top-color: rgba(0, 71, 175, 0.3); }
+  .ft--inv .ft-btn { background: #0047AF; color: #FEFEFE; }
 
   /* ─── Mobile ────────────────────────────────────────────── */
   @media (max-width: 767px) {

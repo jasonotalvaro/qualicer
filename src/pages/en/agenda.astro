@@ -136,7 +136,7 @@ function imgCircle(p: PonRef) {
               <div class="ag-lista">
                 {grupo.map(s => (
                   <article
-                    class="ag-card"
+                    class={`ag-card${s.dia === 'viernes' ? ' ag-card--viernes' : ''}`}
                     data-sesion={s._id}
                     data-eje={s.eje ?? ''}
                     data-dia={s.dia}
@@ -174,6 +174,18 @@ function imgCircle(p: PonRef) {
                         )}
                         <a class="ag-mas-info" href="#">More information</a>
                       </div>
+                      {s.dia === 'viernes' && (
+                        <div class="ag-viernes-info">
+                          <div class="ag-vinfo-block">
+                            <span class="ag-vinfo-label">Location:</span>
+                            <span class="ag-vinfo-text">Colegio Ingenieros Industriales Comunitat Valenciana — Avda. del Mar 46, 12003 Castellón</span>
+                          </div>
+                          <div class="ag-vinfo-block">
+                            <span class="ag-vinfo-label">Entry:</span>
+                            <span class="ag-vinfo-text">Free entry</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </article>
                 ))}
@@ -347,6 +359,27 @@ function imgCircle(p: PonRef) {
     transition:     opacity 0.15s;
   }
 
+  .ag-card--viernes { background: rgba(233, 0, 43, 0.2); }
+
+  .ag-viernes-info {
+    display:    flex;
+    flex-wrap:  wrap;
+    gap:        0.6rem 2.1rem;
+    margin-top: 1.4rem;
+  }
+
+  .ag-vinfo-block {
+    display:     flex;
+    gap:         0.3rem;
+    align-items: baseline;
+    font-size:   0.8rem;
+    line-height: 1.4em;
+    color:       var(--color-dark);
+  }
+
+  .ag-vinfo-label { font-weight: 600; white-space: nowrap; }
+  .ag-vinfo-text  { font-weight: 400; }
+
   .ag-meta { display: flex; flex-shrink: 0; align-self: flex-start; }
 
   .ag-hora {
@@ -495,6 +528,7 @@ function imgCircle(p: PonRef) {
     .ag-pon-item      { display: block; }
     .ag-pon-sep       { display: none; }
     .ag-mas-info      { font-size: 13px; align-self: flex-end; }
+    .ag-vinfo-block   { font-size: 13px; }
   }
 
 </style>
