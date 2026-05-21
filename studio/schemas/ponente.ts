@@ -47,25 +47,18 @@ export default {
       ],
     },
     {
-      name:        'imagenVertical',
-      title:       'Imagen vertical',
-      type:        'image',
-      options:     { hotspot: true },
-      description: 'Formato retrato — uso en listado de ponentes',
-    },
-    {
       name:        'imagenHorizontal',
-      title:       'Imagen horizontal',
+      title:       'Imagen',
       type:        'image',
       options:     { hotspot: true },
-      description: 'Formato paisaje — uso en cards destacados del home',
+      description: 'Formato paisaje 430×270',
     },
   ],
   preview: {
     select: {
       title:    'apellido',
       subtitle: 'nombre',
-      media:    'imagenVertical',
+      media:    'imagenHorizontal',
     },
     prepare({ title, subtitle, media }: any) {
       return { title: `${subtitle} ${title}`, media };

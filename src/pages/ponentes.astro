@@ -70,14 +70,9 @@ function imgUrl(p: Ponente) {
   if (p.imagenVertical)   return urlFor(p.imagenVertical).width(888).height(462).fit('crop').url();
   return '';
 }
-function imgVert(p: Ponente) {
-  if (p.imagenVertical)   return urlFor(p.imagenVertical).width(860).height(1194).url();
-  if (p.imagenHorizontal) return urlFor(p.imagenHorizontal).width(860).height(1194).fit('crop').url();
-  return '';
-}
-function imgHoriz(p: Ponente) {
-  if (p.imagenHorizontal) return urlFor(p.imagenHorizontal).width(888).height(462).url();
-  if (p.imagenVertical)   return urlFor(p.imagenVertical).width(888).height(462).fit('crop').url();
+function imgModal(p: Ponente) {
+  if (p.imagenHorizontal) return urlFor(p.imagenHorizontal).width(860).height(538).url();
+  if (p.imagenVertical)   return urlFor(p.imagenVertical).width(860).height(538).fit('crop').url();
   return '';
 }
 function slugPonente(p: Ponente) {
@@ -239,18 +234,10 @@ const numInsps = Math.ceil(ponentes.length / 9) * 3;
       <dialog class="pon-modal" id={`modal-${p._id}`} aria-label={`${p.nombre} ${p.apellido}`}>
         <button class="pon-modal-close" aria-label="Cerrar">&#x2715;</button>
 
-        {imgVert(p) && (
+        {imgModal(p) && (
           <img
-            class="pon-modal-img pon-modal-img--vert"
-            src={imgVert(p)}
-            alt={`${p.nombre} ${p.apellido}`}
-            loading="lazy"
-          />
-        )}
-        {imgHoriz(p) && (
-          <img
-            class="pon-modal-img pon-modal-img--horiz"
-            src={imgHoriz(p)}
+            class="pon-modal-img"
+            src={imgModal(p)}
             alt={`${p.nombre} ${p.apellido}`}
             loading="lazy"
           />
@@ -780,6 +767,7 @@ const numInsps = Math.ceil(ponentes.length / 9) * 3;
     background:    var(--color-white);
     box-shadow:    0 32px 80px rgba(0, 0, 0, 0.22);
     width:         min(1225px, 92vw);
+    height:        33rem;
     max-height:    90vh;
     overflow-y:    auto;
     overflow-x:    hidden;
@@ -811,15 +799,14 @@ const numInsps = Math.ceil(ponentes.length / 9) * 3;
 
   .pon-modal-img {
     width:         430px;
-    height:        597px;
+    aspect-ratio:  430 / 270;
+    height:        auto;
     object-fit:    cover;
     border-radius: 15px;
     flex-shrink:   0;
     display:       block;
-    align-self:    flex-end;
+    align-self:    flex-start;
   }
-
-  .pon-modal-img--horiz { display: none; }
 
   .pon-modal-content {
     flex:            1;
@@ -987,13 +974,9 @@ const numInsps = Math.ceil(ponentes.length / 9) * 3;
       overflow-y: auto;
     }
 
-    .pon-modal-img--vert  { display: none; }
-    .pon-modal-img--horiz {
-      display:      block;
+    .pon-modal-img {
       width:        100%;
-      aspect-ratio: 292 / 183;
-      height:       auto;
-      object-fit:   cover;
+      aspect-ratio: 430 / 270;
       align-self:   auto;
     }
 
