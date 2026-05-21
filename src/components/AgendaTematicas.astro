@@ -1,10 +1,29 @@
 ---
+import { client } from '../lib/sanity';
 import { getLangFromUrl, useTranslations } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
 const t    = useTranslations(lang);
 
 const agendaHref = lang === 'en' ? '/en/agenda' : '/agenda';
+
+const rawTitulos: { titulo: { es?: string; en?: string } }[] = await client.fetch(
+  `*[_type == "agenda" && defined(titulo)] { titulo }`
+);
+
+// Fisher-Yates shuffle at build time
+const arr = [...rawTitulos];
+for (let i = arr.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [arr[i], arr[j]] = [arr[j], arr[i]];
+}
+
+const picked = arr.slice(0, 6).map(s =>
+  lang === 'en' ? (s.titulo?.en ?? s.titulo?.es ?? '') : (s.titulo?.es ?? s.titulo?.en ?? '')
+);
+
+const col1 = picked.slice(0, 3);
+const col2  = picked.slice(3, 6);
 ---
 
 <section class="b7">
@@ -14,14 +33,10 @@ const agendaHref = lang === 'en' ? '/en/agenda' : '/agenda';
 
     <div class="b7-topics">
       <div class="b7-col">
-        <p class="b7-topic">{t('b7.topic1')}</p>
-        <p class="b7-topic">{t('b7.topic2')}</p>
-        <p class="b7-topic">{t('b7.topic3')}</p>
+        {col1.map(text => <p class="b7-topic">{text}</p>)}
       </div>
       <div class="b7-col">
-        <p class="b7-topic">{t('b7.topic4')}</p>
-        <p class="b7-topic">{t('b7.topic5')}</p>
-        <p class="b7-topic">{t('b7.topic6')}</p>
+        {col2.map(text => <p class="b7-topic">{text}</p>)}
       </div>
     </div>
 

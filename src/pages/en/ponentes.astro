@@ -96,11 +96,23 @@ const INSP_DESIGNS = [
   },
   {
     gradient: 'linear-gradient(180deg, rgba(54,163,223,1) 0%, rgba(54,163,223,0) 100%)',
-    text:     '"Ceramics cannot be understood in parts. It must be understood as a whole."',
+    text:     '"The ceramic sector cannot be understood in parts. It must be understood as a whole."',
   },
   {
     gradient: 'linear-gradient(180deg, rgba(111,197,183,1) 0%, rgba(111,197,183,0) 100%)',
-    text:     '"Every perspective adds a dimension. Together, the volume."',
+    text:     '"+30 experts. 5 dimensions. One single forum."',
+  },
+  {
+    gradient: 'linear-gradient(180deg, rgba(242,137,167,1) 0%, rgba(242,137,167,0) 100%)',
+    text:     '"A sector that does not share the same vision cannot see its own future."',
+  },
+  {
+    gradient: 'linear-gradient(180deg, rgba(54,163,223,1) 0%, rgba(54,163,223,0) 100%)',
+    text:     '"Since 1992, the forum where ceramic quality is built through debate."',
+  },
+  {
+    gradient: 'linear-gradient(180deg, rgba(111,197,183,1) 0%, rgba(111,197,183,0) 100%)',
+    text:     '"The debate does not begin when the speaker arrives. It begins when the right question does."',
   },
 ] as const;
 
@@ -206,7 +218,7 @@ const numInsps = Math.ceil(ponentes.length / 9) * 3;
             );
           })}
           {Array.from({ length: numInsps }, (_, i) => {
-            const design = INSP_DESIGNS[i % 3];
+            const design = INSP_DESIGNS[i % 6];
             return (
               <div
                 class="pon-insp-card"
