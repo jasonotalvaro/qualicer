@@ -11,19 +11,9 @@ const rawTitulos: { titulo: { es?: string; en?: string } }[] = await client.fetc
   `*[_type == "agenda" && defined(titulo)] { titulo }`
 );
 
-// Fisher-Yates shuffle at build time
-const arr = [...rawTitulos];
-for (let i = arr.length - 1; i > 0; i--) {
-  const j = Math.floor(Math.random() * (i + 1));
-  [arr[i], arr[j]] = [arr[j], arr[i]];
-}
-
-const picked = arr.slice(0, 6).map(s =>
+const allTitles = rawTitulos.map(s =>
   lang === 'en' ? (s.titulo?.en ?? s.titulo?.es ?? '') : (s.titulo?.es ?? s.titulo?.en ?? '')
-);
-
-const col1 = picked.slice(0, 3);
-const col2  = picked.slice(3, 6);
+).filter(Boolean);
 ---
 
 <section class="b7">
@@ -31,19 +21,42 @@ const col2  = picked.slice(3, 6);
 
     <h2 class="b7-title">{t('b7.title')}</h2>
 
-    <div class="b7-topics">
-      <div class="b7-col">
-        {col1.map(text => <p class="b7-topic">{text}</p>)}
-      </div>
-      <div class="b7-col">
-        {col2.map(text => <p class="b7-topic">{text}</p>)}
-      </div>
+    <div class="b7-topics" id="b7-topics" data-titles={JSON.stringify(allTitles)}>
+      <div class="b7-col" id="b7-col1"></div>
+      <div class="b7-col" id="b7-col2"></div>
     </div>
 
     <a href={agendaHref} class="b7-btn">{t('b7.cta')}</a>
 
   </div>
 </section>
+
+<script>
+  (() => {
+    const container = document.getElementById('b7-topics');
+    if (!container) return;
+    const titles: string[] = JSON.parse(container.dataset.titles || '[]');
+    for (let i = titles.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [titles[i], titles[j]] = [titles[j], titles[i]];
+    }
+    const picked = titles.slice(0, 6);
+    const col1 = document.getElementById('b7-col1');
+    const col2 = document.getElementById('b7-col2');
+    picked.slice(0, 3).forEach(text => {
+      const p = document.createElement('p');
+      p.className = 'b7-topic';
+      p.textContent = text;
+      col1?.appendChild(p);
+    });
+    picked.slice(3, 6).forEach(text => {
+      const p = document.createElement('p');
+      p.className = 'b7-topic';
+      p.textContent = text;
+      col2?.appendChild(p);
+    });
+  })();
+</script>
 
 <style>
   /* Sección: blanco full-width sobre fondo gris */
