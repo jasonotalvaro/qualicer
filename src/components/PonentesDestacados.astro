@@ -21,12 +21,13 @@ interface Ponente {
   descripcion?:     { es?: string; en?: string };
   imagenHorizontal?: any;
   imagenVertical?:   any;
+  linkedin?:         string;
   sesiones?:        SesionRef[];
 }
 
 const todos: Ponente[] = await client.fetch(`
   *[_type == "ponente"]{
-    _id, nombre, apellido, eje, cargo, descripcion, imagenHorizontal, imagenVertical,
+    _id, nombre, apellido, eje, cargo, descripcion, imagenHorizontal, imagenVertical, linkedin,
     "sesiones": *[_type == "agenda" && references(^._id)] | order(dia, hora) { _id, titulo, dia, hora }
   }
 `);
@@ -157,6 +158,9 @@ const entradasHref = 'https://tickets.qualicer2026.com';
 
         <!-- BOTTOM: Ver en agenda + Conseguir entradas -->
         <div class="b6-modal-btns">
+          {p.linkedin && (
+            <a class="b6-sec-btn b6-modal-linkedin" href={p.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+          )}
           <a class="b6-sec-btn" href={`${agendaBase}#${slugPonente(p)}`}>
             {t('b6.agenda' as any)}
           </a>
@@ -614,7 +618,7 @@ const entradasHref = 'https://tickets.qualicer2026.com';
     .b6-modal-btns {
       position:         sticky;
       bottom:           0;
-      flex-direction:   column;
+      flex-direction:   row;
       align-items:      stretch;
       gap:              8px;
       margin-top:       auto;
@@ -622,7 +626,15 @@ const entradasHref = 'https://tickets.qualicer2026.com';
       padding-top:      12px;
     }
 
-    .b6-modal-btns .b6-sec-btn,
+    .b6-modal-btns .b6-sec-btn {
+      flex:        1;
+      box-sizing:  border-box;
+      font-size:   16px;
+      line-height: 1;
+      padding:     14px 22px 16px;
+      text-align:  center;
+    }
+
     .b6-modal-btns .btn-primary {
       width:       100%;
       box-sizing:  border-box;

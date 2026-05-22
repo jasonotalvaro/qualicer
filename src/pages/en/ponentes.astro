@@ -25,6 +25,7 @@ interface Ponente {
   descripcion?:     { es?: string; en?: string };
   imagenHorizontal?: any;
   imagenVertical?:   any;
+  linkedin?:         string;
   sesiones?:        SesionRef[];
 }
 
@@ -35,7 +36,7 @@ interface AgendaItem {
 
 const [ponentes, agenda]: [Ponente[], AgendaItem[]] = await Promise.all([
   client.fetch(`*[_type == "ponente"] | order(apellido asc) {
-    _id, nombre, apellido, eje, cargo, descripcion, imagenHorizontal, imagenVertical,
+    _id, nombre, apellido, eje, cargo, descripcion, imagenHorizontal, imagenVertical, linkedin,
     "sesiones": *[_type == "agenda" && references(^._id)] | order(dia, hora) { _id, titulo, dia, hora }
   }`),
   client.fetch(`*[_type == "agenda" && defined(ponentes)] {
@@ -274,6 +275,9 @@ const numInsps = Math.ceil(ponentes.length / 9) * 3;
           )}
 
           <div class="pon-modal-btns">
+            {p.linkedin && (
+              <a class="pon-modal-sec-btn pon-modal-linkedin" href={p.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+            )}
             <a class="pon-modal-sec-btn" href={`${agendaHref}#${slugPonente(p)}`}>
               {t('b6.agenda' as any)}
             </a>
@@ -987,7 +991,7 @@ const numInsps = Math.ceil(ponentes.length / 9) * 3;
     .pon-modal-btns {
       position:       sticky;
       bottom:         0;
-      flex-direction: column;
+      flex-direction: row;
       align-items:    stretch;
       gap:            8px;
       margin-top:     auto;
@@ -995,7 +999,11 @@ const numInsps = Math.ceil(ponentes.length / 9) * 3;
       padding-top:    12px;
     }
 
-    .pon-modal-btns .pon-modal-sec-btn,
+    .pon-modal-btns .pon-modal-sec-btn {
+      flex:       1;
+      box-sizing: border-box;
+    }
+
     .pon-modal-btns .pon-modal-primary-btn {
       width:      100%;
       box-sizing: border-box;

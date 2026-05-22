@@ -47,6 +47,12 @@ export default {
       ],
     },
     {
+      name:        'linkedin',
+      title:       'LinkedIn',
+      type:        'url',
+      description: 'URL del perfil de LinkedIn',
+    },
+    {
       name:        'imagenHorizontal',
       title:       'Imagen',
       type:        'image',
