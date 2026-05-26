@@ -140,23 +140,30 @@ function imgCircle(p: PonRef) {
                     data-sesion={s._id}
                     data-eje={s.eje ?? ''}
                     data-dia={s.dia}
+                    data-workshop={s.dia === 'viernes' ? 'true' : null}
                   >
                     <div class="ag-meta">
                       <span class="ag-hora">{s.hora}</span>
-                      {s.eje && (
-                        <span class="ag-tag ag-tag--mob" style={`background:${ejeColor[s.eje]}`}>
-                          {t(`eje.${s.eje}` as any)}
-                        </span>
-                      )}
+                      {s.dia === 'viernes'
+                        ? <span class="ag-tag ag-tag--mob ag-tag--workshop">Workshop</span>
+                        : s.eje && (
+                            <span class="ag-tag ag-tag--mob" style={`background:${ejeColor[s.eje]}`}>
+                              {t(`eje.${s.eje}` as any)}
+                            </span>
+                          )
+                      }
                     </div>
                     <div class="ag-body">
                       <div class="ag-titulo-row">
                         <p class="ag-titulo">{tituloText(s)}</p>
-                        {s.eje && (
-                          <span class="ag-tag ag-tag--desk" style={`background:${ejeColor[s.eje]}`}>
-                            {t(`eje.${s.eje}` as any)}
-                          </span>
-                        )}
+                        {s.dia === 'viernes'
+                          ? <span class="ag-tag ag-tag--desk ag-tag--workshop">Workshop</span>
+                          : s.eje && (
+                              <span class="ag-tag ag-tag--desk" style={`background:${ejeColor[s.eje]}`}>
+                                {t(`eje.${s.eje}` as any)}
+                              </span>
+                            )
+                        }
                       </div>
                       <div class="ag-ponentes-row">
                         {s.ponentes && s.ponentes.length > 0 && (
@@ -210,7 +217,7 @@ function imgCircle(p: PonRef) {
   function applyFilters() {
     document.querySelectorAll<HTMLElement>('.ag-lista').forEach(l => { l.style.opacity = '0.4'; });
     document.querySelectorAll<HTMLElement>('.ag-card').forEach(card => {
-      const ejeOk = active.eje.size === 0 || active.eje.has(card.dataset.eje ?? '');
+      const ejeOk = active.eje.size === 0 || active.eje.has(card.dataset.eje ?? '') || card.dataset.workshop === 'true';
       const diaOk = active.dia.size === 0 || active.dia.has(card.dataset.dia ?? '');
       card.style.display = ejeOk && diaOk ? '' : 'none';
     });
@@ -448,6 +455,7 @@ function imgCircle(p: PonRef) {
 
   .ag-tag--mob  { display: none; }
   .ag-tag--desk { display: inline-flex; }
+  .ag-tag--workshop { background: #989898; }
 
   /* Body: columna de filas */
   .ag-body {
