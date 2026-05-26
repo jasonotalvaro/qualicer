@@ -17,6 +17,13 @@ interface PonRef {
   imagenVertical?: any;
 }
 
+interface AutorRef {
+  _id:      string;
+  nombre:   string;
+  apellido: string;
+  cargo?:   { es?: string; en?: string };
+}
+
 interface Sesion {
   _id:         string;
   dia:         'miercoles' | 'jueves' | 'viernes';
@@ -25,12 +32,14 @@ interface Sesion {
   eje?:        'construccion' | 'sostenibilidad' | 'estrategia';
   descripcion?: { es?: string; en?: string };
   ponentes?:   PonRef[];
+  autores?:    AutorRef[];
 }
 
 const raw: Sesion[] = await client.fetch(`
   *[_type == "agenda"] {
     _id, dia, hora, titulo, eje, descripcion,
-    ponentes[]-> { _id, nombre, apellido, cargo, imagenVertical }
+    ponentes[]-> { _id, nombre, apellido, cargo, imagenVertical },
+    autores[]->  { _id, nombre, apellido, cargo }
   }
 `);
 
@@ -63,6 +72,9 @@ function descText(s: Sesion) {
 }
 function cargoText(p: PonRef) {
   return p.cargo?.en ?? p.cargo?.es ?? '';
+}
+function cargoAutor(a: AutorRef) {
+  return a.cargo?.en ?? a.cargo?.es ?? '';
 }
 function imgCircle(p: PonRef) {
   if (p.imagenVertical) return urlFor(p.imagenVertical).width(96).height(96).fit('crop').url();
@@ -166,14 +178,24 @@ function imgCircle(p: PonRef) {
                         }
                       </div>
                       <div class="ag-ponentes-row">
-                        {s.ponentes && s.ponentes.length > 0 && (
+                        {(s.ponentes?.length || s.autores?.length) && (
                           <p class="ag-ponentes-list">
-                            {s.ponentes.map((p, i) => (
+                            {s.ponentes?.map((p, i) => (
                               <>
                                 {i > 0 && <span class="ag-pon-sep"> | </span>}
                                 <span class="ag-pon-item">
                                   <strong class="ag-pon-name">{p.nombre} {p.apellido}</strong>
                                   {cargoText(p) && <span class="ag-pon-cargo"> ({cargoText(p)})</span>}
+                                </span>
+                              </>
+                            ))}
+                            {s.ponentes?.length && s.autores?.length ? <span class="ag-pon-sep"> | </span> : null}
+                            {s.autores?.map((a, i) => (
+                              <>
+                                {i > 0 && <span class="ag-pon-sep"> | </span>}
+                                <span class="ag-pon-item">
+                                  <strong class="ag-pon-name">{a.nombre} {a.apellido}</strong>
+                                  {cargoAutor(a) && <span class="ag-pon-cargo"> ({cargoAutor(a)})</span>}
                                 </span>
                               </>
                             ))}

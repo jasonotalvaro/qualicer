@@ -7,7 +7,7 @@ const EJES = [
 function horasList() {
   const list = [];
   for (let h = 8; h <= 22; h++) {
-    for (const m of [0, 15, 30, 45]) {
+    for (let m = 0; m < 60; m += 5) {
       if (h === 22 && m > 0) break;
       const hh = String(h).padStart(2, '0');
       const mm = String(m).padStart(2, '0');
@@ -74,6 +74,12 @@ export default {
       title: 'Ponentes',
       type:  'array',
       of: [{ type: 'reference', to: [{ type: 'ponente' }] }],
+    },
+    {
+      name:  'autores',
+      title: 'Autores',
+      type:  'array',
+      of: [{ type: 'reference', to: [{ type: 'autor' }] }],
     },
   ],
   preview: {
