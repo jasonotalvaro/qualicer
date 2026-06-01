@@ -207,11 +207,15 @@ function imgCircle(p: PonRef) {
                         <div class="ag-viernes-info">
                           <div class="ag-vinfo-block">
                             <span class="ag-vinfo-label">Location:</span>
-                            <span class="ag-vinfo-text">Colegio Ingenieros Industriales Comunitat Valenciana — Avda. del Mar 46, 12003 Castellón</span>
+                            <span class="ag-vinfo-text">Colegio Ingenieros Industriales<br>Comunitat Valenciana<br>Avda. del Mar 46, 12003 Castellón</span>
                           </div>
                           <div class="ag-vinfo-block">
                             <span class="ag-vinfo-label">Entry:</span>
                             <span class="ag-vinfo-text">Free entry</span>
+                          </div>
+                          <div class="ag-vinfo-block">
+                            <span class="ag-vinfo-label">Note:</span>
+                            <span class="ag-vinfo-text">Conducted in English, without simultaneous translation.</span>
                           </div>
                         </div>
                       )}
@@ -394,16 +398,17 @@ function imgCircle(p: PonRef) {
     display:    flex;
     flex-wrap:  wrap;
     gap:        0.6rem 2.1rem;
-    margin-top: 1.4rem;
+    margin-top: 0;
   }
 
   .ag-vinfo-block {
-    display:     flex;
-    gap:         0.3rem;
-    align-items: baseline;
-    font-size:   0.8rem;
-    line-height: 1.4em;
-    color:       var(--color-dark);
+    display:        flex;
+    flex-direction: column;
+    gap:            0.3rem;
+    align-items:    baseline;
+    font-size:      0.8rem;
+    line-height:    1.4em;
+    color:          var(--color-dark);
   }
 
   .ag-vinfo-label { font-weight: 600; white-space: nowrap; }

@@ -213,6 +213,10 @@ function imgCircle(p: PonRef) {
                             <span class="ag-vinfo-label">{lang === 'en' ? 'Entry:' : 'Entrada:'}</span>
                             <span class="ag-vinfo-text">{lang === 'en' ? 'Free entry' : 'Entrada gratuita'}</span>
                           </div>
+                          <div class="ag-vinfo-block">
+                            <span class="ag-vinfo-label">{lang === 'en' ? 'Note:' : 'Nota:'}</span>
+                            <span class="ag-vinfo-text">{lang === 'en' ? 'Conducted in English, without simultaneous translation.' : 'Se desarrolla en inglés, sin traducción simultánea.'}</span>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -428,9 +432,10 @@ function imgCircle(p: PonRef) {
   .ag-card--viernes { background: rgba(233, 0, 43, 0.2); }
 
   .ag-viernes-info {
-    display:   flex;
-    flex-wrap: wrap;
-    gap:       0.6rem 2.1rem;
+    display:    flex;
+    flex-wrap:  wrap;
+    gap:        0.6rem 2.1rem;
+    margin-top: 0;
   }
 
   .ag-vinfo-block {
