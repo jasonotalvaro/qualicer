@@ -30,7 +30,7 @@ function lines(str: string) {
 
       <!-- Bloque superior: textos -->
       <div class="hero-card-top">
-        <p class="hero-congress">{t('hero.congress' as any)}</p>
+        <p class="hero-congress" set:html={t('hero.congress' as any)}></p>
 
         <h1 class="hero-headline" aria-label={`${t('hero.headline1' as any)} ${t('hero.headline2' as any)}`}>
           <span>{t('hero.headline1' as any)}</span>

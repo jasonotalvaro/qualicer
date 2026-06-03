@@ -157,7 +157,7 @@ const ui = {
     'nav.langUrl':   '/',
 
     /* hero */
-    'hero.congress':    'XIX World Congress on Ceramic Tile and Flooring Quality',
+    'hero.congress':    '19<sup>th</sup> World Congress on Ceramic Tile Quality',
     'hero.headline1':   'Now,',
     'hero.headline2':   'the full view',
     'hero.desc':        'The international forum where ceramic innovation, quality\nand transformation are understood in all their dimensions',
