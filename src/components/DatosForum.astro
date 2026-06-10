@@ -35,7 +35,7 @@ const cards = [
     {cards.map((card) => (
       <div class:list={['datos-card', { 'datos-card--featured': card.featured }]}>
         <div class="datos-card-top">
-          <p class="datos-stat">{card.stat}</p>
+          <p class="datos-stat"><Fragment set:html={card.stat} /></p>
           <p class="datos-label">{card.label}</p>
         </div>
         <p class="datos-desc">{card.desc}</p>

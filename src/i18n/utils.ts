@@ -27,7 +27,7 @@ const ui = {
 
     /* datos */
     'datos.title':       'El foro en datos',
-    'datos.card1.stat':  '32ª',
+    'datos.card1.stat':  '19<sup>ª</sup> Edición',
     'datos.card1.label': 'Congreso Mundial de la Calidad del Azulejo y del Pavimento Cerámico',
     'datos.card1.desc':  'Desde 1992, Qualicer reúne a los mejores expertos del mundo en un encuentro que define el rumbo de la industria cerámica.',
     'datos.card2.stat':  '+30',
@@ -170,7 +170,7 @@ const ui = {
 
     /* datos */
     'datos.title':       'The forum in numbers',
-    'datos.card1.stat':  '32nd',
+    'datos.card1.stat':  '19<sup>th</sup> Edition',
     'datos.card1.label': 'World Congress on Ceramic Tile and Flooring Quality',
     'datos.card1.desc':  'Since 1992, Qualicer has brought together the world\'s leading experts in an event that shapes the direction of the ceramic industry.',
     'datos.card2.stat':  '+30',
